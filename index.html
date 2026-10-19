@@ -338,6 +338,7 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .tile{width:46px;height:46px;border:2px solid var(--ink);border-radius:10px;background:var(--soft);font-size:22px;font-weight:800;box-shadow:0 3px 0 var(--ink)}
 .tile:disabled{opacity:.25;box-shadow:none}
 .tile:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.savest{margin-top:18px;font-size:11px;font-weight:800;color:var(--muted);text-align:center;line-height:1.5}.savest.ng{color:var(--bad)}
 </style>
 
 <div class="wrap" id="app"></div>
@@ -941,7 +942,17 @@ function load(){
   try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && s.v===2){ for(const [id,o] of Object.entries(s.owned)) if(o.form==null && SP[id]) o.form = formIdx(id,o.lv); return s; } }catch(e){}
   return {v:2, owned:{}, party:[], seen:{}, balls:5, cleared:{}, wrong:{}};
 }
-function persist(){ try{ localStorage.setItem(KEY, JSON.stringify(save)); }catch(e){} }
+let saveErr = "";
+function persist(){ save.savedAt=Date.now(); try{ localStorage.setItem(KEY, JSON.stringify(save)); saveErr=""; }catch(e){ saveErr=e.name||"error"; } }
+/* 保存できる状態かの診断（端末・開き方によって保存できないことがあるため） */
+const STORE_OK = (()=>{ try{ localStorage.setItem("rq_test","1"); const ok=localStorage.getItem("rq_test")==="1"; localStorage.removeItem("rq_test"); return ok; }catch(e){ return false; } })();
+const IS_APP = (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone===true;
+try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); }catch(e){}
+function saveStatusHTML(){
+  const ok = STORE_OK && !saveErr, t = save.savedAt ? new Date(save.savedAt) : null;
+  const ts = t ? `${t.getMonth()+1}/${t.getDate()} ${t.getHours()}:${String(t.getMinutes()).padStart(2,"0")}` : "まだなし";
+  return `<div class="savest ${ok?'':'ng'}">開き方：${IS_APP?'ホーム画面アプリ':'ブラウザ（Safariなど）'}　保存：${ok?'できる':'できない'+(saveErr?'（'+esc(saveErr)+'）':'')}　さいごの保存：${ts}</div>`;
+}
 
 function formIdx(id, lv){ const f=SP[id].forms; let k=0; f.forEach((x,i)=>{ if(i && lv>=x.lv) k=i; }); return k; }
 const curF = id => { const o=save.owned[id]; return o.form ?? formIdx(id,o.lv); };
@@ -1417,6 +1428,7 @@ function showMap(){
   let h = `<div class="hero"><div class="sun"></div><div class="hill"></div><div class="hill2"></div><h1>理科クエスト</h1><p>正解してモンスターをなかまにしよう</p>
     <div class="mon lead">${artMine(lead)}</div>
     <div class="stats"><span class="pill">${flaskSVG} フラスコ ×${save.balls}</span><span class="pill">ずかん ${caught} / ${DEX_ORDER.length}</span></div></div>`;
+  if(!STORE_OK || saveErr) h += `<div class="card bkcard warn"><b>この開き方では記録を保存できません</b><span>Safariの「プライベート」や、Cookieをすべてブロックする設定だと保存できないことがあります。バックアップコードで記録を守ってください。</span></div>`;
   h += '<!--BKTOP-->';
   const rg = grantRares(); if(rg.length) h += `<div class="gets">${rg.map(rareCard).join("")}</div>`;
   const evoId = [...DEX_ORDER,...RARE_ORDER,...QD_ORDER].find(id=>canEvo(id));
@@ -1448,6 +1460,7 @@ function showMap(){
   const stale = !lb || (Date.now()-lb.getTime() > 3*24*3600*1000);
   const bkHTML = `<button class="card bkcard ${stale?'warn':''}" id="bk"><b>きろくのバックアップ</b><span>${lb?`さいごにバックアップ：${lb.getMonth()+1}月${lb.getDate()}日`:'まだバックアップしていません'}${stale?'　→ タップしてバックアップしよう':''}</span></button>`;
   if(stale) h = h.replace('<!--BKTOP-->', bkHTML); else h += bkHTML;
+  h += saveStatusHTML();
   h += `<div class="tools"><button id="reset">きろくをリセット</button>${resetAsk?`<div class="confirm">なかまも全部いなくなるよ。本当に消す？ <button id="ry">消す</button><button id="rn">やめる</button></div>`:''}</div>`;
   app.innerHTML = h;
   app.querySelectorAll(".route:not([disabled])").forEach(b=>b.onclick=()=>startBattle(b.dataset.u,b.dataset.s));
