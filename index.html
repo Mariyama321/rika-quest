@@ -339,6 +339,9 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .tile:disabled{opacity:.25;box-shadow:none}
 .tile:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
 .savest{margin-top:18px;font-size:11px;font-weight:800;color:var(--muted);text-align:center;line-height:1.5}.savest.ng{color:var(--bad)}
+.megacard{border-color:#b06aff;box-shadow:0 4px 0 #b06aff;background:linear-gradient(135deg,#fbe9ff,#e3f6ff)}
+.megaline{display:flex;gap:10px;align-items:center;padding:8px 12px;margin-top:12px;background:linear-gradient(135deg,#fbe9ff,#e3f6ff)}
+.megaline .mon{flex:none;width:52px;height:52px}.megaline b{display:block}
 </style>
 
 <div class="wrap" id="app"></div>
@@ -939,8 +942,8 @@ const need = lv => lv*12;
 
 let save = load();
 function load(){
-  try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && s.v===2){ for(const [id,o] of Object.entries(s.owned)) if(o.form==null && SP[id]) o.form = formIdx(id,o.lv); return s; } }catch(e){}
-  return {v:2, owned:{}, party:[], seen:{}, balls:5, cleared:{}, wrong:{}};
+  try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && s.v===2){ for(const [id,o] of Object.entries(s.owned)) if(o.form==null && SP[id]) o.form = formIdx(id,o.lv); if(!s.wrongEver) s.wrongEver=Object.fromEntries(Object.keys(s.wrong||{}).map(k=>[k,1])); return s; } }catch(e){}
+  return {v:2, owned:{}, party:[], seen:{}, balls:5, cleared:{}, wrong:{}, wrongEver:{}};
 }
 let saveErr = "";
 function persist(){ save.savedAt=Date.now(); try{ localStorage.setItem(KEY, JSON.stringify(save)); saveErr=""; }catch(e){ saveErr=e.name||"error"; } }
@@ -1262,6 +1265,7 @@ function art(id, lv=1, opt={}){
     D: sil?K:shade(s.color,-.22), L: sil?K:shade(s.color,.45),
     st:`stroke="${K}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"`};
   let g = ARCH[arch](o);
+  if(s.mega && !sil){ const gid="mg"+(++PUID); g = `<defs><radialGradient id="${gid}"><stop offset="0" stop-color="#ff3df0" stop-opacity="0"/><stop offset=".62" stop-color="#ff3df0" stop-opacity="0"/><stop offset=".8" stop-color="#b06aff" stop-opacity=".45"/><stop offset="1" stop-color="#3dd6ff" stop-opacity="0"/></radialGradient></defs><circle cx="60" cy="64" r="58" fill="url(#${gid})"/>` + g + `<g transform="translate(100 18)"><circle r="11" fill="#24324a"/><circle r="8.5" fill="none" stroke="#ff3df0" stroke-width="2.5"/><path d="M-4 3 V-3 L0 1 L4 -3 V3" fill="none" stroke="#3dd6ff" stroke-width="2.2" stroke-linejoin="round"/></g>`; }
   if(s.rare && !sil){ let sp=""; for(const [x,y,r] of [[14,30,5],[104,26,6],[100,80,4],[18,86,4],[60,10,4]]) sp+=`<path transform="translate(${x} ${y}) scale(${r/5})" d="M0 -5 L1.3 -1.3 L5 0 L1.3 1.3 L0 5 L-1.3 1.3 L-5 0 L-1.3 -1.3Z" fill="#ffcf3a" stroke="#24324a" stroke-width="1"/>`; g = g + sp; }
   if(s.parts){ const a=PANCH[arch](f); g = partsBack(o,s.parts,a) + g + partsFront(o,s.parts,a,++PUID); }
   if(sil) g = g.replace(/fill="#[0-9a-f]{3,6}"/gi,`fill="${K}"`).replace(/stroke="#[0-9a-f]{3,6}"/gi,`stroke="${K}"`);
@@ -1430,8 +1434,8 @@ function showMap(){
     <div class="stats"><span class="pill">${flaskSVG} フラスコ ×${save.balls}</span><span class="pill">ずかん ${caught} / ${DEX_ORDER.length}</span></div></div>`;
   if(!STORE_OK || saveErr) h += `<div class="card bkcard warn"><b>この開き方では記録を保存できません</b><span>Safariの「プライベート」や、Cookieをすべてブロックする設定だと保存できないことがあります。バックアップコードで記録を守ってください。</span></div>`;
   h += '<!--BKTOP-->';
-  const rg = grantRares(); if(rg.length) h += `<div class="gets">${rg.map(rareCard).join("")}</div>`;
-  const evoId = [...DEX_ORDER,...RARE_ORDER,...QD_ORDER].find(id=>canEvo(id));
+  const rg = grantRares(), mg = grantMegas(); if(rg.length||mg.length) h += `<div class="gets">${mg.map(megaCard).join("")}${rg.map(rareCard).join("")}</div>`;
+  const evoId = [...DEX_ORDER,...RARE_ORDER,...QD_ORDER,...MEGA_ORDER].find(id=>canEvo(id));
   if(evoId) h += `<button class="card prof gift" id="evoNote"><div class="mon" style="width:52px;height:52px;flex:none">${artMine(evoId)}</div><div style="text-align:left"><p>しんかできるなかまがいるよ！</p><p style="font-weight:500">${esc(nameOf(evoId))}をしんかさせよう。タップで「なかま」へ。</p></div></button>`;
   const giftReady = !save.owned.toratch && save.cleared["rika-11|s1"];
   if(giftReady) h += `<button class="card prof gift" id="gift"><div class="face">${profFace}</div><div style="text-align:left"><p>ソラノはかせからプレゼント！</p><p style="font-weight:500">ルート1クリアおめでとう。タップしてうけとろう。</p></div></button>`;
@@ -1452,8 +1456,10 @@ function showMap(){
     });
     const L = u.legend;
     h += `<button class="card route boss" data-u="${u.id}" data-s="boss" ${all?'':'disabled'}><div><span class="rn">でんせつ・ランダム10問</span><b>${save.seen[L]?esc(SP[L].forms[0].n):'？？？'}のすみか</b><span class="note">${all?'でんせつのモンスターがまっている':'ルートを全部クリアするとあらわれる'}</span></div><div class="stars">${starStr(save.cleared[u.id+"|boss"]||0)}</div><div class="wilds"><div class="mon">${art(L,1,{sil:!save.seen[L]})}</div></div></button>`;
-    const wn = Object.keys(save.wrong).filter(k=>k.startsWith(u.id+"|")).length;
-    if(wn) h += `<button class="card route review" data-u="${u.id}" data-s="review"><div><span class="rn">ふくしゅう</span><b>ニガテの森</b><span class="note">まちがえた問題 ${wn}問</span></div><div></div></button>`;
+    const wn = Object.keys(save.wrong).filter(k=>k.startsWith(u.id+"|")).length, mid = "mega_"+u.legend, mp = MEGA[mid] ? megaProgress(mid) : null;
+    const mnote = mp && !save.owned[mid] ? (mp.ever>=MEGA_NEED ? `全部正解すると、メガモンスターがなかまに！` : `まちがえた問題が${MEGA_NEED}問以上になると、克服でメガモンスターが手に入る`) : '';
+    if(wn) h += `<button class="card route review" data-u="${u.id}" data-s="review"><div><span class="rn">ふくしゅう</span><b>ニガテの森</b><span class="note">まちがえた問題 のこり${wn}問${mnote?'<br>'+mnote:''}</span></div><div></div>${MEGA[mid]?`<div class="wilds"><div class="mon">${art(mid,1,{sil:!save.owned[mid]})}</div></div>`:''}</button>`;
+    else if(MEGA[mid] && save.owned[mid]) h += `<div class="card route review" style="opacity:.8"><div><span class="rn">ふくしゅう</span><b>ニガテの森（克服ずみ）</b><span class="note">メガ${esc(SP[u.legend].forms[0].n)}がなかまになった</span></div><div></div></div>`;
     h += `</div></section>`;
   }
   const lb = save.lastBackup ? new Date(save.lastBackup) : null;
@@ -1558,7 +1564,7 @@ let partySel = null;
 function showParty(){
   const lead = save.party[0], o = save.owned[lead], s = SP[lead];
   const nf = s.forms[curF(lead)+1];
-  const ids = [...DEX_ORDER, ...RARE_ORDER, ...QD_ORDER].filter(id=>save.owned[id]);
+  const ids = [...DEX_ORDER, ...RARE_ORDER, ...QD_ORDER, ...MEGA_ORDER].filter(id=>save.owned[id]);
   if(!partySel || !save.owned[partySel]) partySel = lead;
   const d = partySel, dO = save.owned[d], inP = save.party.includes(d);
   app.innerHTML = `<h2 class="sec-h">なかま</h2>
@@ -1592,7 +1598,7 @@ function showDex(){
   let h = `<h2 class="sec-h">モンスターずかん</h2><p class="dexcount">つかまえた ${caught}・見つけた ${seen}・ぜんぶで ${DEX_ORDER.length}</p>`;
   if(dexSel && save.seen[dexSel]){
     const s=SP[dexSel], own=save.owned[dexSel];
-    h += `<div class="card detail" style="margin:0 0 14px"><div class="row"><div class="mon">${(own?artMine(dexSel):art(dexSel,1,{sil:true}))}</div><div style="min-width:0"><span class="mini">${s.qd?'クイズダンジョンの伝説のドラゴン':s.egg?'たまごから生まれるモンスター':s.rare?`${MAPD[s.pref][0]}のレアモンスター`:`No.${String(DEX_ORDER.indexOf(dexSel)+1).padStart(3,"0")}`}</span><h3>${esc(own?nameOf(dexSel):s.forms[0].n)}</h3>${typeChip(s.type)}</div></div>
+    h += `<div class="card detail" style="margin:0 0 14px"><div class="row"><div class="mon">${(own?artMine(dexSel):art(dexSel,1,{sil:true}))}</div><div style="min-width:0"><span class="mini">${s.mega?'メガモンスター（'+esc(megaWhere(dexSel))+'を克服）':s.qd?'クイズダンジョンの伝説のドラゴン':s.egg?'たまごから生まれるモンスター':s.rare?`${MAPD[s.pref][0]}のレアモンスター`:`No.${String(DEX_ORDER.indexOf(dexSel)+1).padStart(3,"0")}`}</span><h3>${esc(own?nameOf(dexSel):s.forms[0].n)}</h3>${typeChip(s.type)}</div></div>
       <p>${own?esc(s.dex):'まだつかまえていない。つかまえると、くわしいことがわかるよ。'}</p>${own&&s.forms.length>1?`<p class="mini">しんか：${s.forms.map(f=>f.n+(f.lv?`（Lv.${f.lv}）`:'')).join(" → ")}</p>`:''}</div>`;
   }
   h += `<div class="grid3">${DEX_ORDER.map((id,i)=>{
@@ -1611,6 +1617,11 @@ function showDex(){
   h += `<div class="grid3">${QD_ORDER.map(id=>{ const lb=SP[id].qd?QD_FLOORS.find(f=>f.dragon===id).lb:'たまご';
     if(!save.owned[id]) return `<div class="card mcard unseen"><span class="no">${lb}</span><div class="mon">${art(id,1,{sil:true})}</div><b>？？？</b></div>`;
     return `<button class="card mcard ${SP[id].qd?'rarecell':''}" data-id="${id}"><span class="no">${lb}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typeChip(SP[id].type)}</button>`; }).join("")}</div>`;
+  const mc = MEGA_ORDER.filter(id=>save.owned[id]).length;
+  h += `<h2 class="sec-h" style="margin-top:22px">メガモンスター</h2><p class="dexcount">なかまにした ${mc} / ${MEGA_ORDER.length}　（ニガテの森・ダンジョンのニガテを克服すると手に入る）</p>`;
+  h += `<div class="grid3">${MEGA_ORDER.map(id=>{ const w=MEGA[id].where, lb=w.unit?(UNITS.find(u=>u.id===w.unit).subject+"第"+UNITS.find(u=>u.id===w.unit).no+"回"):("ダンジョン"+QD_FLOORS.find(f=>f.id===w.floor).lb);
+    if(!save.owned[id]) return `<div class="card mcard unseen"><span class="no">${lb}</span><div class="mon">${art(id,1,{sil:true})}</div><b>？？？</b></div>`;
+    return `<button class="card mcard rarecell" data-id="${id}"><span class="no">${lb}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typeChip(SP[id].type)}</button>`; }).join("")}</div>`;
   app.innerHTML = h;
   app.querySelectorAll(".mcard[data-id]").forEach(b=>b.onclick=()=>{ dexSel=b.dataset.id; showDex(); });
 }
@@ -1670,6 +1681,7 @@ function qdS(){
   const s = save.qd || (save.qd = {});
   s.m=s.m||{}; s.day=s.day||{d:"",n:0}; s.egg=s.egg||{w:0,last:"",streak:0,hatched:0}; s.boss=s.boss||{}; s.tower=s.tower||{best:0};
   if(s.day.d!==today()) s.day={d:today(),n:0};
+  if(!s.weakInit){ for(const r of Object.values(s.m)) if(r.ng && r.weak==null) r.weak = r.lv<=1; s.weakInit=1; }
   return s;
 }
 const qdRec = key => qdS().m[key];
@@ -1711,12 +1723,12 @@ function qdMakeQ(info, fmt){
 function qdMark(item, ok){
   const s=qdS(), key=item.key, t=today(), r=s.m[key]||(s.m[key]={lv:0,due:t,ng:0}), lv0=r.lv;
   if(B && B.tower){
-    if(!ok){ r.lv=Math.min(r.lv,3); r.due=t; r.ng++; return "おぼえ度が3にもどった…ふくしゅうに出てくるよ"; }
+    if(!ok){ r.lv=Math.min(r.lv,3); r.due=t; r.ng++; r.weak=true; return "おぼえ度が3にもどった…ふくしゅうに出てくるよ"; }
     s.day.n++; qdWarm(); return "";
   }
-  if(!ok){ item.missed=true; r.ng++; r.lv=Math.min(r.lv,1); r.due=t; return lv0>1?`おぼえ度が ${lv0} → ${r.lv} にさがった`:""; }
+  if(!ok){ item.missed=true; r.ng++; r.weak=true; r.lv=Math.min(r.lv,1); r.due=t; return lv0>1?`おぼえ度が ${lv0} → ${r.lv} にさがった`:""; }
   if(item.missed){ r.lv=Math.max(r.lv,1); r.due=dayAdd(t,1); return "まちがえたので、あしたもう一度出るよ"; }
-  s.day.n++; qdWarm();
+  s.day.n++; qdWarm(); r.weak=false;
   if(r.lv<5) r.lv++;
   if(r.lv>=5){ r.due="9999"; return lv0<5?"マスター！ この問題はかんぺき！":""; }
   r.due=dayAdd(t, QD_INT[r.lv]);
@@ -1750,7 +1762,7 @@ function qdBar(st){ return `<div class="lvbar">${st.c.map((n,i)=>n?`<i style="fl
 function showQD(){
   const s=qdS();
   if(!s.sel || !QD_FLOORS.some(f=>f.id===s.sel)) s.sel=QD_FLOORS[0].id;
-  const dg=grantDragons(); persist();
+  const dg=grantDragons(), mgq=grantMegas(); persist();
   const f=QD_FLOORS.find(x=>x.id===s.sel), st=qdStats(f);
   const allDue=QD_FLOORS.reduce((n,x)=>n+qdStats(x).due,0);
   const totM=QD_FLOORS.reduce((n,x)=>n+qdStats(x).mastered,0), totQ=QD_FLOORS.reduce((n,x)=>n+x.qs.length,0);
@@ -1758,7 +1770,7 @@ function showQD(){
   const dn=Math.min(s.day.n,QD_DAY_GOAL), eggReady=s.egg.w>=EGG_NEED;
   let h=`<div class="hero dun"><h1>クイズダンジョン</h1><p>全部おぼえて、伝説のドラゴンをなかまにしよう</p>
     <div class="stats"><span class="pill">${flaskSVG} フラスコ ×${save.balls}</span><span class="pill">マスター ${totM} / ${totQ}</span></div></div>`;
-  if(dg.length) h+=`<div class="gets">${dg.map(dragonCard).join("")}</div>`;
+  if(dg.length||mgq.length) h+=`<div class="gets">${mgq.map(megaCard).join("")}${dg.map(dragonCard).join("")}</div>`;
   h+=`<div class="card daily"><div class="egg">${eggSVG(s.egg.w)}</div><div style="min-width:0;flex:1"><b>今日のたんけん</b>
       <div class="mini">ダンジョンで${QD_DAY_GOAL}問正解すると、たまごがあたたまる（${EGG_NEED}日分でうまれる）</div>
       <div class="bar" style="margin-top:6px"><i style="width:${dn/QD_DAY_GOAL*100}%;background:var(--accent)"></i></div>
@@ -1775,6 +1787,8 @@ function showQD(){
     <button class="card route review" data-m="review" ${st.due?'':'disabled'}><div><span class="rn">ふくしゅう・15問まで</span><b>ふくしゅうの間</b><span class="note">${st.due?`今日ふくしゅうする問題 ${st.due}問`:'今日のふくしゅうはおわり'}</span></div><div></div></button>
     <button class="card route boss" data-m="boss" ${bossOk?'':'disabled'}><div><span class="rn">ボス・弱点問題10問</span><b>${save.seen[f.dragon]?esc(SP[f.dragon].forms[0].n):'？？？'}の間</b><span class="note">${bossOk?`まちがえたことがある問題で戦う（${bossCand}問）`:'全部の問題に出会うと、あらわれる'}</span></div><div class="stars">${starStr(s.boss[f.id]||0)}</div><div class="wilds"><div class="mon">${art(f.dragon,1,{sil:!save.seen[f.dragon]})}</div></div></button>
     </div>
+    ${(()=>{ const mid="mega_"+f.dragon, mp=megaProgress(mid), own=save.owned[mid];
+      return `<div class="card megaline"><div class="mon">${art(mid,1,{sil:!own})}</div><div><b>ニガテ克服 → メガモンスター</b><span class="mini">${own?`メガ${esc(SP[f.dragon].forms[0].n)}はなかまになった！`:`まちがえた問題を、ふくしゅうで1回目に正解すると取り返せる。<br>取り返していない問題 <b>${mp.now}問</b>（まちがえたことがある問題 ${mp.ever}問）${mp.needSeen?'<br>全部の問題に出会ったあとで判定するよ':mp.ever<MEGA_NEED?`<br>まちがえた問題が${MEGA_NEED}問以上あると対象になる`:''}`}</span></div></div>`; })()}
     <p class="mini" style="margin-top:8px">${save.owned[f.dragon]?'伝説のドラゴンはなかまになった！':`全部の問題を「マスター」にして、ボスをたおすと、伝説のドラゴンがなかまになるよ。`}</p></section>`;
   h+=`<button class="card tower" id="tower" ${towerPool>=TOWER_MIN?'':'disabled'}><div class="tw">${towerSVG}</div><div style="text-align:left"><b>無限の塔</b><span class="mini">${towerPool>=TOWER_MIN?`おぼえ度3以上の問題がランダムに出る。ハート3つで何階まで行ける？　さいこう記録 <b>${s.tower.best}階</b>`:`おぼえ度3以上の問題が${TOWER_MIN}問になるとひらく（いま ${towerPool}問）`}</span></div></button>`;
   h+=`<details class="card howto"><summary>おぼえ度のしくみ</summary><p class="mini">1回目で正解すると、おぼえ度が1上がって、次に出る日がのびるよ（1日後→2日後→4日後→7日後）。5になったら「マスター」。まちがえると、おぼえ度が1にもどって、また出てくる。<br>おぼえ度が上がると答え方がかわるよ。理科の「何といいますか」の問題は、文字タイルをならべて答える（だんだんヒントがへる）。社会は日本地図をタップして答える。<br>社会の問題をマスターすると、「ちず」のその都道府県の色もこくなるよ。</p></details>`;
@@ -1858,9 +1872,9 @@ function finishQD(win){
   }
   persist();
   const st=f?qdStats(f):null;
-  const dg=grantDragons(), rares=grantRares();
+  const dg=grantDragons(), rares=grantRares(), megas=grantMegas();
   const lvAfter=prefLevels(), newCol=Object.keys(lvAfter).filter(p=>lvAfter[p]>(B.colBefore[p]||0));
-  const gets=[...dg.map(dragonCard), ...rares.map(rareCard),
+  const gets=[...megas.map(megaCard), ...dg.map(dragonCard), ...rares.map(rareCard),
     ...(newCol.length?[`<div class="card get evo"><div class="mon" style="width:64px;height:64px">${mapSVG({view:newCol, fill:Object.fromEntries(newCol.map(p=>[p,MAPLV[lvAfter[p]]]))})}</div><div><b>地図の ${newCol.map(p=>MAPD[p][0]).join("・")} の色がこくなった！</b><span>「ちず」で見てみよう</span></div></div>`]:[]),
     ...(B.eggWarm?[`<div class="card get"><div class="mon">${eggSVG(s.egg.w)}</div><div><b>今日のたんけんクリア！</b><span>たまごがあたたまった（${s.egg.w}/${EGG_NEED}）・フラスコ +2</span></div></div>`]:[]),
     ...B.evoReady.map(id=>`<div class="card get evo"><div class="mon">${artMine(id)}</div><div><b>${esc(nameOf(id))} Lv.${save.owned[id].lv}</b><span>しんかできるようになった！</span></div></div>`),
@@ -1876,6 +1890,48 @@ function finishQD(win){
   document.getElementById("again").onclick=()=>{ B=null; startQD(fid,m); };
   document.getElementById("map").onclick=()=>{ B=null; tab="dun"; home(); };
 }
+
+/* ============================================================
+   メガモンスター：ニガテを克服するとなかまになる（v19）
+   - ぼうけんの単元：その単元でまちがえた問題（これまでに3問以上）を、ニガテの森で全部正解して「のこり0問」にする
+   - ダンジョンのフロア：全問に出会ったあと、まちがえた問題（3問以上）を全部「ふくしゅう」で1回目に正解して取り返す
+   - 見た目は、その単元のでんせつ／フロアのドラゴンのメガシンカした姿（自動生成。新しい単元にも自動で付く）
+   id: mega_<元のid>（変更しない）
+   ============================================================ */
+const MEGA_NEED = 3;
+const MEGA = {};
+function megaOf(src, where){
+  const b = SP[src];
+  return {arch:b.arch, body:b.body, beak:b.beak, type:b.type, color:b.accent, accent:b.color, skill:b.skill, legend:true, mega:true, src, where,
+    parts:Object.assign({}, b.parts||{}, {horn:(b.parts&&b.parts.horn)==="crown"?"twin":"crown", pat:"stars", wing:"crystal", acc:"gem", accColor:"#ff3df0"}),
+    forms:[{n:"メガ"+b.forms[0].n}],
+    dex:`${b.forms[0].n}が、ニガテをのりこえた力でメガシンカした姿。まちがえた問題を全部とりかえした人だけが出会える。`};
+}
+for(const u of UNITS) if(u.legend && SP[u.legend]) MEGA["mega_"+u.legend] = megaOf(u.legend, {unit:u.id});
+for(const f of QD_FLOORS) MEGA["mega_"+f.dragon] = megaOf(f.dragon, {floor:f.id});
+Object.assign(SP, MEGA);
+const MEGA_ORDER = Object.keys(MEGA);
+function megaProgress(id){
+  const w = MEGA[id].where;
+  if(w.unit){
+    const pre = w.unit+"|";
+    const ever = Object.keys(save.wrongEver||{}).filter(k=>k.startsWith(pre)).length;
+    const now = Object.keys(save.wrong).filter(k=>k.startsWith(pre)).length;
+    return {ever, now, ok: ever>=MEGA_NEED && now===0};
+  }
+  const f = QD_FLOORS.find(x=>x.id===w.floor), st = qdStats(f);
+  let ever=0, now=0; for(const q of f.qs){ const r=qdS().m[q.key]; if(r&&r.ng){ ever++; if(r.weak) now++; } }
+  return {ever, now, ok: st.allSeen && ever>=MEGA_NEED && now===0, needSeen: !st.allSeen};
+}
+function grantMegas(){
+  const got=[];
+  for(const id of MEGA_ORDER){ if(save.owned[id]) continue;
+    if(megaProgress(id).ok){ save.owned[id]={lv:25,exp:0,form:0}; save.seen[id]=1; if(save.party.length<3) save.party.push(id); got.push(id); } }
+  if(got.length) persist();
+  return got;
+}
+function megaWhere(id){ const w=MEGA[id].where; if(w.unit){ const u=UNITS.find(x=>x.id===w.unit); return `${u.subject}第${u.no}回「${u.title}」のニガテの森`; } return `ダンジョン「${QD_FLOORS.find(x=>x.id===w.floor).name}」のニガテ`; }
+const megaCard = id => `<div class="card get evo megacard"><div class="mon">${artMine(id)}</div><div><b>メガモンスター ${esc(nameOf(id))}</b><span>${esc(megaWhere(id))}を克服したので、なかまになった！</span></div></div>`;
 
 /* ---------- battle ---------- */
 let B = null;
@@ -2100,7 +2156,7 @@ function judge(picked){
     setLog(`<b>${esc(nameOf(B.lead))}</b>がやる気になった！ どうする？`);
   }else{
     B.combo=0; B.hearts--; B.mistakes++;
-    if(!B.qd) save.wrong[item.key]=(save.wrong[item.key]||0)+1;
+    if(!B.qd){ save.wrong[item.key]=(save.wrong[item.key]||0)+1; (save.wrongEver=save.wrongEver||{})[item.key]=1; }
     item.hidden=[]; item.seq=[]; item.pairs={}; item.selL=null; item.selP=null;
     if(B.tower){ B.queue.shift(); B.queue.push(towerNext()); } else B.queue.push(B.queue.shift());
     persist();
@@ -2179,9 +2235,10 @@ function finish(win){
     addExp(B.lead, stars*5);
   }
   persist();
-  const rares = grantRares();
+  const rares = grantRares(), megas = grantMegas();
   const lvAfter = prefLevels(), newCol = Object.keys(lvAfter).filter(p=>lvAfter[p]>(B.colBefore[p]||0));
   const gets = [
+    ...megas.map(megaCard),
     ...rares.map(rareCard),
     ...(newCol.length?[`<div class="card get evo"><div class="mon" style="width:64px;height:64px">${mapSVG({view:newCol, fill:Object.fromEntries(newCol.map(p=>[p,MAPLV[lvAfter[p]]]))})}</div><div><b>地図の ${newCol.map(p=>MAPD[p][0]).join("・")} の色がこくなった！</b><span>色の段階 ${[...new Set(newCol.map(p=>lvAfter[p]))].join("・")}／4　「ちず」で見てみよう</span></div></div>`]:[]),
     ...B.evoReady.map(id=>`<div class="card get evo"><div class="mon">${artMine(id)}</div><div><b>${esc(nameOf(id))} Lv.${save.owned[id].lv}</b><span>しんかできるようになった！ 「なかま」でしんかさせよう</span></div></div>`),
@@ -2189,7 +2246,7 @@ function finish(win){
   ].join("");
   const ups = Object.entries(B.lvups).filter(([id])=>!B.evoReady.includes(id)).map(([id,lv])=>`${esc(nameOf(id))} Lv.${lv}`).join("・");
   app.innerHTML = `<div class="result">
-    <h2>${win?'ルートクリア！':'目の前がまっくらになった…'}</h2>
+    <h2>${win?(B.sid==="review"?'ニガテの森クリア！':'ルートクリア！'):'目の前がまっくらになった…'}</h2>
     ${win?`<div class="big">${starStr(stars)}</div><p class="line">まちがい ${B.mistakes}回・さいだい ${B.maxCombo}コンボ・たおした ${B.defeated}ひき</p><p class="line">フラスコ +${3+B.ballsGot}</p>`:`<p class="line">まちがえた問題は「ニガテの森」で練習できるよ</p>`}
     ${ups?`<p class="line">レベルアップ：${ups}</p>`:''}
     <div class="gets">${gets}</div>
