@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated": "2026-10-23T05:53+09:00",
+ "updated": "2026-10-24T05:54+09:00",
  "week": {
   "0": "テニス",
   "1": "",
@@ -608,6 +608,32 @@
    "due": "2026-11-13",
    "suggest": "2026-11-09",
    "doneInNotebook": false
+  },
+  {
+   "id": "h_hmvhef369_20261107",
+   "kind": "habit",
+   "subj": "社会",
+   "src": "家",
+   "title": "社会ノート整理",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-11-07",
+   "due": "",
+   "suggest": "2026-11-07",
+   "doneInNotebook": false
+  },
+  {
+   "id": "h_rmvd9jjaq_20261107",
+   "kind": "habit",
+   "subj": "算数",
+   "src": "塾",
+   "title": "計算",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-11-07",
+   "due": "",
+   "suggest": "2026-11-07",
+   "doneInNotebook": false
   }
  ],
  "tests": [
@@ -659,6 +685,11 @@
   {
    "title": "塾",
    "due": "2026-12-22",
+   "off": true
+  },
+  {
+   "title": "塾",
+   "due": "2026-12-23",
    "off": true
   }
  ]
