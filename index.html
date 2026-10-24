@@ -389,6 +389,9 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .phc.pop{animation:ppop .25s forwards;background:#dcf5e8}
 .phc.bad{background:#ffe1e5;border-color:var(--bad)}
 @keyframes ppop{to{transform:scale(.6);opacity:0}}
+.choices.allgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.choices.allgrid .choice{justify-content:center;font-family:var(--display);font-size:20px;padding:10px 4px}
+[hidden]{display:none!important}
 </style>
 
 <div class="wrap" id="app"></div>
@@ -894,6 +897,61 @@ const UNITS = [
       {q:"米からつくられた粉で、パンなどに利用されているものは？", c:["米粉","小麦粉","かたくり粉"], a:0,
        e:"米からつくられた「米粉」の利用も進められています。"}
     ]}
+  ]
+},
+{
+  id:"sansu-1", no:1, label:"算数1", title:"3.14の倍数", subject:"算数", added:"2026-10-24",
+  region:"えんしゅうの丘",
+  legend:"num_pi", mapColor:"#2f9e7a",
+  monsters:{
+    num_suji:{arch:"beast", type:"mizu", color:"#7cc8ff", accent:"#ffcf3a", skill:"hint", parts:{pat:"stripes", acc:"scarf", accColor:"#ffcf3a"}, forms:[{n:"スウジー"},{n:"スウジード",lv:5},{n:"スウジガルム",lv:12}], dex:"数字が大すきな子犬。3.14の倍数をすらすら言えるようになると、しっぽをふる。"},
+    num_kake:{arch:"bird", type:"hono", color:"#ffb04a", accent:"#e8475a", skill:"power", parts:{horn:"crest", pat:"zigzag"}, forms:[{n:"カケザン"},{n:"カケザンバード",lv:5},{n:"ジョウザンホーク",lv:12}], dex:"かけ算のスピードで空を飛ぶ鳥。"},
+    enban:{arch:"turtle", type:"iwa", color:"#c9d3e0", accent:"#2f9e7a", skill:"heal", parts:{pat:"spots"}, forms:[{n:"エンバン"},{n:"エンバンガメ",lv:7}], dex:"こうらがまんまるの円になっているカメ。半径×半径×3.14で、こうらの広さがわかる。"},
+    hankei:{arch:"fox", type:"kusa", color:"#9fd36a", accent:"#2f9e7a", skill:"luck", parts:{acc:"bell", accColor:"#ffcf3a"}, forms:[{n:"ハンケイ"},{n:"ハンケイギツネ",lv:8}], dex:"円の中心から外まで、いつも同じ長さでとびはねるキツネ。"},
+    compas:{arch:"bird", beak:true, type:"mizu", color:"#e9f5ff", accent:"#3d8bff", skill:"hint", parts:{horn:"uni"}, forms:[{n:"コンパスン"},{n:"コンパスワシ",lv:9}], dex:"コンパスのような細い足で、きれいな円をえがいて飛ぶ。"},
+    num_pi:{arch:"dragon", type:"kusa", color:"#4fc3a1", accent:"#ffcf3a", skill:"luck", legend:true, parts:{pat:"zigzag", acc:"gem", accColor:"#ffcf3a"}, forms:[{n:"パイドラゴン"}], dex:"円周率3.14の力をもつ、えんしゅうの丘のでんせつのドラゴン。"}
+  },
+  stages:[
+    {"id": "s1", "name": "3.14×1〜5", "note": "3.14の1倍から5倍", "wild": ["num_suji", "enban"], "qs": [{"q": "3.14×1 は？", "c": ["3.14", "2.14", "6.28", "3.24"], "a": 0, "e": "3.14×1＝3.14", "n": "3.14"}, {"q": "3.14×2 は？", "c": ["6.28", "3.14", "62.8", "5.28"], "a": 0, "e": "3.14×2＝6.28", "n": "6.28"}, {"q": "3.14×3 は？", "c": ["9.42", "8.42", "9.52", "6.28"], "a": 0, "e": "3.14×3＝9.42", "n": "9.42"}, {"q": "3.14×4 は？", "c": ["12.56", "12.66", "125.6", "15.7"], "a": 0, "e": "3.14×4＝12.56", "n": "12.56"}, {"q": "3.14×5 は？", "c": ["15.7", "18.84", "12.56", "15.8"], "a": 0, "e": "3.14×5＝15.7", "n": "15.7"}, {"q": "6.28 は 3.14×いくつ？", "c": ["2", "1", "4", "3"], "a": 0, "e": "3.14×2＝6.28", "n": "2"}, {"q": "12.56 は 3.14×いくつ？", "c": ["4", "2", "5", "8"], "a": 0, "e": "3.14×4＝12.56", "n": "4"}, {"q": "15.7 は 3.14×いくつ？", "c": ["5", "7", "3", "10"], "a": 0, "e": "3.14×5＝15.7", "n": "5"}]},
+    {"id": "s2", "name": "3.14×6〜9", "note": "3.14の6倍から9倍", "wild": ["num_suji", "hankei", "enban"], "qs": [{"q": "3.14×6 は？", "c": ["18.84", "17.84", "188.4", "21.98"], "a": 0, "e": "3.14×6＝18.84", "n": "18.84"}, {"q": "3.14×7 は？", "c": ["21.98", "20.98", "219.8", "22.08"], "a": 0, "e": "3.14×7＝21.98", "n": "21.98"}, {"q": "3.14×8 は？", "c": ["25.12", "21.98", "251.2", "28.26"], "a": 0, "e": "3.14×8＝25.12", "n": "25.12"}, {"q": "3.14×9 は？", "c": ["28.26", "28.36", "282.6", "31.4"], "a": 0, "e": "3.14×9＝28.26", "n": "28.26"}, {"q": "18.84 は 3.14×いくつ？", "c": ["6", "7", "4", "8"], "a": 0, "e": "3.14×6＝18.84", "n": "6"}, {"q": "21.98 は 3.14×いくつ？", "c": ["7", "9", "6", "5"], "a": 0, "e": "3.14×7＝21.98", "n": "7"}, {"q": "25.12 は 3.14×いくつ？", "c": ["8", "9", "16", "10"], "a": 0, "e": "3.14×8＝25.12", "n": "8"}, {"q": "28.26 は 3.14×いくつ？", "c": ["9", "11", "7", "10"], "a": 0, "e": "3.14×9＝28.26", "n": "9"}]},
+    {"id": "s3", "name": "3.14×12〜25", "note": "よく出る 12・15・16・18・24・25 倍", "wild": ["hankei", "compas", "num_kake"], "qs": [{"q": "3.14×12 は？", "c": ["37.68", "37.78", "36.68", "376.8"], "a": 0, "e": "3.14×12＝37.68", "n": "37.68"}, {"q": "3.14×15 は？", "c": ["47.1", "50.24", "43.96", "46.1"], "a": 0, "e": "3.14×15＝47.1", "n": "47.1"}, {"q": "3.14×16 は？", "c": ["50.24", "47.1", "49.24", "50.34"], "a": 0, "e": "3.14×16＝50.24", "n": "50.24"}, {"q": "3.14×18 は？", "c": ["56.52", "55.52", "59.66", "565.2"], "a": 0, "e": "3.14×18＝56.52", "n": "56.52"}, {"q": "3.14×24 は？", "c": ["75.36", "753.6", "74.36", "75.46"], "a": 0, "e": "3.14×24＝75.36", "n": "75.36"}, {"q": "3.14×25 は？", "c": ["78.5", "785", "81.64", "75.36"], "a": 0, "e": "3.14×25＝78.5", "n": "78.5"}, {"q": "37.68 は 3.14×いくつ？", "c": ["12", "11", "24", "14"], "a": 0, "e": "3.14×12＝37.68", "n": "12"}, {"q": "50.24 は 3.14×いくつ？", "c": ["16", "14", "32", "18"], "a": 0, "e": "3.14×16＝50.24", "n": "16"}, {"q": "78.5 は 3.14×いくつ？", "c": ["25", "24", "27", "23"], "a": 0, "e": "3.14×25＝78.5", "n": "25"}]},
+    {"id": "s4", "name": "大きい倍数と円", "note": "×36・49・64 と 円の面積・円周", "wild": ["compas", "num_kake", "hankei"], "qs": [{"q": "3.14×36 は？", "c": ["113.04", "116.18", "1130.4", "113.14"], "a": 0, "e": "3.14×36＝113.04", "n": "113.04"}, {"q": "3.14×49 は？", "c": ["153.86", "157", "1538.6", "150.72"], "a": 0, "e": "3.14×49＝153.86", "n": "153.86"}, {"q": "3.14×64 は？", "c": ["200.96", "204.1", "197.82", "199.96"], "a": 0, "e": "3.14×64＝200.96", "n": "200.96"}, {"q": "113.04 は 3.14×いくつ？", "c": ["36", "72", "34", "38"], "a": 0, "e": "3.14×36＝113.04", "n": "36"}, {"q": "200.96 は 3.14×いくつ？", "c": ["64", "65", "128", "66"], "a": 0, "e": "3.14×64＝200.96", "n": "64"}, {"q": "半径3cmの円の面積は何cm²？（円周率は3.14）", "c": ["28.26", "18.84", "50.24", "56.52"], "a": 0, "e": "半径×半径×3.14＝3×3×3.14＝3.14×9＝28.26cm²", "n": "28.26"}, {"q": "半径4cmの円の面積は何cm²？（円周率は3.14）", "c": ["50.24", "25.12", "78.5", "100.48"], "a": 0, "e": "半径×半径×3.14＝4×4×3.14＝3.14×16＝50.24cm²", "n": "50.24"}, {"q": "半径5cmの円の面積は何cm²？（円周率は3.14）", "c": ["78.5", "31.4", "113.04", "157"], "a": 0, "e": "半径×半径×3.14＝5×5×3.14＝3.14×25＝78.5cm²", "n": "78.5"}, {"q": "半径6cmの円の面積は何cm²？（円周率は3.14）", "c": ["113.04", "37.68", "153.86", "226.08"], "a": 0, "e": "半径×半径×3.14＝6×6×3.14＝3.14×36＝113.04cm²", "n": "113.04"}, {"q": "半径8cmの円の面積は何cm²？（円周率は3.14）", "c": ["200.96", "50.24", "254.34", "401.92"], "a": 0, "e": "半径×半径×3.14＝8×8×3.14＝3.14×64＝200.96cm²", "n": "200.96"}, {"q": "直径4cmの円の円周は何cm？（円周率は3.14）", "c": ["12.56", "25.12", "6.28", "15.7"], "a": 0, "e": "直径×3.14＝4×3.14＝12.56cm", "n": "12.56"}, {"q": "直径10cmの円の円周は何cm？（円周率は3.14）", "c": ["31.4", "62.8", "78.5", "34.54"], "a": 0, "e": "直径×3.14＝10×3.14＝31.4cm", "n": "31.4"}, {"q": "直径6cmの円の円周は何cm？（円周率は3.14）", "c": ["18.84", "37.68", "28.26", "21.98"], "a": 0, "e": "直径×3.14＝6×3.14＝18.84cm", "n": "18.84"}]}
+  ]
+},
+{
+  id:"sansu-2", no:2, label:"算数2", title:"素数と約数", subject:"算数", added:"2026-10-24",
+  region:"そすうの森",
+  legend:"num_prime", mapColor:"#9b5fd1",
+  monsters:{
+    num_sosu:{arch:"fox", type:"iwa", color:"#9b5fd1", accent:"#ffd23f", skill:"hint", parts:{horn:"uni", pat:"stars"}, forms:[{n:"ソスウルフ"},{n:"ソスウルガ",lv:5},{n:"プライムウルフ",lv:12}], dex:"素数のにおいをかぎ分けるオオカミ。"},
+    yakusu:{arch:"bat", type:"kusa", color:"#7cc36a", accent:"#ffcf3a", skill:"luck", parts:{pat:"spots"}, forms:[{n:"ヤクスウ"},{n:"ヤクスウバット",lv:7}], dex:"ある数を割り切れる数（約数）を全部見つけるのがとくいなコウモリ。"},
+    warikiren:{arch:"beetle", type:"iwa", color:"#c07a3a", accent:"#ffd9a0", skill:"power", parts:{pat:"stripes"}, forms:[{n:"ワリキレン"},{n:"ワリキレンカブト",lv:8}], dex:"角で数をスパッと割る。割り切れないとくやしがる。"},
+    gousei:{arch:"golem", body:"cube", type:"iwa", color:"#b8c6d8", accent:"#9b5fd1", skill:"heal", parts:{pat:"stars"}, forms:[{n:"ゴウセイ"},{n:"ゴウセイキューブ",lv:9}], dex:"いくつかの素数をかけ合わせてできた体。91＝7×13 のように、素数に見えて素数ではない。"},
+    num_prime:{arch:"golem", body:"crystal", type:"iwa", color:"#cfe3ff", accent:"#b06aff", skill:"power", legend:true, parts:{horn:"crown", pat:"stars"}, forms:[{n:"プライムオー"}], dex:"1とその数でしか割り切れない、かたい結晶の王。そすうの森のでんせつのモンスター。"}
+  },
+  stages:[
+    {"id": "s1", "name": "10と20までの素数", "note": "素数とは？ 1は素数？", "wild": ["num_sosu", "yakusu"], "qs": [{"type": "all", "q": "1〜10の数のうち、素数を全部えらぼう", "c": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"], "a": [1, 2, 4, 6], "e": "10までの素数は 2・3・5・7。1は素数ではない（約数が1つだけ）。", "fixed": true}, {"q": "1は素数？", "c": ["素数ではない", "素数", "2の倍数なので素数ではない", "どちらとも決まっていない"], "a": 0, "e": "素数は「1とその数自身の2つだけが約数」の数。1は約数が1つだけなので素数ではない。"}, {"q": "偶数の素数はどれ？", "c": ["2", "4", "6", "10"], "a": 0, "e": "2は約数が1と2だけなので素数。偶数の素数は2だけ。"}, {"q": "9は素数？", "c": ["素数ではない（3×3）", "素数", "素数ではない（2×5）", "素数ではない（1×9だけ）"], "a": 0, "e": "9＝3×3。1と9以外に3でも割り切れるので素数ではない。"}, {"type": "all", "q": "11〜20の数のうち、素数を全部えらぼう", "c": ["11", "12", "13", "14", "15", "16", "17", "18", "19", "20"], "a": [0, 2, 6, 8], "e": "11・13・17・19。15＝3×5、のこりは偶数。", "fixed": true}, {"q": "20までに素数はいくつある？", "c": ["8こ", "7こ", "9こ", "10こ"], "a": 0, "e": "2・3・5・7・11・13・17・19 の8こ。", "n": "8"}]},
+    {"id": "s2", "name": "21〜50の素数", "note": "まぎらわしい 39・49 に注意", "wild": ["num_sosu", "warikiren", "yakusu"], "qs": [{"type": "all", "q": "21〜30の数のうち、素数を全部えらぼう", "c": ["21", "22", "23", "24", "25", "26", "27", "28", "29", "30"], "a": [2, 8], "e": "23と29。21＝3×7、25＝5×5、27＝3×9。", "fixed": true}, {"type": "all", "q": "31〜40の数のうち、素数を全部えらぼう", "c": ["31", "32", "33", "34", "35", "36", "37", "38", "39", "40"], "a": [0, 6], "e": "31と37。33＝3×11、35＝5×7、39＝3×13。", "fixed": true}, {"type": "all", "q": "41〜50の数のうち、素数を全部えらぼう", "c": ["41", "42", "43", "44", "45", "46", "47", "48", "49", "50"], "a": [0, 2, 6], "e": "41・43・47。45＝5×9、49＝7×7。", "fixed": true}, {"q": "次のうち素数はどれ？", "c": ["37", "39", "27", "33"], "a": 0, "e": "37は素数。39＝3×13、27＝3×9、33＝3×11。"}, {"q": "次のうち素数ではないのはどれ？", "c": ["49", "41", "43", "47"], "a": 0, "e": "49＝7×7なので素数ではない。"}, {"q": "次のうち素数はどれ？", "c": ["29", "21", "25", "35"], "a": 0, "e": "29は素数。21＝3×7、25＝5×5、35＝5×7。"}, {"q": "50までに素数はいくつある？", "c": ["15こ", "13こ", "14こ", "16こ"], "a": 0, "e": "2,3,5,7,11,13,17,19,23,29,31,37,41,43,47 の15こ。", "n": "15"}]},
+    {"id": "s3", "name": "51〜100の素数", "note": "51・57・91 は素数ではない", "wild": ["warikiren", "gousei", "num_sosu"], "qs": [{"type": "all", "q": "51〜60の数のうち、素数を全部えらぼう", "c": ["51", "52", "53", "54", "55", "56", "57", "58", "59", "60"], "a": [2, 8], "e": "53と59。51＝3×17、57＝3×19 に注意。", "fixed": true}, {"type": "all", "q": "61〜70の数のうち、素数を全部えらぼう", "c": ["61", "62", "63", "64", "65", "66", "67", "68", "69", "70"], "a": [0, 6], "e": "61と67。63＝7×9、69＝3×23。", "fixed": true}, {"type": "all", "q": "71〜80の数のうち、素数を全部えらぼう", "c": ["71", "72", "73", "74", "75", "76", "77", "78", "79", "80"], "a": [0, 2, 8], "e": "71・73・79。77＝7×11。", "fixed": true}, {"type": "all", "q": "81〜90の数のうち、素数を全部えらぼう", "c": ["81", "82", "83", "84", "85", "86", "87", "88", "89", "90"], "a": [2, 8], "e": "83と89。81＝9×9、87＝3×29。", "fixed": true}, {"type": "all", "q": "91〜100の数のうち、素数を全部えらぼう", "c": ["91", "92", "93", "94", "95", "96", "97", "98", "99", "100"], "a": [6], "e": "97だけ。91＝7×13 に注意。", "fixed": true}, {"q": "91は素数？", "c": ["素数ではない（7×13）", "素数", "素数ではない（3×31）", "素数ではない（9×11）"], "a": 0, "e": "91＝7×13。素数とまちがえやすい数。"}, {"q": "57は素数？", "c": ["素数ではない（3×19）", "素数", "素数ではない（7×9）", "素数ではない（5×11）"], "a": 0, "e": "57＝3×19。各位の和5＋7＝12が3の倍数なので3で割り切れる。"}, {"q": "100までに素数はいくつある？", "c": ["25こ", "20こ", "24こ", "30こ"], "a": 0, "e": "100までの素数は25こ。", "n": "25"}]},
+    {"id": "s4", "name": "約数", "note": "12・18・24・30・36・48・60・72・100", "wild": ["yakusu", "gousei", "warikiren"], "qs": [{"type": "all", "q": "12の約数を全部えらぼう", "c": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "12"], "a": [0, 1, 2, 3, 5, 10], "e": "12の約数は 1・2・3・4・6・12（6こ）。", "fixed": true}, {"q": "12の約数はいくつある？", "c": ["6こ", "4こ", "5こ", "7こ"], "a": 0, "e": "12の約数は 1・2・3・4・6・12 の6こ。", "n": "6"}, {"type": "all", "q": "18の約数を全部えらぼう", "c": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "18"], "a": [0, 1, 2, 5, 8, 10], "e": "18の約数は 1・2・3・6・9・18（6こ）。", "fixed": true}, {"type": "all", "q": "24の約数を全部えらぼう", "c": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "24"], "a": [0, 1, 2, 3, 5, 7, 11, 12], "e": "24の約数は 1・2・3・4・6・8・12・24（8こ）。", "fixed": true}, {"type": "all", "q": "30の約数を全部えらぼう", "c": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "30"], "a": [0, 1, 2, 4, 5, 9, 14, 15], "e": "30の約数は 1・2・3・5・6・10・15・30（8こ）。", "fixed": true}, {"type": "all", "q": "36の約数を全部えらぼう", "c": ["1", "2", "3", "4", "5", "6", "8", "9", "10", "11", "12", "13", "15", "16", "18", "36"], "a": [0, 1, 2, 3, 5, 7, 10, 14, 15], "e": "36の約数は 1・2・3・4・6・9・12・18・36（9こ）。", "fixed": true}, {"q": "36の約数はいくつある？", "c": ["9こ", "7こ", "8こ", "10こ"], "a": 0, "e": "36の約数は 1・2・3・4・6・9・12・18・36 の9こ。", "n": "9"}, {"type": "all", "q": "48の約数を全部えらぼう", "c": ["1", "2", "3", "4", "6", "8", "12", "13", "15", "16", "17", "19", "20", "22", "24", "48"], "a": [0, 1, 2, 3, 4, 5, 6, 9, 14, 15], "e": "48の約数は 1・2・3・4・6・8・12・16・24・48（10こ）。", "fixed": true}, {"type": "all", "q": "60の約数を全部えらぼう", "c": ["1", "2", "3", "4", "5", "6", "10", "12", "15", "20", "22", "24", "27", "29", "30", "60"], "a": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 14, 15], "e": "60の約数は 1・2・3・4・5・6・10・12・15・20・30・60（12こ）。", "fixed": true}, {"q": "60の約数はいくつある？", "c": ["12こ", "10こ", "11こ", "13こ"], "a": 0, "e": "60の約数は 1・2・3・4・5・6・10・12・15・20・30・60 の12こ。", "n": "12"}, {"type": "all", "q": "72の約数を全部えらぼう", "c": ["1", "2", "3", "4", "6", "8", "9", "11", "12", "16", "18", "20", "21", "24", "36", "72"], "a": [0, 1, 2, 3, 4, 5, 6, 8, 10, 13, 14, 15], "e": "72の約数は 1・2・3・4・6・8・9・12・18・24・36・72（12こ）。", "fixed": true}, {"type": "all", "q": "100の約数を全部えらぼう", "c": ["1", "2", "4", "5", "10", "15", "20", "24", "25", "31", "34", "37", "38", "44", "50", "100"], "a": [0, 1, 2, 3, 4, 6, 8, 14, 15], "e": "100の約数は 1・2・4・5・10・20・25・50・100（9こ）。", "fixed": true}, {"q": "100の約数はいくつある？", "c": ["9こ", "7こ", "8こ", "10こ"], "a": 0, "e": "100の約数は 1・2・4・5・10・20・25・50・100 の9こ。", "n": "9"}]}
+  ]
+},
+{
+  id:"sansu-3", no:3, label:"算数3", title:"おぼえると便利な数", subject:"算数", added:"2026-10-24",
+  region:"けいさんの谷",
+  legend:"num_keisan", mapColor:"#ff7a2f",
+  monsters:{
+    heihou:{arch:"golem", body:"cube", type:"iwa", color:"#3d8bff", accent:"#e9f5ff", skill:"power", parts:{horn:"twin"}, forms:[{n:"ヘイホウ"},{n:"ヘイホウキング",lv:8}], dex:"同じ数を2回かけるとどんどん大きくなる四角いゴーレム。"},
+    baibain:{arch:"serpent", type:"hono", color:"#ff7a2f", accent:"#ffd23f", skill:"luck", parts:{pat:"zigzag"}, forms:[{n:"バイバイン"},{n:"バイバインリュウ",lv:8}], dex:"1回ごとに体の長さが2倍になる竜。10回で1024倍。"},
+    bunsuu:{arch:"fox", type:"mizu", color:"#ff9db0", accent:"#ffffff", skill:"heal", parts:{pat:"spots", acc:"scarf", accColor:"#e8475a"}, forms:[{n:"ブンスウ"},{n:"ブンスウギツネ",lv:7}], dex:"8つに分けたピザが大すき。1切れは0.125。"},
+    shousuu:{arch:"bird", type:"kusa", color:"#d9f2b4", accent:"#4fa636", skill:"hint", parts:{horn:"crest"}, forms:[{n:"ショウスウ"},{n:"ショウスウバード",lv:9}], dex:"小数点の上を飛びまわる鳥。0.375は3/8だと知っている。"},
+    num_keisan:{arch:"dragon", type:"hono", color:"#ffcf3a", accent:"#e8475a", skill:"power", legend:true, parts:{horn:"crown", pat:"stripes", acc:"gem", accColor:"#3d8bff"}, forms:[{n:"ケイサンリュウ"}], dex:"25×4＝100、125×8＝1000 を一瞬で計算する、けいさんの谷のでんせつの竜。"}
+  },
+  stages:[
+    {"id": "s1", "name": "同じ数のかけ算", "note": "11×11〜19×19、25×25", "wild": ["heihou", "baibain"], "qs": [{"q": "11×11 は？", "c": ["121", "144", "100", "131"], "a": 0, "e": "11×11＝121", "n": "121"}, {"q": "12×12 は？", "c": ["144", "169", "121", "154"], "a": 0, "e": "12×12＝144", "n": "144"}, {"q": "13×13 は？", "c": ["169", "196", "144", "179"], "a": 0, "e": "13×13＝169", "n": "169"}, {"q": "14×14 は？", "c": ["196", "225", "169", "206"], "a": 0, "e": "14×14＝196", "n": "196"}, {"q": "15×15 は？", "c": ["225", "256", "196", "235"], "a": 0, "e": "15×15＝225", "n": "225"}, {"q": "16×16 は？", "c": ["256", "289", "225", "266"], "a": 0, "e": "16×16＝256", "n": "256"}, {"q": "17×17 は？", "c": ["289", "324", "256", "299"], "a": 0, "e": "17×17＝289", "n": "289"}, {"q": "18×18 は？", "c": ["324", "361", "289", "334"], "a": 0, "e": "18×18＝324", "n": "324"}, {"q": "19×19 は？", "c": ["361", "400", "324", "371"], "a": 0, "e": "19×19＝361", "n": "361"}, {"q": "25×25 は？", "c": ["625", "525", "576", "635"], "a": 0, "e": "25×25＝625", "n": "625"}, {"q": "169 は、同じ数を2回かけた数。いくつ×いくつ？", "c": ["13×13", "12×12", "14×14", "17×17"], "a": 0, "e": "13×13＝169"}, {"q": "289 は、同じ数を2回かけた数。いくつ×いくつ？", "c": ["17×17", "16×16", "18×18", "19×19"], "a": 0, "e": "17×17＝289"}]},
+    {"id": "s2", "name": "2を何回もかける", "note": "4・8・16 … 1024", "wild": ["baibain", "heihou", "bunsuu"], "qs": [{"q": "2を2回かけた数は？", "c": ["4", "8", "2", "6"], "a": 0, "e": "2を2回かけると 2×2＝4", "n": "4"}, {"q": "2を3回かけた数は？", "c": ["8", "16", "4", "6"], "a": 0, "e": "2を3回かけると 2×2×2＝8", "n": "8"}, {"q": "2を4回かけた数は？", "c": ["16", "32", "8", "18"], "a": 0, "e": "2を4回かけると 2×2×2×2＝16", "n": "16"}, {"q": "2を5回かけた数は？", "c": ["32", "64", "16", "10"], "a": 0, "e": "2を5回かけると 2×2×2×2×2＝32", "n": "32"}, {"q": "2を6回かけた数は？", "c": ["64", "128", "32", "12"], "a": 0, "e": "2を6回かけると 2×2×2×2×2×2＝64", "n": "64"}, {"q": "2を7回かけた数は？", "c": ["128", "256", "64", "14"], "a": 0, "e": "2を7回かけると 2×2×2×2×2×2×2＝128", "n": "128"}, {"q": "2を8回かけた数は？", "c": ["256", "512", "128", "16"], "a": 0, "e": "2を8回かけると 2×2×2×2×2×2×2×2＝256", "n": "256"}, {"q": "2を9回かけた数は？", "c": ["512", "1024", "256", "18"], "a": 0, "e": "2を9回かけると 2×2×2×2×2×2×2×2×2＝512", "n": "512"}, {"q": "2を10回かけた数は？", "c": ["1024", "2048", "512", "20"], "a": 0, "e": "2を10回かけると 2×2×2×2×2×2×2×2×2×2＝1024", "n": "1024"}, {"q": "1024 は 2を何回かけた数？", "c": ["10回", "8回", "9回", "11回"], "a": 0, "e": "2×2×…（10回）＝1024", "n": "10"}]},
+    {"id": "s3", "name": "分数と小数", "note": "1/8＝0.125 など", "wild": ["bunsuu", "shousuu", "baibain"], "qs": [{"q": "1/2 を小数にすると？", "c": ["0.5", "5", "0.05", "0.25"], "a": 0, "e": "1/2＝1÷2＝0.5", "n": "0.5"}, {"q": "1/4 を小数にすると？", "c": ["0.25", "2.5", "0.025", "0.5"], "a": 0, "e": "1/4＝1÷4＝0.25", "n": "0.25"}, {"q": "3/4 を小数にすると？", "c": ["0.75", "7.5", "0.075", "0.5"], "a": 0, "e": "3/4＝3÷4＝0.75", "n": "0.75"}, {"q": "1/5 を小数にすると？", "c": ["0.2", "2", "0.02", "0.25"], "a": 0, "e": "1/5＝1÷5＝0.2", "n": "0.2"}, {"q": "2/5 を小数にすると？", "c": ["0.4", "4", "0.04", "0.5"], "a": 0, "e": "2/5＝2÷5＝0.4", "n": "0.4"}, {"q": "3/5 を小数にすると？", "c": ["0.6", "6", "0.06", "0.5"], "a": 0, "e": "3/5＝3÷5＝0.6", "n": "0.6"}, {"q": "4/5 を小数にすると？", "c": ["0.8", "8", "0.08", "0.75"], "a": 0, "e": "4/5＝4÷5＝0.8", "n": "0.8"}, {"q": "1/8 を小数にすると？", "c": ["0.125", "1.25", "0.0125", "0.25"], "a": 0, "e": "1/8＝1÷8＝0.125", "n": "0.125"}, {"q": "3/8 を小数にすると？", "c": ["0.375", "3.75", "0.0375", "0.5"], "a": 0, "e": "3/8＝3÷8＝0.375", "n": "0.375"}, {"q": "5/8 を小数にすると？", "c": ["0.625", "6.25", "0.0625", "0.5"], "a": 0, "e": "5/8＝5÷8＝0.625", "n": "0.625"}, {"q": "7/8 を小数にすると？", "c": ["0.875", "8.75", "0.0875", "0.75"], "a": 0, "e": "7/8＝7÷8＝0.875", "n": "0.875"}, {"q": "1/16 を小数にすると？", "c": ["0.0625", "0.625", "0.00625", "0.25"], "a": 0, "e": "1/16＝1÷16＝0.0625", "n": "0.0625"}, {"q": "1/20 を小数にすると？", "c": ["0.05", "0.5", "0.005", "0.25"], "a": 0, "e": "1/20＝1÷20＝0.05", "n": "0.05"}, {"q": "1/25 を小数にすると？", "c": ["0.04", "0.4", "0.004", "0.25"], "a": 0, "e": "1/25＝1÷25＝0.04", "n": "0.04"}, {"q": "0.125 を分数にすると？", "c": ["1/8", "3/8", "5/8", "7/8"], "a": 0, "e": "0.125＝1/8（1/8＝0.125 の1こ分）"}, {"q": "0.375 を分数にすると？", "c": ["3/8", "1/8", "5/8", "7/8"], "a": 0, "e": "0.375＝3/8（1/8＝0.125 の3こ分）"}, {"q": "0.625 を分数にすると？", "c": ["5/8", "1/8", "3/8", "7/8"], "a": 0, "e": "0.625＝5/8（1/8＝0.125 の5こ分）"}, {"q": "0.875 を分数にすると？", "c": ["7/8", "1/8", "3/8", "5/8"], "a": 0, "e": "0.875＝7/8（1/8＝0.125 の7こ分）"}]},
+    {"id": "s4", "name": "べんりなかけ算", "note": "25×4、125×8、37×3 など", "wild": ["shousuu", "heihou", "bunsuu"], "qs": [{"q": "25×4 は？", "c": ["100", "1000", "90", "104"], "a": 0, "e": "25×4＝100", "n": "100"}, {"q": "25×8 は？", "c": ["200", "180", "250", "208"], "a": 0, "e": "25×8＝200", "n": "200"}, {"q": "25×12 は？", "c": ["300", "250", "312", "360"], "a": 0, "e": "25×12＝25×4×3＝300", "n": "300"}, {"q": "25×16 は？", "c": ["400", "350", "416", "450"], "a": 0, "e": "25×16＝25×4×4＝400", "n": "400"}, {"q": "125×4 は？", "c": ["500", "400", "520", "450"], "a": 0, "e": "125×4＝500", "n": "500"}, {"q": "125×8 は？", "c": ["1000", "800", "1250", "1008"], "a": 0, "e": "125×8＝1000", "n": "1000"}, {"q": "125×16 は？", "c": ["2000", "1600", "2500", "1250"], "a": 0, "e": "125×16＝125×8×2＝2000", "n": "2000"}, {"q": "37×3 は？", "c": ["111", "101", "121", "113"], "a": 0, "e": "37×3＝111", "n": "111"}, {"q": "37×6 は？", "c": ["222", "212", "232", "226"], "a": 0, "e": "37×6＝111×2＝222", "n": "222"}, {"q": "37×9 は？", "c": ["333", "323", "343", "339"], "a": 0, "e": "37×9＝111×3＝333", "n": "333"}, {"q": "37×27 は？", "c": ["999", "989", "909", "1009"], "a": 0, "e": "37×27＝111×9＝999", "n": "999"}, {"q": "7×11×13 は？", "c": ["1001", "1011", "991", "1101"], "a": 0, "e": "7×11×13＝1001", "n": "1001"}, {"q": "143×7 は？", "c": ["1001", "1011", "991", "1007"], "a": 0, "e": "143×7＝1001（143＝11×13）", "n": "1001"}]}
   ]
 }
 /* ↑ 次の単元はこの下に { id:"rika-12", ... } を追加（既存の id は絶対に変えない） */
@@ -1435,14 +1493,13 @@ const ICONS = {
   party:`<svg viewBox="0 0 24 24"><circle cx="8" cy="13" r="6" fill="currentColor"/><circle cx="17" cy="11" r="5" fill="currentColor" opacity=".6"/></svg>`,
   map:`<svg viewBox="0 0 24 24"><path d="M3 6 L9 3 L15 6 L21 3 V18 L15 21 L9 18 L3 21Z" fill="currentColor"/><path d="M9 3 V18 M15 6 V21" stroke="#fff" stroke-width="1.5"/></svg>`,
   dun:`<svg viewBox="0 0 24 24"><path d="M3 21 V10 Q12 1 21 10 V21Z" fill="currentColor"/><path d="M9 21 V14 Q12 11 15 14 V21Z" fill="#fff"/></svg>`,
-  calc:`<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" fill="currentColor"/><path d="M7 8 H11 M9 6 V10 M13 8 H17 M7 16 L11 12 M7 12 L11 16 M13 14 H17 M15 12 v0.1 M15 16 v0.1" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>`,
   dex:`<svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="3" fill="currentColor"/><rect x="7" y="6" width="10" height="6" rx="1.5" fill="#fff"/></svg>`
 };
 let tab = "adv";
 function showTabs(on){
   const t = document.getElementById("tabs");
   t.hidden = !on; if(!on) return;
-  t.innerHTML = [["adv","ぼうけん"],["dun","ダンジョン"],["calc","さんすう"],["party","なかま"],["dex","ずかん"],["map","ちず"]].map(([k,n])=>`<button class="${tab===k?'on':''}" data-t="${k}">${ICONS[k]}${n}</button>`).join("");
+  t.innerHTML = [["adv","ぼうけん"],["dun","ダンジョン"],["party","なかま"],["dex","ずかん"],["map","ちず"]].map(([k,n])=>`<button class="${tab===k?'on':''}" data-t="${k}">${ICONS[k]}${n}</button>`).join("");
   t.querySelectorAll("button").forEach(b=>b.onclick=()=>{ tab=b.dataset.t; home(); });
 }
 const app = document.getElementById("app");
@@ -1454,7 +1511,6 @@ function home(){
   if(tab==="dex") return showDex();
   if(tab==="map") return showJMap();
   if(tab==="dun") return showQD();
-  if(tab==="calc") return showCalc();
   showMap();
 }
 
@@ -1484,7 +1540,7 @@ function showMap(){
   if(!STORE_OK || saveErr) h += `<div class="card bkcard warn"><b>この開き方では記録を保存できません</b><span>Safariの「プライベート」や、Cookieをすべてブロックする設定だと保存できないことがあります。バックアップコードで記録を守ってください。</span></div>`;
   h += '<!--BKTOP-->';
   const rg = grantRares(), mg = grantMegas(); if(rg.length||mg.length) h += `<div class="gets">${mg.map(megaCard).join("")}${rg.map(rareCard).join("")}</div>`;
-  const evoId = [...DEX_ORDER,...RARE_ORDER,...QD_ORDER,...MEGA_ORDER,...CALC_ORDER].find(id=>canEvo(id));
+  const evoId = [...DEX_ORDER,...RARE_ORDER,...QD_ORDER,...MEGA_ORDER].find(id=>canEvo(id));
   if(evoId) h += `<button class="card prof gift" id="evoNote"><div class="mon" style="width:52px;height:52px;flex:none">${artMine(evoId)}</div><div style="text-align:left"><p>しんかできるなかまがいるよ！</p><p style="font-weight:500">${esc(nameOf(evoId))}をしんかさせよう。タップで「なかま」へ。</p></div></button>`;
   const giftReady = !save.owned.toratch && save.cleared["rika-11|s1"];
   if(giftReady) h += `<button class="card prof gift" id="gift"><div class="face">${profFace}</div><div style="text-align:left"><p>ソラノはかせからプレゼント！</p><p style="font-weight:500">ルート1クリアおめでとう。タップしてうけとろう。</p></div></button>`;
@@ -1496,10 +1552,10 @@ function showMap(){
   h += `<div class="subj">${subjects.map(sj=>`<button class="${sj===save.subj?'on':''}" data-sj="${sj}">${sj}</button>`).join("")}</div>`;
   h += `<div class="regions" id="regions">${units.map(u=>{
     const own = Object.keys(u.monsters).filter(k=>save.owned[k]).length;
-    return `<button class="card region ${u.id===save.region?'on':''}" data-r="${u.id}"><span class="rno">第${u.no}回</span><b>${esc(u.region)}</b><span class="rsub">${esc(u.title)}・なかま ${own}/${Object.keys(u.monsters).length}</span></button>`;}).join("")}</div>`;
+    return `<button class="card region ${u.id===save.region?'on':''}" data-r="${u.id}"><span class="rno">${u.label||`第${u.no}回`}</span><b>${esc(u.region)}</b><span class="rsub">${esc(u.title)}・なかま ${own}/${Object.keys(u.monsters).length}</span></button>`;}).join("")}</div>`;
   for(const u of units.filter(x=>x.id===save.region)){
     const done = u.stages.filter(s=>save.cleared[u.id+"|"+s.id]).length, all = done===u.stages.length;
-    h += `<section class="unit"><div class="unit-head"><span class="unit-no">第${u.no}回</span><h2>${esc(u.title)}</h2><span class="sub">${done}/${u.stages.length} クリア</span></div><div class="routes">`;
+    h += `<section class="unit"><div class="unit-head"><span class="unit-no">${u.label||`第${u.no}回`}</span><h2>${esc(u.title)}</h2><span class="sub">${done}/${u.stages.length} クリア</span></div><div class="routes">`;
     u.stages.forEach((s,i)=>{
       h += `<button class="card route" data-u="${u.id}" data-s="${s.id}"><div><span class="rn">ルート ${i+1}・${s.qs.length}問</span><b>${esc(s.name)}</b><span class="note">${esc(s.note)}</span></div><div class="stars">${starStr(save.cleared[u.id+"|"+s.id]||0)}</div><div class="wilds">${s.wild.map(w=>`<div class="mon">${art(w,1,{sil:!save.seen[w]})}</div>`).join("")}</div></button>`;
     });
@@ -1613,7 +1669,7 @@ let partySel = null;
 function showParty(){
   const lead = save.party[0], o = save.owned[lead], s = SP[lead];
   const nf = s.forms[curF(lead)+1];
-  const ids = [...DEX_ORDER, ...RARE_ORDER, ...QD_ORDER, ...MEGA_ORDER, ...CALC_ORDER].filter(id=>save.owned[id]);
+  const ids = [...DEX_ORDER, ...RARE_ORDER, ...QD_ORDER, ...MEGA_ORDER].filter(id=>save.owned[id]);
   if(!partySel || !save.owned[partySel]) partySel = lead;
   const d = partySel, dO = save.owned[d], inP = save.party.includes(d);
   app.innerHTML = `<h2 class="sec-h">なかま</h2>
@@ -1647,7 +1703,7 @@ function showDex(){
   let h = `<h2 class="sec-h">モンスターずかん</h2><p class="dexcount">つかまえた ${caught}・見つけた ${seen}・ぜんぶで ${DEX_ORDER.length}</p>`;
   if(dexSel && save.seen[dexSel]){
     const s=SP[dexSel], own=save.owned[dexSel];
-    h += `<div class="card detail" style="margin:0 0 14px"><div class="row"><div class="mon">${(own?artMine(dexSel):art(dexSel,1,{sil:true}))}</div><div style="min-width:0"><span class="mini">${s.num?'さんすう道場の数字モンスター':s.mega?'メガモンスター（'+esc(megaWhere(dexSel))+'を克服）':s.qd?'クイズダンジョンの伝説のドラゴン':s.egg?'たまごから生まれるモンスター':s.rare?`${MAPD[s.pref][0]}のレアモンスター`:`No.${String(DEX_ORDER.indexOf(dexSel)+1).padStart(3,"0")}`}</span><h3>${esc(own?nameOf(dexSel):s.forms[0].n)}</h3>${typeChip(s.type)}</div></div>
+    h += `<div class="card detail" style="margin:0 0 14px"><div class="row"><div class="mon">${(own?artMine(dexSel):art(dexSel,1,{sil:true}))}</div><div style="min-width:0"><span class="mini">${s.mega?'メガモンスター（'+esc(megaWhere(dexSel))+'を克服）':s.qd?'クイズダンジョンの伝説のドラゴン':s.egg?'たまごから生まれるモンスター':s.rare?`${MAPD[s.pref][0]}のレアモンスター`:`No.${String(DEX_ORDER.indexOf(dexSel)+1).padStart(3,"0")}`}</span><h3>${esc(own?nameOf(dexSel):s.forms[0].n)}</h3>${typeChip(s.type)}</div></div>
       <p>${own?esc(s.dex):'まだつかまえていない。つかまえると、くわしいことがわかるよ。'}</p>${own&&s.forms.length>1?`<p class="mini">しんか：${s.forms.map(f=>f.n+(f.lv?`（Lv.${f.lv}）`:'')).join(" → ")}</p>`:''}</div>`;
   }
   h += `<div class="grid3">${DEX_ORDER.map((id,i)=>{
@@ -1666,14 +1722,9 @@ function showDex(){
   h += `<div class="grid3">${QD_ORDER.map(id=>{ const lb=SP[id].qd?QD_FLOORS.find(f=>f.dragon===id).lb:'たまご';
     if(!save.owned[id]) return `<div class="card mcard unseen"><span class="no">${lb}</span><div class="mon">${art(id,1,{sil:true})}</div><b>？？？</b></div>`;
     return `<button class="card mcard ${SP[id].qd?'rarecell':''}" data-id="${id}"><span class="no">${lb}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typeChip(SP[id].type)}</button>`; }).join("")}</div>`;
-  const nc = CALC_ORDER.filter(id=>save.owned[id]).length;
-  h += `<h2 class="sec-h" style="margin-top:22px">数字モンスター</h2><p class="dexcount">なかまにした ${nc} / ${CALC_ORDER.length}　（さんすう道場のミニゲームの記録で手に入る）</p>`;
-  h += `<div class="grid3">${CALC_REWARD.map(([k,need,id])=>{ const lb=(k==="ta"?"タイムアタック":"素数ハンター")+need;
-    if(!save.owned[id]) return `<div class="card mcard unseen"><span class="no">${lb}</span><div class="mon">${art(id,1,{sil:true})}</div><b>？？？</b></div>`;
-    return `<button class="card mcard" data-id="${id}"><span class="no">${lb}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typeChip(SP[id].type)}</button>`; }).join("")}</div>`;
   const mc = MEGA_ORDER.filter(id=>save.owned[id]).length;
   h += `<h2 class="sec-h" style="margin-top:22px">メガモンスター</h2><p class="dexcount">なかまにした ${mc} / ${MEGA_ORDER.length}　（ニガテの森・ダンジョンのニガテを克服すると手に入る）</p>`;
-  h += `<div class="grid3">${MEGA_ORDER.map(id=>{ const w=MEGA[id].where, lb=w.unit?(UNITS.find(u=>u.id===w.unit).subject+"第"+UNITS.find(u=>u.id===w.unit).no+"回"):("ダンジョン"+QD_FLOORS.find(f=>f.id===w.floor).lb);
+  h += `<div class="grid3">${MEGA_ORDER.map(id=>{ const w=MEGA[id].where, lb=w.unit?((u=>u.label||(u.subject+"第"+u.no+"回"))(UNITS.find(u=>u.id===w.unit))):("ダンジョン"+QD_FLOORS.find(f=>f.id===w.floor).lb);
     if(!save.owned[id]) return `<div class="card mcard unseen"><span class="no">${lb}</span><div class="mon">${art(id,1,{sil:true})}</div><b>？？？</b></div>`;
     return `<button class="card mcard rarecell" data-id="${id}"><span class="no">${lb}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typeChip(SP[id].type)}</button>`; }).join("")}</div>`;
   app.innerHTML = h;
@@ -1984,225 +2035,10 @@ function grantMegas(){
   if(got.length) persist();
   return got;
 }
-function megaWhere(id){ const w=MEGA[id].where; if(w.unit){ const u=UNITS.find(x=>x.id===w.unit); return `${u.subject}第${u.no}回「${u.title}」のニガテの森`; } return `ダンジョン「${QD_FLOORS.find(x=>x.id===w.floor).name}」のニガテ`; }
+function megaWhere(id){ const w=MEGA[id].where; if(w.unit){ const u=UNITS.find(x=>x.id===w.unit); return `${u.label||`${u.subject}第${u.no}回`}「${u.title}」のニガテの森`; } return `ダンジョン「${QD_FLOORS.find(x=>x.id===w.floor).name}」のニガテ`; }
 const megaCard = id => `<div class="card get evo megacard"><div class="mon">${artMine(id)}</div><div><b>メガモンスター ${esc(nameOf(id))}</b><span>${esc(megaWhere(id))}を克服したので、なかまになった！</span></div></div>`;
 
-const CALC_CATS=[{"id":"pi","name":"3.14の倍数","short":"3.14","col":"#2f9e7a","items":[{"k":"pi1","q":"3.14×1","a":"3.14"},{"k":"pi2","q":"3.14×2","a":"6.28"},{"k":"pi3","q":"3.14×3","a":"9.42"},{"k":"pi4","q":"3.14×4","a":"12.56"},{"k":"pi5","q":"3.14×5","a":"15.7"},{"k":"pi6","q":"3.14×6","a":"18.84"},{"k":"pi7","q":"3.14×7","a":"21.98"},{"k":"pi8","q":"3.14×8","a":"25.12"},{"k":"pi9","q":"3.14×9","a":"28.26"},{"k":"pi12","q":"3.14×12","a":"37.68"},{"k":"pi15","q":"3.14×15","a":"47.1"},{"k":"pi16","q":"3.14×16","a":"50.24"},{"k":"pi18","q":"3.14×18","a":"56.52"},{"k":"pi24","q":"3.14×24","a":"75.36"},{"k":"pi25","q":"3.14×25","a":"78.5"},{"k":"pi36","q":"3.14×36","a":"113.04"},{"k":"pi49","q":"3.14×49","a":"153.86"},{"k":"pi64","q":"3.14×64","a":"200.96"}]},{"id":"sq","name":"同じ数のかけ算（平方数）","short":"平方数","col":"#3d8bff","items":[{"k":"sq11","q":"11×11","a":"121"},{"k":"sq12","q":"12×12","a":"144"},{"k":"sq13","q":"13×13","a":"169"},{"k":"sq14","q":"14×14","a":"196"},{"k":"sq15","q":"15×15","a":"225"},{"k":"sq16","q":"16×16","a":"256"},{"k":"sq17","q":"17×17","a":"289"},{"k":"sq18","q":"18×18","a":"324"},{"k":"sq19","q":"19×19","a":"361"},{"k":"sq25","q":"25×25","a":"625"}]},{"id":"prime","name":"100までの素数","short":"素数","col":"#9b5fd1","items":[{"k":"pr0","kind":"pick","q":"1〜10の素数を全部えらぼう","c":[1,2,3,4,5,6,7,8,9,10],"a":[2,3,5,7]},{"k":"pr1","kind":"pick","q":"10〜19の素数を全部えらぼう","c":[10,11,12,13,14,15,16,17,18,19],"a":[11,13,17,19]},{"k":"pr2","kind":"pick","q":"20〜29の素数を全部えらぼう","c":[20,21,22,23,24,25,26,27,28,29],"a":[23,29]},{"k":"pr3","kind":"pick","q":"30〜39の素数を全部えらぼう","c":[30,31,32,33,34,35,36,37,38,39],"a":[31,37]},{"k":"pr4","kind":"pick","q":"40〜49の素数を全部えらぼう","c":[40,41,42,43,44,45,46,47,48,49],"a":[41,43,47]},{"k":"pr5","kind":"pick","q":"50〜59の素数を全部えらぼう","c":[50,51,52,53,54,55,56,57,58,59],"a":[53,59]},{"k":"pr6","kind":"pick","q":"60〜69の素数を全部えらぼう","c":[60,61,62,63,64,65,66,67,68,69],"a":[61,67]},{"k":"pr7","kind":"pick","q":"70〜79の素数を全部えらぼう","c":[70,71,72,73,74,75,76,77,78,79],"a":[71,73,79]},{"k":"pr8","kind":"pick","q":"80〜89の素数を全部えらぼう","c":[80,81,82,83,84,85,86,87,88,89],"a":[83,89]},{"k":"pr9","kind":"pick","q":"90〜99の素数を全部えらぼう","c":[90,91,92,93,94,95,96,97,98,99],"a":[97]}]},{"id":"frac","name":"分数と小数","short":"分数","col":"#e8475a","items":[{"k":"fr1_2","q":"1/2 を小数にすると？","a":"0.5"},{"k":"fr1_4","q":"1/4 を小数にすると？","a":"0.25"},{"k":"fr3_4","q":"3/4 を小数にすると？","a":"0.75"},{"k":"fr1_5","q":"1/5 を小数にすると？","a":"0.2"},{"k":"fr2_5","q":"2/5 を小数にすると？","a":"0.4"},{"k":"fr3_5","q":"3/5 を小数にすると？","a":"0.6"},{"k":"fr4_5","q":"4/5 を小数にすると？","a":"0.8"},{"k":"fr1_8","q":"1/8 を小数にすると？","a":"0.125"},{"k":"fr3_8","q":"3/8 を小数にすると？","a":"0.375"},{"k":"fr5_8","q":"5/8 を小数にすると？","a":"0.625"},{"k":"fr7_8","q":"7/8 を小数にすると？","a":"0.875"},{"k":"fr1_16","q":"1/16 を小数にすると？","a":"0.0625"},{"k":"fr1_20","q":"1/20 を小数にすると？","a":"0.05"},{"k":"fr1_25","q":"1/25 を小数にすると？","a":"0.04"},{"k":"fb1","q":"0.125 ＝ □／8　□は？","a":"1"},{"k":"fb3","q":"0.375 ＝ □／8　□は？","a":"3"},{"k":"fb5","q":"0.625 ＝ □／8　□は？","a":"5"},{"k":"fb7","q":"0.875 ＝ □／8　□は？","a":"7"}]},{"id":"pow","name":"2を何回もかける","short":"2の倍々","col":"#ff7a2f","items":[{"k":"p2_2","q":"2を2回かけた数は？","a":"4"},{"k":"p2_3","q":"2を3回かけた数は？","a":"8"},{"k":"p2_4","q":"2を4回かけた数は？","a":"16"},{"k":"p2_5","q":"2を5回かけた数は？","a":"32"},{"k":"p2_6","q":"2を6回かけた数は？","a":"64"},{"k":"p2_7","q":"2を7回かけた数は？","a":"128"},{"k":"p2_8","q":"2を8回かけた数は？","a":"256"},{"k":"p2_9","q":"2を9回かけた数は？","a":"512"},{"k":"p2_10","q":"2を10回かけた数は？","a":"1024"}]},{"id":"div","name":"約数","short":"約数","col":"#a0784b","items":[{"k":"dv12","kind":"pick","q":"12の約数を全部えらぼう（6こ）","c":[1,2,3,4,5,6,7,8,9,10,12],"a":[1,2,3,4,6,12]},{"k":"dv18","kind":"pick","q":"18の約数を全部えらぼう（6こ）","c":[1,2,3,4,5,6,7,8,9,10,18],"a":[1,2,3,6,9,18]},{"k":"dv24","kind":"pick","q":"24の約数を全部えらぼう（8こ）","c":[1,2,3,4,5,6,7,8,9,10,11,12,24],"a":[1,2,3,4,6,8,12,24]},{"k":"dv30","kind":"pick","q":"30の約数を全部えらぼう（8こ）","c":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,30],"a":[1,2,3,5,6,10,15,30]},{"k":"dv36","kind":"pick","q":"36の約数を全部えらぼう（9こ）","c":[1,2,3,4,5,6,7,9,12,13,14,15,16,17,18,36],"a":[1,2,3,4,6,9,12,18,36]},{"k":"dv48","kind":"pick","q":"48の約数を全部えらぼう（10こ）","c":[1,2,3,4,6,7,8,9,11,12,14,16,17,18,24,48],"a":[1,2,3,4,6,8,12,16,24,48]},{"k":"dv60","kind":"pick","q":"60の約数を全部えらぼう（12こ）","c":[1,2,3,4,5,6,10,11,12,14,15,19,20,28,30,60],"a":[1,2,3,4,5,6,10,12,15,20,30,60]},{"k":"dv72","kind":"pick","q":"72の約数を全部えらぼう（12こ）","c":[1,2,3,4,6,8,9,12,15,18,21,24,29,31,36,72],"a":[1,2,3,4,6,8,9,12,18,24,36,72]},{"k":"dv100","kind":"pick","q":"100の約数を全部えらぼう（9こ）","c":[1,2,4,5,8,9,10,12,19,20,25,39,43,44,50,100],"a":[1,2,4,5,10,20,25,50,100]}]},{"id":"kake","name":"おぼえると便利なかけ算","short":"便利な計算","col":"#d9a400","items":[{"k":"kk25x4","q":"25×4","a":"100"},{"k":"kk25x8","q":"25×8","a":"200"},{"k":"kk25x12","q":"25×12","a":"300"},{"k":"kk25x16","q":"25×16","a":"400"},{"k":"kk125x4","q":"125×4","a":"500"},{"k":"kk125x8","q":"125×8","a":"1000"},{"k":"kk125x16","q":"125×16","a":"2000"},{"k":"kk37x3","q":"37×3","a":"111"},{"k":"kk37x6","q":"37×6","a":"222"},{"k":"kk37x9","q":"37×9","a":"333"},{"k":"kk37x27","q":"37×27","a":"999"},{"k":"kk7x11x13","q":"7×11×13","a":"1001"},{"k":"kk143x7","q":"143×7","a":"1001"}]}];
-/* ============================================================
-   さんすう道場（v20）：おぼえておきたい数を、すばやく思い出せるまで練習する
-   - 7つのなかま（3.14の倍数・平方数・素数・分数と小数・2の倍々・約数・便利なかけ算）計87こ
-   - 数字キーで答える／えらぶ（素数・約数）。時間内に正解（すばやい）でおぼえ度+1。おそい正解は上がらない
-   - おぼえ度・次に出る日はダンジョンと同じ（1/2/4/7日後、5=マスター）。マスターした数は「数のカード」に
-   - 素数ハンター（45秒）、60秒タイムアタック。記録で数字モンスターがなかまに
-   保存：save.calc = {m:{key:{lv,due,ng}}, ta:{best}, ph:{best}, done:{catId:1}}
-   ============================================================ */
-const CALC_ITEM = {};
-CALC_CATS.forEach(c=>c.items.forEach(it=>{ it.cat=c.id; it.key="calc|"+it.k; CALC_ITEM[it.key]=it; }));
-const CALC_MON = {
-  num_suji:{arch:"beast", type:"mizu", color:"#7cc8ff", accent:"#ffcf3a", skill:"hint", num:true, parts:{pat:"stripes", acc:"scarf", accColor:"#ffcf3a"}, forms:[{n:"スウジー"},{n:"スウジード",lv:5},{n:"スウジガルム",lv:12}], dex:"数字が大すきな子犬。60秒で10問答えられる子のところにやってくる。"},
-  num_kake:{arch:"bird", type:"hono", color:"#ffb04a", accent:"#e8475a", skill:"power", num:true, parts:{horn:"crest", pat:"zigzag"}, forms:[{n:"カケザン"},{n:"カケザンバード",lv:5},{n:"ジョウザンホーク",lv:12}], dex:"かけ算のスピードで空を飛ぶ鳥。60秒で20問答えられるとなかまになる。"},
-  num_pi:{arch:"dragon", type:"kusa", color:"#4fc3a1", accent:"#ffcf3a", skill:"luck", legend:true, num:true, parts:{pat:"zigzag", acc:"gem", accColor:"#ffcf3a"}, forms:[{n:"パイドラゴン"}], dex:"円周率3.14の力をもつドラゴン。60秒で30問答えられる人だけが出会える。"},
-  num_sosu:{arch:"fox", type:"iwa", color:"#9b5fd1", accent:"#ffd23f", skill:"hint", num:true, parts:{horn:"uni", pat:"stars"}, forms:[{n:"ソスウルフ"},{n:"ソスウルガ",lv:5},{n:"プライムウルフ",lv:12}], dex:"素数のにおいをかぎ分けるオオカミ。素数ハンターで15ひきたおすとなかまになる。"},
-  num_prime:{arch:"golem", body:"crystal", type:"iwa", color:"#cfe3ff", accent:"#b06aff", skill:"power", legend:true, num:true, parts:{horn:"crown", pat:"stars"}, forms:[{n:"プライムオー"}], dex:"1とその数でしか割り切れない、かたい結晶の王。素数ハンターで30ひきたおすとあらわれる。"}
-};
-Object.assign(SP, CALC_MON);
-const CALC_ORDER = Object.keys(CALC_MON);
-const CALC_REWARD = [["ta",10,"num_suji"],["ta",20,"num_kake"],["ta",30,"num_pi"],["ph",15,"num_sosu"],["ph",30,"num_prime"]];
-function calcS(){ const s=save.calc||(save.calc={}); s.m=s.m||{}; s.ta=s.ta||{best:0}; s.ph=s.ph||{best:0}; s.done=s.done||{}; return s; }
-const calcLv = key => (calcS().m[key]||{}).lv||0;
-function calcStats(c){
-  const st={c:[0,0,0,0,0,0], due:0, fresh:0, mastered:0, total:c.items.length}, t=today();
-  for(const it of c.items){ const r=calcS().m[it.key]; if(!r){ st.fresh++; st.c[0]++; continue; } st.c[r.lv]++; if(r.lv<5&&r.due<=t) st.due++; }
-  st.mastered=st.c[5]; return st;
-}
-const calcLimit = it => it.kind==="pick" ? 3+1.5*it.a.length : 3+0.5*Math.max(0,it.a.length-2);
-function calcGrant(){
-  const s=calcS(), got=[];
-  for(const [k,need,id] of CALC_REWARD) if(s[k].best>=need && !save.owned[id]){ save.owned[id]={lv:SP[id].legend?20:5,exp:0,form:0}; save.seen[id]=1; if(save.party.length<3) save.party.push(id); got.push(id); }
-  for(const c of CALC_CATS){ const st=calcStats(c); if(st.mastered===st.total && !s.done[c.id]){ s.done[c.id]=1; save.balls+=5; got.push("cat:"+c.id); } }
-  if(got.length) persist();
-  return got;
-}
-function calcGotHTML(got){
-  return got.map(g=> g.startsWith("cat:") ? (c=>`<div class="card get evo rarecard"><div class="ccard big" style="--cc:${c.col}">★</div><div><b>「${esc(c.name)}」を全部マスター！</b><span>数のカードがそろった！ フラスコ +5</span></div></div>`)(CALC_CATS.find(x=>x.id===g.slice(4)))
-    : `<div class="card get evo ${SP[g].legend?'rarecard':''}"><div class="mon">${artMine(g)}</div><div><b>${esc(nameOf(g))} がなかまになった！</b><span>${esc(SP[g].dex)}</span></div></div>`).join("");
-}
-const calcAnsText = it => it.kind==="pick" ? it.a.join("・") : it.a;
-const calcCardText = it => it.kind==="pick" ? `${it.q.replace(/を全部えらぼう.*$/,"")}：${it.a.join(", ")}` : (it.q.includes("□") ? it.q.replace("□は？","").replace("□",it.a) : it.q.replace(/ を小数にすると？/,"").replace(/は？$/,"")+" ＝ "+it.a);
-
-/* ---------- 道場の画面 ---------- */
-let calcOpen=null;
-function showCalc(){
-  const s=calcS(), got=calcGrant(), t=today();
-  const allDue=CALC_CATS.reduce((n,c)=>n+calcStats(c).due,0), allFresh=CALC_CATS.reduce((n,c)=>n+calcStats(c).fresh,0);
-  const totM=CALC_CATS.reduce((n,c)=>n+calcStats(c).mastered,0), tot=Object.keys(CALC_ITEM).length, qd=qdS();
-  let h=`<div class="hero board"><h1>さんすう道場</h1><p>おぼえておきたい数を、すばやく思い出せるようになろう</p>
-    <div class="stats"><span class="pill">数のカード ${totM} / ${tot}</span><span class="pill">今日 ${Math.min(qd.day.n,QD_DAY_GOAL)}/${QD_DAY_GOAL}問${qd.egg.last===t?' ✔':''}</span></div></div>`;
-  if(got.length) h+=`<div class="gets">${calcGotHTML(got)}</div>`;
-  h+=`<div class="routes" style="margin-top:14px">
-    <button class="card route" id="cToday" ${allDue+allFresh?'':'disabled'}><div><span class="rn">けいこ・10問</span><b>今日のけいこ</b><span class="note">ふくしゅう ${allDue}こ・まだ出ていない数 ${allFresh}こ から出る</span></div><div class="ctag">数字キー</div></button>
-    <button class="card route" id="cPH"><div><span class="rn">ミニゲーム・45秒</span><b>素数ハンター</b><span class="note">素数のモンスターだけタップしてたおそう　さいこう ${s.ph.best}ひき</span></div><div class="ctag">タップ</div></button>
-    <button class="card route" id="cTA"><div><span class="rn">ミニゲーム・60秒</span><b>60秒タイムアタック</b><span class="note">60秒で何問答えられる？　さいこう ${s.ta.best}問</span></div><div class="ctag">スピード</div></button>
-  </div>`;
-  h+=`<h2 class="sec-h" style="margin-top:20px">数のなかま</h2><div class="ccats">${CALC_CATS.map(c=>{ const st=calcStats(c);
-    return `<div class="card ccat ${calcOpen===c.id?'on':''}" style="--cc:${c.col}"><button class="chead" data-c="${c.id}"><span class="cdot">${s.done[c.id]?'★':''}</span><div style="min-width:0;flex:1;text-align:left"><b>${esc(c.name)}</b>${qdBar(st)}<span class="mini">マスター ${st.mastered}/${st.total}${st.due?`・ふくしゅう ${st.due}`:''}${st.fresh?`・新しい ${st.fresh}`:''}</span></div></button>
-      <div class="cbtns"><button class="btn" data-go="${c.id}" ${st.due+st.fresh?'':'disabled'}>けいこ</button><button class="btn alt" data-cards="${c.id}">${calcOpen===c.id?'とじる':'カード'}</button></div>
-      ${calcOpen===c.id?`<div class="cards">${c.items.map(it=>{ const r=s.m[it.key], lv=r?r.lv:0; return `<div class="ccard ${lv>=5?'got':r?'part':''}" style="--cc:${c.col}">${r?`<span>${esc(calcCardText(it))}</span>`:'<span>？</span>'}<i>${[1,2,3,4,5].map(i=>`<em class="${i<=lv?'on':''}"></em>`).join("")}</i></div>`; }).join("")}</div>`:''}</div>`; }).join("")}</div>`;
-  h+=`<h2 class="sec-h" style="margin-top:20px">数字モンスター</h2><div class="grid3">${CALC_REWARD.map(([k,need,id])=>{ const own=save.owned[id];
-    return `<div class="card mcard ${own?'':'unseen'}"><span class="no">${k==="ta"?'タイムアタック':'素数ハンター'} ${need}</span><div class="mon">${own?artMine(id):art(id,1,{sil:true})}</div><b>${own?esc(nameOf(id)):'？？？'}</b></div>`; }).join("")}</div>`;
-  h+=`<details class="card howto"><summary>さんすう道場のしくみ</summary><p class="mini">時間内に正解すると「すばやい！」で、おぼえ度が1上がるよ（次に出るのは1日後→2日後→4日後→7日後）。正解でも時間がかかったときは、おぼえ度は上がらず、あしたもう一度出る。まちがえると、おぼえ度が1にもどる。おぼえ度5になった数は「数のカード」になる。1つのなかまのカードが全部そろうとフラスコ+5。<br>道場で「すばやく」正解した数も、ダンジョンの「今日のたんけん」（たまご）に数えるよ。</p></details>`;
-  app.innerHTML=h;
-  document.getElementById("cToday").onclick=()=>startCalc(null);
-  document.getElementById("cPH").onclick=startPH;
-  document.getElementById("cTA").onclick=startTA;
-  app.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>startCalc(b.dataset.go));
-  app.querySelectorAll("[data-cards],.chead").forEach(b=>b.onclick=()=>{ const id=b.dataset.cards||b.dataset.c; calcOpen=calcOpen===id?null:id; showCalc(); });
-}
-
-/* ---------- けいこ／タイムアタック ---------- */
-let C=null;
-function calcQueue(cat){
-  const s=calcS(), t=today(), cats=cat?CALC_CATS.filter(c=>c.id===cat):CALC_CATS;
-  const items=cats.flatMap(c=>c.items);
-  const due=items.filter(it=>{ const r=s.m[it.key]; return r&&r.lv<5&&r.due<=t; }).sort((a,b)=>calcLv(a.key)-calcLv(b.key));
-  let q=due.slice(0,10);
-  if(q.length<10){ const fresh=[]; for(const c of cats){ fresh.push(...c.items.filter(it=>!s.m[it.key])); }
-    if(!cat){ const per={}; const pickF=[]; for(const it of fresh){ per[it.cat]=(per[it.cat]||0)+1; if(per[it.cat]<=3) pickF.push(it); } q=q.concat(pickF.slice(0,10-q.length)); }
-    else q=q.concat(fresh.slice(0,10-q.length)); }
-  return shuffle(q).map(it=>({it}));
-}
-function calcOpp(){ const pool=DEX_ORDER.filter(id=>!SP[id].legend && save.seen[id]); return pick(pool.length?pool:DEX_ORDER.filter(id=>!SP[id].legend)); }
-function startCalc(cat){
-  const queue=calcQueue(cat); if(!queue.length) return home();
-  C={mode:"keiko", cat, queue, total:queue.length, done:0, ups:0, mastered:0, fast:0, slow:0, miss:0, opp:calcOpp(), eggBefore:qdS().egg.last};
-  showTabs(false); calcRender();
-}
-function startTA(){
-  const s=calcS();
-  let pool=Object.values(CALC_ITEM).filter(it=>it.kind!=="pick" && s.m[it.key]);
-  if(pool.length<10) pool=Object.values(CALC_ITEM).filter(it=>it.kind!=="pick");
-  C={mode:"ta", pool, queue:[{it:pick(pool)}], score:0, miss:0, end:performance.now()+60000, opp:calcOpp(), eggBefore:qdS().egg.last};
-  showTabs(false); calcRender();
-  C.timer=setInterval(()=>{ if(!C||C.mode!=="ta") return; const left=Math.max(0,(C.end-performance.now())/1000), el=document.getElementById("taLeft"), bar=document.getElementById("taBar");
-    if(el) el.textContent=Math.ceil(left); if(bar) bar.style.width=(left/60*100)+"%";
-    if(left<=0){ clearInterval(C.timer); calcFinish(); } },200);
-}
-function calcKeypad(){ return `<div class="keypad">${["7","8","9","4","5","6","1","2","3",".","0","⌫"].map(k=>`<button class="key" data-k="${k}">${k}</button>`).join("")}</div>`; }
-function calcRender(){
-  const item=C.queue[0], it=item.it, ta=C.mode==="ta", lim=calcLimit(it);
-  item.input=""; item.sel=item.sel||[]; item.t0=performance.now();
-  const cat=CALC_CATS.find(c=>c.id===it.cat);
-  window.scrollTo(0,0);
-  app.innerHTML=`<div class="btop"><button class="back" id="back">← やめる</button>${ta?`<span class="pill">のこり <b id="taLeft">${Math.ceil((C.end-performance.now())/1000)}</b>秒</span><span class="pill">${C.score}問</span>`:`<span class="pill">${C.done+1} / ${C.total}</span>`}</div>
-  <div class="card cstage"><div class="mon cmon" id="cmon">${art(C.opp,5)}</div>
-    <div class="bar hpbar" style="margin:4px 0 6px"><i style="width:${ta?100:(1-C.done/C.total)*100}%"></i></div>
-    ${ta?`<div class="tbar"><i id="taBar" style="width:${Math.max(0,(C.end-performance.now())/600)}%"></i></div>`:`<div class="tbar"><i class="run" style="animation-duration:${lim}s"></i></div><div class="mini" style="text-align:right">${lim}秒以内なら「すばやい」</div>`}
-    <span class="ccat-tag" style="background:${cat.col}">${esc(cat.short)}</span>
-    <p class="cq">${esc(it.q)}${it.kind==="pick"||/[？？]/.test(it.q)?'':' ＝ ？'}</p>
-    ${it.kind==="pick"?`<div class="pickgrid">${it.c.map(n=>`<button class="pk" data-n="${n}">${n}</button>`).join("")}</div><button class="btn go" id="cdec" style="margin-top:10px">けってい</button>`
-      :`<div class="cans" id="cans">&nbsp;</div>${calcKeypad()}<button class="btn go" id="cdec" style="margin-top:10px" disabled>けってい</button>`}
-    <div id="cfb"></div></div>`;
-  document.getElementById("back").onclick=()=>{ if(C&&C.timer) clearInterval(C.timer); C=null; tab="calc"; home(); };
-  const dec=document.getElementById("cdec");
-  if(it.kind==="pick"){
-    app.querySelectorAll(".pk").forEach(b=>b.onclick=()=>{ if(item.judged) return; const n=+b.dataset.n; item.sel=item.sel.includes(n)?item.sel.filter(x=>x!==n):[...item.sel,n]; b.classList.toggle("sel"); });
-    dec.onclick=()=>calcJudge();
-  }else{
-    const show=()=>{ document.getElementById("cans").textContent=item.input||" "; dec.disabled=!item.input; };
-    app.querySelectorAll(".key").forEach(b=>b.onclick=()=>{ if(item.judged) return; const k=b.dataset.k;
-      if(k==="⌫") item.input=item.input.slice(0,-1); else if(item.input.length<8 && !(k==="." && item.input.includes("."))) item.input+=k; show(); });
-    dec.onclick=()=>calcJudge();
-  }
-}
-function calcMark(item, ok, fast){
-  const s=calcS(), t=today(), r=s.m[item.it.key]||(s.m[item.it.key]={lv:0,due:t,ng:0}), lv0=r.lv;
-  if(!ok){ item.missed=true; r.ng++; r.lv=Math.min(r.lv,1); r.due=t; return lv0>1?`おぼえ度 ${lv0} → ${r.lv}`:""; }
-  if(item.missed){ r.lv=Math.max(r.lv,1); r.due=dayAdd(t,1); return "まちがえたので、あしたもう一度"; }
-  if(!fast){ r.due=dayAdd(t,1); return "正解！ でも時間がかかったので、おぼえ度はそのまま（あしたもう一度）"; }
-  qdS().day.n++; qdWarm(); addExp(save.party[0],3);
-  if(r.lv<5) r.lv++;
-  if(r.lv>=5){ r.due="9999"; if(lv0<5){ C.mastered++; return "マスター！ 数のカードになった！"; } return ""; }
-  C.ups++; r.due=dayAdd(t,QD_INT[r.lv]); return `おぼえ度 ${lv0} → ${r.lv}`;
-}
-function calcJudge(){
-  const item=C.queue[0], it=item.it; if(item.judged) return; item.judged=true;
-  const sec=(performance.now()-item.t0)/1000, lim=calcLimit(it);
-  const ok = it.kind==="pick" ? (item.sel.length===it.a.length && item.sel.every(n=>it.a.includes(n))) : item.input===it.a;
-  const fast = ok && sec<=lim;
-  if(it.kind==="pick") app.querySelectorAll(".pk").forEach(b=>{ const n=+b.dataset.n; b.disabled=true; if(it.a.includes(n)) b.classList.add(item.sel.includes(n)?"ok":"miss"); else if(item.sel.includes(n)) b.classList.add("ng"); });
-  else { const a=document.getElementById("cans"); a.classList.add(ok?"ok":"ng"); }
-  document.getElementById("cdec").hidden=true;
-  const fb=document.getElementById("cfb"), mon=document.getElementById("cmon");
-  if(C.mode==="ta"){
-    if(ok){ C.score++; mon.classList.add("hit"); } else C.miss++;
-    fb.innerHTML = ok?`<div class="fb ok"><h3>せいかい！</h3></div>`:`<div class="fb ng"><h3>正解は ${esc(calcAnsText(it))}</h3></div>`;
-    setTimeout(()=>{ if(!C) return; C.queue=[{it:pick(C.pool.filter(x=>x!==it))}]; if(performance.now()<C.end) calcRender(); }, ok?350:1300);
-    return;
-  }
-  const msg=calcMark(item, ok, fast); persist();
-  if(fast){ C.fast++; mon.classList.add("hit"); } else if(ok) C.slow++; else C.miss++;
-  fb.innerHTML = ok ? `<div class="fb ok"><h3>${fast?`すばやい！ ${sec.toFixed(1)}秒`:`せいかい（${sec.toFixed(1)}秒）`}</h3>${msg?`<p class="mini"><b>${esc(msg)}</b></p>`:''}</div>`
-                    : `<div class="fb ng"><h3>ざんねん… 正解は ${esc(calcAnsText(it))}</h3>${msg?`<p class="mini"><b>${esc(msg)}</b></p>`:''}<p class="mini">この数は、あとでもう一度出てくるよ。</p></div>`;
-  fb.innerHTML += `<button class="btn" id="cnext" style="margin-top:10px">つぎへ</button>`;
-  const next=()=>{ if(!C) return; const x=C.queue.shift(); if(ok) C.done++; else { x.judged=false; x.sel=[]; C.queue.push(x); }
-    if(!C.queue.length) return calcFinish(); calcRender(); };
-  document.getElementById("cnext").onclick=next;
-  if(fast) setTimeout(()=>{ if(C && C.queue[0]===item) next(); }, 900);
-}
-function calcFinish(){
-  const s=calcS(), ta=C.mode==="ta"; let head;
-  if(ta){ const rec=C.score>s.ta.best; if(rec) s.ta.best=C.score; const fl=Math.floor(C.score/5); save.balls+=fl;
-    head=`<p class="line">60秒タイムアタック</p><h2>${C.score}問 せいかい！</h2><p class="line">${rec?'<b>さいこう記録こうしん！</b>':`さいこう記録 ${s.ta.best}問`}　まちがい ${C.miss}　フラスコ +${fl}</p>`; }
-  else { save.balls+=2; addExp(save.party[0],5);
-    head=`<h2>けいこ おわり！</h2><p class="line">すばやい ${C.fast}・おそい正解 ${C.slow}・まちがい ${C.miss}　フラスコ +2</p><p class="line">おぼえ度アップ ${C.ups}こ${C.mastered?`・<b>マスター ${C.mastered}こ！</b>`:''}</p>`; }
-  persist();
-  const got=calcGrant(), egg=qdS().egg, warm=egg.last===today() && C.eggBefore!==today();
-  const mode=C.mode, cat=C.cat; C=null; window.scrollTo(0,0);
-  app.innerHTML=`<div class="result">${head}<div class="gets">${calcGotHTML(got)}${warm?`<div class="card get"><div class="mon">${eggSVG(egg.w)}</div><div><b>今日のたんけんクリア！</b><span>たまごがあたたまった（${egg.w}/${EGG_NEED}）・フラスコ +2</span></div></div>`:''}</div>
-    <button class="btn go" id="again">${ta?'もう一度ちょうせん':'つづける'}</button><button class="btn alt" id="map">道場にもどる</button></div>`;
-  document.getElementById("again").onclick=()=> ta?startTA():startCalc(cat);
-  document.getElementById("map").onclick=()=>{ tab="calc"; home(); };
-}
-
-/* ---------- 素数ハンター ---------- */
-const isPrime = n => n>1 && [...Array(Math.floor(Math.sqrt(n))).keys()].every(i=>i<1||n%(i+1)!==0);
-function factorStr(n){ const f=[]; let m=n; for(let d=2;d*d<=m;d++) while(m%d===0){ f.push(d); m/=d; } if(m>1) f.push(m); return f.join("×"); }
-const PRIMES100=[...Array(100).keys()].filter(isPrime);
-const NONPRIME_TRICKY=[1,9,15,21,27,33,39,49,51,57,63,69,77,81,87,91,93,99,25,35,45,55,65,75,85,95,39,49,91,57,51,87];
-function phNum(){ return Math.random()<.5 ? pick(PRIMES100) : (Math.random()<.7 ? pick(NONPRIME_TRICKY) : 2+Math.floor(Math.random()*98)); }
-let PH=null;
-function startPH(){
-  showTabs(false);
-  PH={cells:Array.from({length:12},()=>({n:phNum(),id:Math.random()})), score:0, hearts:3, end:performance.now()+45000, msg:"素数のモンスターだけタップしよう！", eggBefore:qdS().egg.last, wrong:[]};
-  PH.cells.forEach(c=>c.mon=calcOpp());
-  phRender();
-  PH.timer=setInterval(()=>{ if(!PH) return; const left=Math.max(0,(PH.end-performance.now())/1000), el=document.getElementById("phLeft"), bar=document.getElementById("phBar");
-    if(el) el.textContent=Math.ceil(left); if(bar) bar.style.width=(left/45*100)+"%"; if(left<=0) phFinish(); },200);
-}
-function phRender(){
-  app.innerHTML=`<div class="btop"><button class="back" id="back">← やめる</button><span class="pill">のこり <b id="phLeft">${Math.ceil((PH.end-performance.now())/1000)}</b>秒</span><span class="pill">たおした ${PH.score}</span><div class="hearts">${[0,1,2].map(i=>heart(i<PH.hearts)).join("")}</div></div>
-    <div class="tbar" style="margin:8px 0"><i id="phBar" style="width:${(PH.end-performance.now())/450}%"></i></div>
-    <div class="log" id="phMsg">${PH.msg}</div>
-    <div class="phgrid">${PH.cells.map((c,i)=>`<button class="phc" data-i="${i}"><div class="mon">${art(c.mon,1)}</div><b>${c.n}</b></button>`).join("")}</div>`;
-  document.getElementById("back").onclick=()=>{ clearInterval(PH.timer); PH=null; tab="calc"; home(); };
-  app.querySelectorAll(".phc").forEach(b=>b.onclick=()=>{ if(!PH||PH.lock) return; const i=+b.dataset.i, c=PH.cells[i];
-    if(isPrime(c.n)){ PH.score++; b.classList.add("pop"); PH.msg=`<b>${c.n}</b>は素数！ たおした！`; }
-    else { PH.hearts--; b.classList.add("bad"); PH.msg=`<b>${c.n}</b>は素数じゃない…${c.n===1?'（1は素数ではない）':`（${c.n} ＝ ${factorStr(c.n)}）`}`; PH.wrong.push(c.n); }
-    PH.lock=true; setTimeout(()=>{ if(!PH) return; PH.lock=false; PH.cells[i]={n:phNum(),mon:calcOpp()}; if(PH.hearts<=0) return phFinish(); phRender(); }, isPrime(c.n)?250:900);
-    const m=document.getElementById("phMsg"); if(m) m.innerHTML=PH.msg; });
-}
-function phFinish(){
-  if(!PH) return; clearInterval(PH.timer);
-  const s=calcS(), rec=PH.score>s.ph.best; if(rec) s.ph.best=PH.score; const fl=Math.floor(PH.score/5); save.balls+=fl; addExp(save.party[0],PH.score);
-  persist(); const got=calcGrant(), wrong=[...new Set(PH.wrong)], sc=PH.score; PH=null; window.scrollTo(0,0);
-  app.innerHTML=`<div class="result"><p class="line">素数ハンター</p><h2>${sc}ひき たおした！</h2>
-    <p class="line">${rec?'<b>さいこう記録こうしん！</b>':`さいこう記録 ${s.ph.best}ひき`}　フラスコ +${fl}</p>
-    ${wrong.length?`<div class="card" style="padding:10px 12px;text-align:left;margin-top:10px"><b>まちがえた数（素数ではない）</b><p class="mini" style="margin:4px 0 0">${wrong.map(n=>n===1?'1（素数ではない）':`${n} ＝ ${factorStr(n)}`).join("　")}</p></div>`:''}
-    <div class="gets">${calcGotHTML(got)}</div>
-    <button class="btn go" id="again">もう一度ちょうせん</button><button class="btn alt" id="map">道場にもどる</button></div>`;
-  document.getElementById("again").onclick=startPH;
-  document.getElementById("map").onclick=()=>{ tab="calc"; home(); };
-}
+/* さんすう道場（v20）は v21 で廃止。数字モンスターは算数の単元（sansu-1〜3）に移した。save.calc は使わない */
 
 /* ---------- battle ---------- */
 let B = null;
@@ -2257,12 +2093,14 @@ function fieldHTML(enter){
 }
 let logMsg = "";
 function renderBattle(enter){
-  const item = B.queue[0], q = item.q, multi = q.type==="multi", isOrd = q.type==="order", isMat = q.type==="match", isPref = q.type==="pref", isTile = q.type==="tile";
+  const item = B.queue[0], q = item.q, isAll = q.type==="all", multi = q.type==="multi"||isAll, isOrd = q.type==="order", isMat = q.type==="match", isPref = q.type==="pref", isTile = q.type==="tile";
   if(isMat){ if(!item.ro) item.ro = shuffle(q.pairs.map((_,i)=>i)); item.pairs = item.pairs || {}; }
   else if(isPref||isTile){}
   else if(!item.order) item.order = (q.fixed && !isOrd) ? q.c.map((_,i)=>i) : shuffle(q.c.map((_,i)=>i));
   if(isOrd||isTile) item.seq = item.seq || [];
   item.hidden = item.hidden || [];
+  if(item.num==null) item.num = !!(q.n && !B.qd && save.okOnce && save.okOnce[item.key]);
+  const isNum = item.num; if(isNum) item.input = item.input || "";
   if(enter) logMsg = `やせいの <b>${esc(nameOf(B.wild.id,B.wild.lv))}</b> があらわれた！` + (mult(SP[B.lead].type,SP[B.wild.id].type)===2?' あいしょうはばつぐん！':mult(SP[B.lead].type,SP[B.wild.id].type)===.5?' あいしょうが悪いかも…':'');
   const me=B.lead, sk=SKILLS[SP[me].skill];
   app.innerHTML = `
@@ -2272,8 +2110,8 @@ function renderBattle(enter){
   <div class="card qpanel">
     <div class="qmeta"><span>${esc(B.name)}</span><span>${B.tower?`${B.tower.floor}階・さいこう ${qdS().tower.best}階`:`のこり ${B.queue.length}問`}</span></div>
     ${q.note||q.table||q.graph||q.bars||q.map?`<div class="qnote"><span class="qnote-h">ほそく</span>${q.note?`<p>${esc(q.note)}</p>`:''}${q.table?`<div class="qtbl"><table>${q.table.map((r,ri)=>`<tr>${r.map((c,ci)=>ri===0||ci===0?`<th>${esc(c)}</th>`:`<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</table></div>`:''}${q.graph?`<div class="qgraph">${graphSVG(q.graph)}</div>`:''}${q.bars?barsHTML(q.bars):''}${q.map?`<div class="qmap">${mapSVG({view:q.map.view, pts:q.map.pts})}${MAPCREDIT}</div>`:''}</div>`:''}
-    <p class="qtext">${esc(q.q)}</p>${multi?'<div class="hint">2つえらんで「けってい」</div>':''}${isOrd?'<div class="hint">はじめのものから順にタップしよう</div>':''}${isMat?'<div class="hint">左をタップしてから、右をタップしてつなごう</div>':''}${isPref?'<div class="hint">地図をタップしてえらび、「けってい」</div>':''}${isTile?`<div class="hint">文字をタップして答えをつくろう（${[...q.ans].length}文字）</div>`:''}
-    ${isTile?tileHTML(item,q)+`<div class="ordrow"><button class="btn alt" id="redo">1文字もどす</button><button class="btn" id="dec" ${item.seq.length===[...q.ans].length-q.pre?'':'disabled'}>けってい</button></div>`:isPref?`<div class="qmap big">${mapSVG({view:q.view, sel:item.selP, tap:true})}${MAPCREDIT}</div><button class="btn" id="dec" style="margin-top:10px" ${item.selP?'':'disabled'}>けってい</button>`:isOrd?orderHTML(item,q):isMat?matchHTML(item,q):`<div class="choices">${item.order.filter(ci=>!item.hidden.includes(ci)).map((ci,k)=>`<button class="choice" data-i="${ci}">${q.c[ci]===KANA[k]?'':`<span class="k">${KANA[k]}</span>`}<span>${esc(q.c[ci])}</span></button>`).join("")}</div>`}
+    <p class="qtext">${esc(q.q)}</p>${isAll?'<div class="hint">あてはまるものを全部えらんで「けってい」</div>':multi?'<div class="hint">2つえらんで「けってい」</div>':''}${isNum?'<div class="hint">なれてきた問題！ 数字キーで答えよう</div>':''}${isOrd?'<div class="hint">はじめのものから順にタップしよう</div>':''}${isMat?'<div class="hint">左をタップしてから、右をタップしてつなごう</div>':''}${isPref?'<div class="hint">地図をタップしてえらび、「けってい」</div>':''}${isTile?`<div class="hint">文字をタップして答えをつくろう（${[...q.ans].length}文字）</div>`:''}
+    ${isNum?`<div class="cans" id="nans">${item.input?esc(item.input):'&nbsp;'}</div><div class="keypad">${["7","8","9","4","5","6","1","2","3",".","0","⌫"].map(k=>`<button class="key" data-k="${k}">${k}</button>`).join("")}</div><button class="btn" id="dec" style="margin-top:10px" ${item.input?'':'disabled'}>けってい</button>`:isTile?tileHTML(item,q)+`<div class="ordrow"><button class="btn alt" id="redo">1文字もどす</button><button class="btn" id="dec" ${item.seq.length===[...q.ans].length-q.pre?'':'disabled'}>けってい</button></div>`:isPref?`<div class="qmap big">${mapSVG({view:q.view, sel:item.selP, tap:true})}${MAPCREDIT}</div><button class="btn" id="dec" style="margin-top:10px" ${item.selP?'':'disabled'}>けってい</button>`:isOrd?orderHTML(item,q):isMat?matchHTML(item,q):`<div class="choices${isAll?' allgrid':''}">${item.order.filter(ci=>!item.hidden.includes(ci)).map((ci,k)=>`<button class="choice" data-i="${ci}">${isAll||q.c[ci]===KANA[k]?'':`<span class="k">${KANA[k]}</span>`}<span>${esc(q.c[ci])}</span></button>`).join("")}</div>`}
     ${multi?'<button class="btn" id="dec" style="margin-top:12px" disabled>けってい</button>':''}
     ${isOrd||isMat?`<div class="ordrow"><button class="btn alt" id="redo">やりなおし</button><button class="btn" id="dec" ${(isOrd?item.seq.length===q.c.length:Object.keys(item.pairs).length===q.pairs.length)?'':'disabled'}>けってい</button></div>`:''}
     <div id="sub"><div class="subrow"><button id="skill" ${B.used[me]?'disabled':''}>${sk.n}${B.used[me]?'（使った）':''}<small>${sk.d}</small></button><button id="swapBtn" ${save.party.length<2?'disabled':''}>こうたい<small>${save.party.length<2?'なかまをふやそう':'なかまを入れかえる'}</small></button></div>
@@ -2286,10 +2124,16 @@ function renderBattle(enter){
     if(B.busy) return; const i=+btn.dataset.i;
     if(!multi) return judge([i]);
     if(sel.includes(i)){ sel=sel.filter(x=>x!==i); btn.classList.remove("sel"); }
-    else if(sel.length<2){ sel.push(i); btn.classList.add("sel"); }
-    document.getElementById("dec").disabled = sel.length!==2;
+    else if(isAll||sel.length<2){ sel.push(i); btn.classList.add("sel"); }
+    document.getElementById("dec").disabled = isAll ? !sel.length : sel.length!==2;
   });
   if(multi) document.getElementById("dec").onclick=()=>judge(sel);
+  if(isNum){
+    app.querySelectorAll(".key").forEach(b=>b.onclick=()=>{ if(B.busy) return; const k=b.dataset.k;
+      if(k==="⌫") item.input=item.input.slice(0,-1); else if(item.input.length<8 && !(k==="." && item.input.includes("."))) item.input+=k;
+      document.getElementById("nans").innerHTML=item.input?esc(item.input):"&nbsp;"; document.getElementById("dec").disabled=!item.input; });
+    document.getElementById("dec").onclick=()=>judge([item.input]);
+  }
   if(isOrd){
     app.querySelectorAll(".choice").forEach(btn=>btn.onclick=()=>{ if(B.busy) return; const i=+btn.dataset.i; if(item.seq.includes(i)) return; item.seq.push(i); renderBattle(); });
     document.getElementById("redo").onclick=()=>{ if(B.busy) return; item.seq=[]; renderBattle(); };
@@ -2340,7 +2184,12 @@ function useSkill(){
   const me=B.lead, k=SP[me].skill, item=B.queue[0], q=item.q;
   if(B.used[me]) return;
   const nm = `<b>${esc(nameOf(me))}</b>の ${SKILLS[k].n}！ `;
-  if(k==="hint" && q.type==="tile"){
+  if(k==="hint" && item.num){
+    const n=q.n, inp=item.input||""; let ok=0; while(ok<inp.length && inp[ok]===n[ok]) ok++;
+    if(ok>=n.length-1){ setLog("もう少しでできるよ！"); return; }
+    item.input=n.slice(0,ok+1); logMsg = nm+`${ok+1}文字目を教えてくれた！`;
+  }
+  else if(k==="hint" && q.type==="tile"){
     const ch=[...q.ans].slice(q.pre); let ok=0; while(ok<item.seq.length && q.tiles[item.seq[ok]]===ch[ok]) ok++;
     if(ok>=ch.length-1){ setLog("もう少しでできるよ！"); return; }
     item.seq=item.seq.slice(0,ok); const used=new Set(item.seq); item.seq.push(q.tiles.findIndex((c,j)=>c===ch[ok]&&!used.has(j)));
@@ -2376,6 +2225,10 @@ function judge(picked){
   if(q.type==="order"){
     ok = picked.length===q.c.length && picked.every((v,i)=>v===i); ansText = q.c.join(" → ");
     app.querySelectorAll(".choice").forEach(b=>{ b.disabled=true; const i=+b.dataset.i; b.classList.add(picked.indexOf(i)===i?"ok":"ng"); });
+  }else if(item.num){
+    ok = picked[0]===q.n; ansText = q.n;
+    const na=document.getElementById("nans"); if(na) na.classList.add(ok?"ok":"ng");
+    app.querySelectorAll(".key").forEach(b=>b.disabled=true);
   }else if(q.type==="tile"){
     ok = [...q.ans].slice(0,q.pre).join("")+picked.map(i=>q.tiles[i]).join("") === q.ans; ansText = q.ans;
     app.querySelectorAll(".tile").forEach(b=>b.disabled=true);
@@ -2416,6 +2269,7 @@ function judge(picked){
     let bonus="";
     if(B.combo%3===0){ save.balls++; B.ballsGot++; bonus=`<p><b>${B.combo}コンボ！ フラスコを1つひろった！</b></p>`; }
     if(B.sid==="review") delete save.wrong[item.key];
+    if(!B.qd) (save.okOnce=save.okOnce||{})[item.key]=1;
     B.queue.shift(); persist();
     addExp(B.lead, 6); save.party.forEach(id=>{ if(id!==B.lead) addExp(id,3); });
     const {m} = dmgOf();
@@ -2428,7 +2282,7 @@ function judge(picked){
   }else{
     B.combo=0; B.hearts--; B.mistakes++;
     if(!B.qd){ save.wrong[item.key]=(save.wrong[item.key]||0)+1; (save.wrongEver=save.wrongEver||{})[item.key]=1; }
-    item.hidden=[]; item.seq=[]; item.pairs={}; item.selL=null; item.selP=null;
+    item.hidden=[]; item.seq=[]; item.pairs={}; item.selL=null; item.selP=null; item.input="";
     if(B.tower){ B.queue.shift(); B.queue.push(towerNext()); } else B.queue.push(B.queue.shift());
     persist();
     const wm=document.getElementById("wildMon"), mm=document.getElementById("meMon");
