@@ -904,12 +904,12 @@ const UNITS = [
   region:"えんしゅうの丘",
   legend:"num_pi", mapColor:"#2f9e7a",
   monsters:{
-    num_suji:{arch:"beast", type:"mizu", color:"#7cc8ff", accent:"#ffcf3a", skill:"hint", parts:{pat:"stripes", acc:"scarf", accColor:"#ffcf3a"}, forms:[{n:"スウジー"},{n:"スウジード",lv:5},{n:"スウジガルム",lv:12}], dex:"数字が大すきな子犬。3.14の倍数をすらすら言えるようになると、しっぽをふる。"},
-    num_kake:{arch:"bird", type:"hono", color:"#ffb04a", accent:"#e8475a", skill:"power", parts:{horn:"crest", pat:"zigzag"}, forms:[{n:"カケザン"},{n:"カケザンバード",lv:5},{n:"ジョウザンホーク",lv:12}], dex:"かけ算のスピードで空を飛ぶ鳥。"},
-    enban:{arch:"turtle", type:"iwa", color:"#c9d3e0", accent:"#2f9e7a", skill:"heal", parts:{pat:"spots"}, forms:[{n:"エンバン"},{n:"エンバンガメ",lv:7}], dex:"こうらがまんまるの円になっているカメ。半径×半径×3.14で、こうらの広さがわかる。"},
-    hankei:{arch:"fox", type:"kusa", color:"#9fd36a", accent:"#2f9e7a", skill:"luck", parts:{acc:"bell", accColor:"#ffcf3a"}, forms:[{n:"ハンケイ"},{n:"ハンケイギツネ",lv:8}], dex:"円の中心から外まで、いつも同じ長さでとびはねるキツネ。"},
-    compas:{arch:"bird", beak:true, type:"mizu", color:"#e9f5ff", accent:"#3d8bff", skill:"hint", parts:{horn:"uni"}, forms:[{n:"コンパスン"},{n:"コンパスワシ",lv:9}], dex:"コンパスのような細い足で、きれいな円をえがいて飛ぶ。"},
-    num_pi:{arch:"dragon", type:"kusa", color:"#4fc3a1", accent:"#ffcf3a", skill:"luck", legend:true, parts:{pat:"zigzag", acc:"gem", accColor:"#ffcf3a"}, forms:[{n:"パイドラゴン"}], dex:"円周率3.14の力をもつ、えんしゅうの丘のでんせつのドラゴン。"}
+    num_suji:{arch:"beast", type:"mizu", color:"#7cc8ff", accent:"#ffcf3a", skill:"hint", numMark:"3.14", parts:{acc:"scarf", accColor:"#ffcf3a"}, forms:[{n:"パイワン"},{n:"パイハウンド",lv:5},{n:"パイガルム",lv:12}], dex:"円周率3.14をむねにつけた子犬。円周は「直径×3.14」、円の面積は「半径×半径×3.14」。"},
+    num_kake:{arch:"bird", type:"hono", color:"#ffb04a", accent:"#e8475a", skill:"power", numMark:"6.28", parts:{horn:"crest"}, forms:[{n:"ロクニッパ"},{n:"ロクニッパード",lv:5},{n:"ツーパイホーク",lv:12}], dex:"6.28＝3.14×2。半径1の円の円周（直径2×3.14）と同じ長さのつばさで飛ぶ。"},
+    enban:{arch:"turtle", type:"iwa", color:"#c9d3e0", accent:"#2f9e7a", skill:"heal", numMark:"78.5", parts:{}, forms:[{n:"ナナハチゴ"},{n:"ナナハチゴガメ",lv:7}], dex:"78.5＝3.14×25。半径5cmの円の面積が78.5cm²。こうらがちょうどその大きさ。"},
+    hankei:{arch:"fox", type:"kusa", color:"#9fd36a", accent:"#2f9e7a", skill:"luck", numMark:"50.24", parts:{acc:"bell", accColor:"#ffcf3a"}, forms:[{n:"ゴマルニヨン"},{n:"ゴマルニヨンギツネ",lv:8}], dex:"50.24＝3.14×16。半径4cmの円の面積が50.24cm²。"},
+    compas:{arch:"bird", beak:true, type:"mizu", color:"#e9f5ff", accent:"#3d8bff", skill:"hint", numMark:"31.4", parts:{horn:"uni"}, forms:[{n:"サイヨン"},{n:"サイヨンワシ",lv:9}], dex:"31.4＝3.14×10。直径10cmの円の円周が31.4cm。その円をえがいて飛ぶ。"},
+    num_pi:{arch:"dragon", type:"kusa", color:"#4fc3a1", accent:"#ffcf3a", skill:"luck", legend:true, numMark:"π", parts:{acc:"gem", accColor:"#ffcf3a"}, forms:[{n:"パイドラゴン"}], dex:"円周率π（パイ）の力をもつ、えんしゅうの丘のでんせつのドラゴン。πは3.1415…とどこまでも続くが、算数では3.14を使う。"}
   },
   stages:[
     {"id": "s1", "name": "3.14×1〜5", "note": "3.14の1倍から5倍", "wild": ["num_suji", "enban"], "qs": [{"q": "3.14×1 は？", "c": ["3.14", "2.14", "6.28", "3.24"], "a": 0, "e": "3.14×1＝3.14", "n": "3.14"}, {"q": "3.14×2 は？", "c": ["6.28", "3.14", "62.8", "5.28"], "a": 0, "e": "3.14×2＝6.28", "n": "6.28"}, {"q": "3.14×3 は？", "c": ["9.42", "8.42", "9.52", "6.28"], "a": 0, "e": "3.14×3＝9.42", "n": "9.42"}, {"q": "3.14×4 は？", "c": ["12.56", "12.66", "125.6", "15.7"], "a": 0, "e": "3.14×4＝12.56", "n": "12.56"}, {"q": "3.14×5 は？", "c": ["15.7", "18.84", "12.56", "15.8"], "a": 0, "e": "3.14×5＝15.7", "n": "15.7"}, {"q": "6.28 は 3.14×いくつ？", "c": ["2", "1", "4", "3"], "a": 0, "e": "3.14×2＝6.28", "n": "2"}, {"q": "12.56 は 3.14×いくつ？", "c": ["4", "2", "5", "8"], "a": 0, "e": "3.14×4＝12.56", "n": "4"}, {"q": "15.7 は 3.14×いくつ？", "c": ["5", "7", "3", "10"], "a": 0, "e": "3.14×5＝15.7", "n": "5"}]},
@@ -923,11 +923,11 @@ const UNITS = [
   region:"そすうの森",
   legend:"num_prime", mapColor:"#9b5fd1",
   monsters:{
-    num_sosu:{arch:"fox", type:"iwa", color:"#9b5fd1", accent:"#ffd23f", skill:"hint", parts:{horn:"uni", pat:"stars"}, forms:[{n:"ソスウルフ"},{n:"ソスウルガ",lv:5},{n:"プライムウルフ",lv:12}], dex:"素数のにおいをかぎ分けるオオカミ。"},
-    yakusu:{arch:"bat", type:"kusa", color:"#7cc36a", accent:"#ffcf3a", skill:"luck", parts:{pat:"spots"}, forms:[{n:"ヤクスウ"},{n:"ヤクスウバット",lv:7}], dex:"ある数を割り切れる数（約数）を全部見つけるのがとくいなコウモリ。"},
-    warikiren:{arch:"beetle", type:"iwa", color:"#c07a3a", accent:"#ffd9a0", skill:"power", parts:{pat:"stripes"}, forms:[{n:"ワリキレン"},{n:"ワリキレンカブト",lv:8}], dex:"角で数をスパッと割る。割り切れないとくやしがる。"},
-    gousei:{arch:"golem", body:"cube", type:"iwa", color:"#b8c6d8", accent:"#9b5fd1", skill:"heal", parts:{pat:"stars"}, forms:[{n:"ゴウセイ"},{n:"ゴウセイキューブ",lv:9}], dex:"いくつかの素数をかけ合わせてできた体。91＝7×13 のように、素数に見えて素数ではない。"},
-    num_prime:{arch:"golem", body:"crystal", type:"iwa", color:"#cfe3ff", accent:"#b06aff", skill:"power", legend:true, parts:{horn:"crown", pat:"stars"}, forms:[{n:"プライムオー"}], dex:"1とその数でしか割り切れない、かたい結晶の王。そすうの森のでんせつのモンスター。"}
+    num_sosu:{arch:"fox", type:"iwa", color:"#9b5fd1", accent:"#ffd23f", skill:"hint", numMark:"2", parts:{horn:"uni"}, forms:[{n:"ツーウルフ"},{n:"ツーウルガ",lv:5},{n:"イーブンプライム",lv:12}], dex:"2は、ただ1つの偶数の素数。いちばん小さい素数でもある。"},
+    yakusu:{arch:"bat", type:"kusa", color:"#7cc36a", accent:"#ffcf3a", skill:"luck", numMark:"12", parts:{}, forms:[{n:"ジュウニバット"},{n:"ジュウニバッター",lv:7}], dex:"12の約数は1・2・3・4・6・12の6こ。小さいのに約数が多い。"},
+    warikiren:{arch:"beetle", type:"iwa", color:"#c07a3a", accent:"#ffd9a0", skill:"power", numMark:"91", parts:{}, forms:[{n:"キュウイチ"},{n:"キュウイチカブト",lv:8}], dex:"91は素数に見えて、じつは7×13。素数のふりをするのが得意。"},
+    gousei:{arch:"golem", body:"cube", type:"iwa", color:"#b8c6d8", accent:"#9b5fd1", skill:"heal", numMark:"60", parts:{}, forms:[{n:"ロクジュウ"},{n:"ロクジュウキューブ",lv:9}], dex:"60の約数は12こ。1時間＝60分、1分＝60秒にも使われる、割り切りやすい数。"},
+    num_prime:{arch:"golem", body:"crystal", type:"iwa", color:"#cfe3ff", accent:"#b06aff", skill:"power", legend:true, numMark:"97", parts:{horn:"crown"}, forms:[{n:"プライムオー"}], dex:"97は100までの素数でいちばん大きい。100までの素数は全部で25こ。そすうの森のでんせつのモンスター。"}
   },
   stages:[
     {"id": "s1", "name": "10と20までの素数", "note": "素数とは？ 1は素数？", "wild": ["num_sosu", "yakusu"], "qs": [{"type": "all", "q": "1〜10の数のうち、素数を全部えらぼう", "c": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"], "a": [1, 2, 4, 6], "e": "10までの素数は 2・3・5・7。1は素数ではない（約数が1つだけ）。", "fixed": true}, {"q": "1は素数？", "c": ["素数ではない", "素数", "2の倍数なので素数ではない", "どちらとも決まっていない"], "a": 0, "e": "素数は「1とその数自身の2つだけが約数」の数。1は約数が1つだけなので素数ではない。"}, {"q": "偶数の素数はどれ？", "c": ["2", "4", "6", "10"], "a": 0, "e": "2は約数が1と2だけなので素数。偶数の素数は2だけ。"}, {"q": "9は素数？", "c": ["素数ではない（3×3）", "素数", "素数ではない（2×5）", "素数ではない（1×9だけ）"], "a": 0, "e": "9＝3×3。1と9以外に3でも割り切れるので素数ではない。"}, {"type": "all", "q": "11〜20の数のうち、素数を全部えらぼう", "c": ["11", "12", "13", "14", "15", "16", "17", "18", "19", "20"], "a": [0, 2, 6, 8], "e": "11・13・17・19。15＝3×5、のこりは偶数。", "fixed": true}, {"q": "20までに素数はいくつある？", "c": ["8こ", "7こ", "9こ", "10こ"], "a": 0, "e": "2・3・5・7・11・13・17・19 の8こ。", "n": "8"}]},
@@ -941,11 +941,11 @@ const UNITS = [
   region:"けいさんの谷",
   legend:"num_keisan", mapColor:"#ff7a2f",
   monsters:{
-    heihou:{arch:"golem", body:"cube", type:"iwa", color:"#3d8bff", accent:"#e9f5ff", skill:"power", parts:{horn:"twin"}, forms:[{n:"ヘイホウ"},{n:"ヘイホウキング",lv:8}], dex:"同じ数を2回かけるとどんどん大きくなる四角いゴーレム。"},
-    baibain:{arch:"serpent", type:"hono", color:"#ff7a2f", accent:"#ffd23f", skill:"luck", parts:{pat:"zigzag"}, forms:[{n:"バイバイン"},{n:"バイバインリュウ",lv:8}], dex:"1回ごとに体の長さが2倍になる竜。10回で1024倍。"},
-    bunsuu:{arch:"fox", type:"mizu", color:"#ff9db0", accent:"#ffffff", skill:"heal", parts:{pat:"spots", acc:"scarf", accColor:"#e8475a"}, forms:[{n:"ブンスウ"},{n:"ブンスウギツネ",lv:7}], dex:"8つに分けたピザが大すき。1切れは0.125。"},
-    shousuu:{arch:"bird", type:"kusa", color:"#d9f2b4", accent:"#4fa636", skill:"hint", parts:{horn:"crest"}, forms:[{n:"ショウスウ"},{n:"ショウスウバード",lv:9}], dex:"小数点の上を飛びまわる鳥。0.375は3/8だと知っている。"},
-    num_keisan:{arch:"dragon", type:"hono", color:"#ffcf3a", accent:"#e8475a", skill:"power", legend:true, parts:{horn:"crown", pat:"stripes", acc:"gem", accColor:"#3d8bff"}, forms:[{n:"ケイサンリュウ"}], dex:"25×4＝100、125×8＝1000 を一瞬で計算する、けいさんの谷のでんせつの竜。"}
+    heihou:{arch:"golem", body:"cube", type:"iwa", color:"#3d8bff", accent:"#e9f5ff", skill:"power", numMark:"1024", parts:{horn:"twin"}, forms:[{n:"センニーヨン"},{n:"センニーヨンキング",lv:8}], dex:"1024は2を10回かけた数。1000に近いので、コンピューターの世界では「キロ」の代わりに使われる。"},
+    baibain:{arch:"serpent", type:"hono", color:"#ff7a2f", accent:"#ffd23f", skill:"luck", numMark:"128", parts:{}, forms:[{n:"イチニッパ"},{n:"イチニッパリュウ",lv:8}], dex:"128は2を7回かけた数。2→4→8→16→32→64→128と、1回ごとに体が2倍になる。"},
+    bunsuu:{arch:"fox", type:"mizu", color:"#ff9db0", accent:"#ffffff", skill:"heal", numMark:"0.125", parts:{acc:"scarf", accColor:"#e8475a"}, forms:[{n:"テンイチニーゴ"},{n:"テンイチニーゴギツネ",lv:7}], dex:"0.125＝1/8。8つに分けたピザ1切れ分。8こ集まると1になる。"},
+    shousuu:{arch:"bird", type:"kusa", color:"#d9f2b4", accent:"#4fa636", skill:"hint", numMark:"0.375", parts:{horn:"crest"}, forms:[{n:"サンパチ"},{n:"サンパチバード",lv:9}], dex:"0.375＝3/8。0.125（1/8）の3こ分。"},
+    num_keisan:{arch:"dragon", type:"hono", color:"#ffcf3a", accent:"#e8475a", skill:"power", legend:true, numMark:"1001", parts:{horn:"crown", acc:"gem", accColor:"#3d8bff"}, forms:[{n:"センイチリュウ"}], dex:"1001＝7×11×13。3つの素数をかけた、ふしぎな数の竜。125×8＝1000、25×4＝100 も一瞬で計算する。けいさんの谷のでんせつ。"}
   },
   stages:[
     {"id": "s2", "name": "2を何回もかける", "note": "4・8・16 … 1024", "wild": ["baibain", "heihou", "bunsuu"], "qs": [{"q": "2を2回かけた数は？", "c": ["4", "8", "2", "6"], "a": 0, "e": "2を2回かけると 2×2＝4", "n": "4"}, {"q": "2を3回かけた数は？", "c": ["8", "16", "4", "6"], "a": 0, "e": "2を3回かけると 2×2×2＝8", "n": "8"}, {"q": "2を4回かけた数は？", "c": ["16", "32", "8", "18"], "a": 0, "e": "2を4回かけると 2×2×2×2＝16", "n": "16"}, {"q": "2を5回かけた数は？", "c": ["32", "64", "16", "10"], "a": 0, "e": "2を5回かけると 2×2×2×2×2＝32", "n": "32"}, {"q": "2を6回かけた数は？", "c": ["64", "128", "32", "12"], "a": 0, "e": "2を6回かけると 2×2×2×2×2×2＝64", "n": "64"}, {"q": "2を7回かけた数は？", "c": ["128", "256", "64", "14"], "a": 0, "e": "2を7回かけると 2×2×2×2×2×2×2＝128", "n": "128"}, {"q": "2を8回かけた数は？", "c": ["256", "512", "128", "16"], "a": 0, "e": "2を8回かけると 2×2×2×2×2×2×2×2＝256", "n": "256"}, {"q": "2を9回かけた数は？", "c": ["512", "1024", "256", "18"], "a": 0, "e": "2を9回かけると 2×2×2×2×2×2×2×2×2＝512", "n": "512"}, {"q": "2を10回かけた数は？", "c": ["1024", "2048", "512", "20"], "a": 0, "e": "2を10回かけると 2×2×2×2×2×2×2×2×2×2＝1024", "n": "1024"}, {"q": "1024 は 2を何回かけた数？", "c": ["10回", "8回", "9回", "11回"], "a": 0, "e": "2×2×…（10回）＝1024", "n": "10"}]},
@@ -1377,6 +1377,9 @@ function art(id, lv=1, opt={}){
   if(s.mega && !sil){ const gid="mg"+(++PUID); g = `<defs><radialGradient id="${gid}"><stop offset="0" stop-color="#ff3df0" stop-opacity="0"/><stop offset=".62" stop-color="#ff3df0" stop-opacity="0"/><stop offset=".8" stop-color="#b06aff" stop-opacity=".45"/><stop offset="1" stop-color="#3dd6ff" stop-opacity="0"/></radialGradient></defs><circle cx="60" cy="64" r="58" fill="url(#${gid})"/>` + g + `<g transform="translate(100 18)"><circle r="11" fill="#24324a"/><circle r="8.5" fill="none" stroke="#ff3df0" stroke-width="2.5"/><path d="M-4 3 V-3 L0 1 L4 -3 V3" fill="none" stroke="#3dd6ff" stroke-width="2.2" stroke-linejoin="round"/></g>`; }
   if(s.rare && !sil){ let sp=""; for(const [x,y,r] of [[14,30,5],[104,26,6],[100,80,4],[18,86,4],[60,10,4]]) sp+=`<path transform="translate(${x} ${y}) scale(${r/5})" d="M0 -5 L1.3 -1.3 L5 0 L1.3 1.3 L0 5 L-1.3 1.3 L-5 0 L-1.3 -1.3Z" fill="#ffcf3a" stroke="#24324a" stroke-width="1"/>`; g = g + sp; }
   if(s.parts){ const a=PANCH[arch](f); g = partsBack(o,s.parts,a) + g + partsFront(o,s.parts,a,++PUID); }
+  if(s.numMark && !sil){ const a=PANCH[arch]?PANCH[arch](f):null, t=String(s.numMark), fs=t.length>4?9.5:11, w=8+t.length*fs*.6;
+    const [cx,cy]=a&&a.p?[a.p[0],a.p[1]]:[60,84];
+    g += `<g transform="translate(${cx} ${cy})"><rect x="${-w/2}" y="-8.5" width="${w}" height="17" rx="7" fill="#fff" stroke="#24324a" stroke-width="2.2"/><text y="${fs*.37}" text-anchor="middle" font-size="${fs}" font-weight="900" fill="#24324a" font-family="system-ui,sans-serif">${esc(t)}</text></g>`; }
   if(sil) g = g.replace(/fill="#[0-9a-f]{3,6}"/gi,`fill="${K}"`).replace(/stroke="#[0-9a-f]{3,6}"/gi,`stroke="${K}"`);
   const sc = [0.84, 0.92, 0.97][f];
   return `<svg viewBox="0 0 120 120" aria-hidden="true"><ellipse cx="60" cy="108" rx="${34*sc}" ry="5" fill="${K}" opacity=".12"/><g transform="translate(60 108) scale(${sc}) translate(-60 -108)">${g}</g></svg>`;
@@ -2011,7 +2014,7 @@ const MEGA_NEED = 3;
 const MEGA = {};
 function megaOf(src, where){
   const b = SP[src];
-  return {arch:b.arch, body:b.body, beak:b.beak, type:b.type, color:b.accent, accent:b.color, skill:b.skill, legend:true, mega:true, src, where,
+  return {arch:b.arch, body:b.body, beak:b.beak, numMark:b.numMark, type:b.type, color:b.accent, accent:b.color, skill:b.skill, legend:true, mega:true, src, where,
     parts:Object.assign({}, b.parts||{}, {horn:(b.parts&&b.parts.horn)==="crown"?"twin":"crown", pat:"stars", wing:"crystal", acc:"gem", accColor:"#ff3df0"}),
     forms:[{n:"メガ"+b.forms[0].n}],
     dex:`${b.forms[0].n}が、ニガテをのりこえた力でメガシンカした姿。まちがえた問題を全部とりかえした人だけが出会える。`};
