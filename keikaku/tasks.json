@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated": "2026-10-24T16:53+09:00",
+ "updated": "2026-10-25T05:53+09:00",
  "week": {
   "0": "テニス",
   "1": "",
@@ -634,6 +634,32 @@
    "due": "",
    "suggest": "2026-11-07",
    "doneInNotebook": false
+  },
+  {
+   "id": "h_hmvd9w2ye_20261108",
+   "kind": "habit",
+   "subj": "国語",
+   "src": "学校",
+   "title": "学校の漢字",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-11-08",
+   "due": "",
+   "suggest": "2026-11-08",
+   "doneInNotebook": false
+  },
+  {
+   "id": "h_rmvd9jjaq_20261108",
+   "kind": "habit",
+   "subj": "算数",
+   "src": "塾",
+   "title": "計算",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-11-08",
+   "due": "",
+   "suggest": "2026-11-08",
+   "doneInNotebook": false
   }
  ],
  "tests": [
@@ -690,6 +716,11 @@
   {
    "title": "塾",
    "due": "2026-12-23",
+   "off": true
+  },
+  {
+   "title": "塾",
+   "due": "2026-12-24",
    "off": true
   }
  ]
