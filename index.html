@@ -2,6 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-cache">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>理科クエスト</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -392,6 +393,7 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .choices.allgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .choices.allgrid .choice{justify-content:center;font-family:var(--display);font-size:20px;padding:10px 4px}
 [hidden]{display:none!important}
+.updbar{position:fixed;left:12px;right:12px;top:calc(10px + env(safe-area-inset-top,0px));z-index:50;border:3px solid var(--ink);border-radius:14px;background:var(--accent);color:#fff;font-family:var(--display);font-size:17px;padding:12px;box-shadow:0 4px 0 var(--ink)}
 </style>
 
 <div class="wrap" id="app"></div>
@@ -2550,6 +2552,20 @@ function finish(win){
   document.getElementById("again").onclick=()=>{ if(s==="review" && !Object.keys(save.wrong).some(k=>k.startsWith(u+"|"))) return home(); startBattle(u,s); };
   document.getElementById("map").onclick=()=>{ B=null; tab="adv"; home(); };
 }
+
+/* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
+const APP_VER="20261024090304";
+function checkUpdate(){
+  if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
+  fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
+    if(!j || !j.v || j.v===APP_VER || document.getElementById("updbar")) return;
+    const d=document.createElement("button"); d.id="updbar"; d.className="updbar";
+    d.innerHTML="新しい版があります。タップして更新！"; d.onclick=()=>location.replace(location.pathname+"?v="+j.v);
+    document.body.appendChild(d);
+  }).catch(()=>{});
+}
+document.addEventListener("visibilitychange",()=>{ if(!document.hidden) checkUpdate(); });
+setTimeout(checkUpdate,1500);
 
 home();
 </script>
