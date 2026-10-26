@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated": "2026-10-26T05:53+09:00",
+ "updated": "2026-10-27T05:55+09:00",
  "week": {
   "0": "テニス",
   "1": "",
@@ -75,19 +75,6 @@
    "due": "",
    "suggest": "2026-10-21",
    "doneInNotebook": false
-  },
-  {
-   "id": "h_rmvd9jjaq_20261019",
-   "kind": "habit",
-   "subj": "算数",
-   "src": "塾",
-   "title": "計算",
-   "lesson": "",
-   "detail": "",
-   "assigned": "2026-10-19",
-   "due": "",
-   "suggest": "2026-10-19",
-   "doneInNotebook": true
   },
   {
    "id": "r_r1_20261020",
@@ -686,6 +673,32 @@
    "due": "2026-11-16",
    "suggest": "",
    "doneInNotebook": false
+  },
+  {
+   "id": "r_r1_20261110",
+   "kind": "hw",
+   "subj": "算数",
+   "src": "塾",
+   "title": "算数の宿題",
+   "lesson": "4下第10回 第6回～第9回のまとめ",
+   "detail": "4下第10回",
+   "assigned": "2026-11-10",
+   "due": "2026-11-17",
+   "suggest": "2026-11-14",
+   "doneInNotebook": false
+  },
+  {
+   "id": "r_r2_20261110",
+   "kind": "hw",
+   "subj": "理科",
+   "src": "塾",
+   "title": "理科の宿題",
+   "lesson": "4下第10回 第6回～第9回のまとめ",
+   "detail": "",
+   "assigned": "2026-11-10",
+   "due": "2026-11-17",
+   "suggest": "2026-11-15",
+   "doneInNotebook": false
   }
  ],
  "tests": [
@@ -753,6 +766,11 @@
    "title": "塾",
    "due": "2026-12-25",
    "off": true
+  },
+  {
+   "title": "冬期講習",
+   "due": "2026-12-26",
+   "off": false
   }
  ]
 }
