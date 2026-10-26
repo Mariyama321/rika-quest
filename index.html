@@ -394,6 +394,20 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .choices.allgrid .choice{justify-content:center;font-family:var(--display);font-size:20px;padding:10px 4px}
 [hidden]{display:none!important}
 .updbar{position:fixed;left:12px;right:12px;top:calc(10px + env(safe-area-inset-top,0px));z-index:50;border:3px solid var(--ink);border-radius:14px;background:var(--accent);color:#fff;font-family:var(--display);font-size:17px;padding:12px;box-shadow:0 4px 0 var(--ink)}
+.urcard{width:100%;border-color:#8f6bff;box-shadow:0 4px 0 #8f6bff;background:linear-gradient(120deg,#fff0f6,#fff9d6,#e6fff4,#e8f1ff,#f3e8ff)}
+.urcell{background:linear-gradient(120deg,#fff0f6,#fff9d6,#e8f1ff)}
+.ursvg{animation:urfloat 3s ease-in-out infinite}
+@keyframes urfloat{50%{transform:translateY(-3px)}}
+.urstage{background:radial-gradient(circle at 50% 45%,#7a5cff 0,#2a1f5a 70%)}
+.fracpanel{margin-top:12px;padding:10px 12px;background:linear-gradient(135deg,#fff0f6,#f3e8ff)}
+.fphead{display:flex;gap:10px;align-items:center}
+.fphead .mon{width:64px;height:64px;flex:none}
+.fphead b{display:block;font-family:var(--display);font-weight:400;font-size:17px}
+.fpcards{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:8px}
+.fpc{border:2px dashed #c8d2de;border-radius:10px;padding:5px 8px;background:#fff;display:flex;justify-content:space-between;align-items:center;gap:4px;font-size:13px}
+.fpc.part{border-style:solid;border-color:var(--ink)}
+.fpc.full{border:2px solid #8f6bff;background:#f3e8ff}
+.fpc i{font-style:normal;color:var(--sun);-webkit-text-stroke:.6px var(--ink);white-space:nowrap}.fpc i .off{color:#dfe6ee}
 </style>
 
 <div class="wrap" id="app"></div>
@@ -1114,6 +1128,26 @@ const UNITS = [
        e:"日本では「食品の安全」に対する関心が高まっているため、原産国の表示などが行われています。"}
     ]}
   ]
+},
+{
+  id:"sansu-4", no:4, label:"算数4", title:"分数と小数", subject:"算数", added:"2026-10-26",
+  region:"ぶんすうの城",
+  legend:"num_bunsuuou", mapColor:"#ff6ad5",
+  cards:["1/2", "1/4", "3/4", "1/5", "2/5", "3/5", "4/5", "1/8", "3/8", "5/8", "7/8"],
+  monsters:{
+    num_half:{arch:"fox", type:"mizu", color:"#7cc8ff", accent:"#ffffff", skill:"heal", numMark:"1/2", parts:{acc:"bell", accColor:"#ffcf3a"}, forms:[{n:"ハンブンコ"},{n:"ハンブンギツネ",lv:8}], dex:"1/2＝0.5。何でもぴったり半分こにするキツネ。2/4 も 4/8 も 0.5 と同じ。"},
+    num_quarter:{arch:"bird", type:"kusa", color:"#9fe07a", accent:"#ffcf3a", skill:"luck", numMark:"1/4", parts:{horn:"crest"}, forms:[{n:"ヨンブンノ"},{n:"クォーターバード",lv:8}], dex:"1/4＝0.25。3羽集まると 3/4＝0.75、4羽で1になる。"},
+    num_fifth:{arch:"bat", type:"hono", color:"#ff9a4a", accent:"#ffd23f", skill:"hint", numMark:"1/5", parts:{}, forms:[{n:"ゴブット"},{n:"ゴブットバット",lv:8}], dex:"1/5＝0.2。2/5＝0.4、3/5＝0.6、4/5＝0.8 と、0.2ずつふえていく。"},
+    num_eighth:{arch:"beetle", type:"iwa", color:"#c9a26b", accent:"#ffe28a", skill:"power", numMark:"1/8", parts:{}, forms:[{n:"ハチブン"},{n:"ハチブンカブト",lv:9}], dex:"1/8＝0.125。小さいけれど、3/8・5/8・7/8 のもとになる大事な数。"},
+    num_pizza:{arch:"golem", body:"round", type:"hono", color:"#ffcf3a", accent:"#e8475a", skill:"heal", numMark:"3/8", parts:{pat:"spots"}, forms:[{n:"ピッツァン"},{n:"ピッツァゴーレム",lv:9}], dex:"8つに切ったピザの3切れ分。3/8＝0.375。5切れなら 0.625、7切れなら 0.875。"},
+    num_bunsuuou:{arch:"dragon", type:"mizu", color:"#ff6ad5", accent:"#ffe28a", skill:"power", legend:true, numMark:"7/8", parts:{horn:"crown", acc:"gem", accColor:"#3d8bff"}, forms:[{n:"ブンスウリュウ"}], dex:"7/8＝0.875。ぶんすうの城をまもるでんせつの竜。この城のどこかに、もっとすごいモンスターがいるらしい…。"}
+  },
+  stages:[
+    {"id": "s1", "name": "2分の1と4分の1", "note": "1/2＝0.5、1/4＝0.25、3/4＝0.75", "wild": ["num_half", "num_quarter"], "qs": [{"q": "1/2 を小数にすると？", "c": ["0.5", "0.12", "0.4", "0.6"], "a": 0, "n": "0.5", "f": "1/2", "e": "1/2＝1÷2＝0.5"}, {"q": "0.5 を分数にすると？", "c": ["1/2", "2/5", "3/5", "3/8"], "a": 0, "f": "1/2", "e": "0.5＝1/2"}, {"q": "1/4 を小数にすると？", "c": ["0.25", "0.14", "0.2", "0.125"], "a": 0, "n": "0.25", "f": "1/4", "e": "1/4＝1÷4＝0.25"}, {"q": "0.25 を分数にすると？", "c": ["1/4", "1/5", "1/8", "3/8"], "a": 0, "f": "1/4", "e": "0.25＝1/4"}, {"q": "3/4 を小数にすると？", "c": ["0.75", "0.34", "0.8", "0.625"], "a": 0, "n": "0.75", "f": "3/4", "e": "3/4＝3÷4＝0.75"}, {"q": "0.75 を分数にすると？", "c": ["3/4", "4/5", "5/8", "7/8"], "a": 0, "f": "3/4", "e": "0.75＝3/4"}, {"q": "0.25 の3こ分は？", "c": ["0.75", "0.5", "0.325", "0.28"], "a": 0, "n": "0.75", "f": "3/4", "e": "1/4＝0.25 なので、3/4 は 0.25×3＝0.75"}, {"type": "all", "q": "0.5 と同じ大きさのものを全部えらぼう。", "c": ["1/2", "2/4", "4/8", "1/5", "0.25", "3/4"], "a": [0, 1, 2], "e": "1/2＝2/4＝4/8＝0.5", "fixed": true}, {"type": "match", "q": "分数と小数を線でつなごう。", "pairs": [["1/2", "0.5"], ["1/4", "0.25"], ["3/4", "0.75"]], "e": "1/2＝0.5、1/4＝0.25、3/4＝0.75"}]},
+    {"id": "s2", "name": "5分の1のなかま", "note": "1/5＝0.2 から 4/5＝0.8 まで", "wild": ["num_fifth", "num_quarter", "num_half"], "qs": [{"q": "1/5 を小数にすると？", "c": ["0.2", "0.15", "0.25", "0.125"], "a": 0, "n": "0.2", "f": "1/5", "e": "1/5＝1÷5＝0.2"}, {"q": "0.2 を分数にすると？", "c": ["1/5", "1/4", "1/8", "3/8"], "a": 0, "f": "1/5", "e": "0.2＝1/5"}, {"q": "2/5 を小数にすると？", "c": ["0.4", "0.25", "0.375", "0.5"], "a": 0, "n": "0.4", "f": "2/5", "e": "2/5＝2÷5＝0.4"}, {"q": "0.4 を分数にすると？", "c": ["2/5", "3/8", "1/2", "1/4"], "a": 0, "f": "2/5", "e": "0.4＝2/5"}, {"q": "3/5 を小数にすると？", "c": ["0.6", "0.35", "0.625", "0.5"], "a": 0, "n": "0.6", "f": "3/5", "e": "3/5＝3÷5＝0.6"}, {"q": "0.6 を分数にすると？", "c": ["3/5", "5/8", "1/2", "3/4"], "a": 0, "f": "3/5", "e": "0.6＝3/5"}, {"q": "4/5 を小数にすると？", "c": ["0.8", "0.45", "0.75", "0.875"], "a": 0, "n": "0.8", "f": "4/5", "e": "4/5＝4÷5＝0.8"}, {"q": "0.8 を分数にすると？", "c": ["4/5", "3/4", "7/8", "5/8"], "a": 0, "f": "4/5", "e": "0.8＝4/5"}, {"q": "1/5＝0.2。では 3/5 は 0.2 の何こ分？", "c": ["3こ", "5こ", "2こ", "15こ"], "a": 0, "f": "3/5", "e": "3/5 は 1/5（0.2）の3こ分なので 0.2×3＝0.6"}, {"type": "match", "q": "分数と小数を線でつなごう。", "pairs": [["1/5", "0.2"], ["2/5", "0.4"], ["3/5", "0.6"], ["4/5", "0.8"]], "e": "1/5＝0.2、2/5＝0.4、3/5＝0.6、4/5＝0.8"}]},
+    {"id": "s3", "name": "8分の1のなかま", "note": "1/8＝0.125 から 7/8＝0.875 まで", "wild": ["num_eighth", "num_pizza", "num_fifth"], "qs": [{"q": "1/8 を小数にすると？", "c": ["0.125", "0.18", "0.2", "0.25"], "a": 0, "n": "0.125", "f": "1/8", "e": "1/8＝1÷8＝0.125"}, {"q": "0.125 を分数にすると？", "c": ["1/8", "1/5", "1/4", "3/8"], "a": 0, "f": "1/8", "e": "0.125＝1/8"}, {"q": "3/8 を小数にすると？", "c": ["0.375", "0.38", "0.4", "0.5"], "a": 0, "n": "0.375", "f": "3/8", "e": "3/8＝3÷8＝0.375"}, {"q": "0.375 を分数にすると？", "c": ["3/8", "2/5", "1/2", "1/4"], "a": 0, "f": "3/8", "e": "0.375＝3/8"}, {"q": "5/8 を小数にすると？", "c": ["0.625", "0.58", "0.6", "0.5"], "a": 0, "n": "0.625", "f": "5/8", "e": "5/8＝5÷8＝0.625"}, {"q": "0.625 を分数にすると？", "c": ["5/8", "3/5", "1/2", "3/4"], "a": 0, "f": "5/8", "e": "0.625＝5/8"}, {"q": "7/8 を小数にすると？", "c": ["0.875", "0.78", "0.8", "0.75"], "a": 0, "n": "0.875", "f": "7/8", "e": "7/8＝7÷8＝0.875"}, {"q": "0.875 を分数にすると？", "c": ["7/8", "4/5", "3/4", "5/8"], "a": 0, "f": "7/8", "e": "0.875＝7/8"}, {"q": "1/8＝0.125。では 5/8 は？", "c": ["0.625", "0.525", "0.58", "0.6"], "a": 0, "n": "0.625", "f": "5/8", "e": "0.125×5＝0.625"}, {"q": "0.375 は 0.125 の何こ分？", "c": ["3こ", "4こ", "2こ", "5こ"], "a": 0, "f": "3/8", "e": "0.125×3＝0.375 なので 3/8"}, {"type": "match", "q": "分数と小数を線でつなごう。", "pairs": [["1/8", "0.125"], ["3/8", "0.375"], ["5/8", "0.625"], ["7/8", "0.875"]], "e": "1/8＝0.125、3/8＝0.375、5/8＝0.625、7/8＝0.875"}]},
+    {"id": "s4", "name": "ぜんぶまぜて", "note": "11この分数と小数をまぜて", "wild": ["num_pizza", "num_eighth", "num_half", "num_fifth"], "qs": [{"q": "7/8 を小数にすると？", "c": ["0.875", "0.78", "0.8", "0.75"], "a": 0, "n": "0.875", "f": "7/8", "e": "7/8＝7÷8＝0.875"}, {"q": "0.625 を分数にすると？", "c": ["5/8", "3/5", "1/2", "3/4"], "a": 0, "f": "5/8", "e": "0.625＝5/8"}, {"q": "3/8 を小数にすると？", "c": ["0.375", "0.38", "0.4", "0.5"], "a": 0, "n": "0.375", "f": "3/8", "e": "3/8＝3÷8＝0.375"}, {"q": "0.2 を分数にすると？", "c": ["1/5", "1/4", "1/8", "3/8"], "a": 0, "f": "1/5", "e": "0.2＝1/5"}, {"q": "1/4 を小数にすると？", "c": ["0.25", "0.14", "0.2", "0.125"], "a": 0, "n": "0.25", "f": "1/4", "e": "1/4＝1÷4＝0.25"}, {"q": "0.75 を分数にすると？", "c": ["3/4", "4/5", "5/8", "7/8"], "a": 0, "f": "3/4", "e": "0.75＝3/4"}, {"q": "3/5 を小数にすると？", "c": ["0.6", "0.35", "0.625", "0.5"], "a": 0, "n": "0.6", "f": "3/5", "e": "3/5＝3÷5＝0.6"}, {"q": "0.8 を分数にすると？", "c": ["4/5", "3/4", "7/8", "5/8"], "a": 0, "f": "4/5", "e": "0.8＝4/5"}, {"q": "2/5 を小数にすると？", "c": ["0.4", "0.25", "0.375", "0.5"], "a": 0, "n": "0.4", "f": "2/5", "e": "2/5＝2÷5＝0.4"}, {"q": "0.125 を分数にすると？", "c": ["1/8", "1/5", "1/4", "3/8"], "a": 0, "f": "1/8", "e": "0.125＝1/8"}, {"q": "1/2 を小数にすると？", "c": ["0.5", "0.12", "0.4", "0.6"], "a": 0, "n": "0.5", "f": "1/2", "e": "1/2＝1÷2＝0.5"}, {"type": "all", "q": "0.5 より大きいものを全部えらぼう。", "c": ["3/4", "3/5", "5/8", "2/5", "3/8", "1/4"], "a": [0, 1, 2], "e": "3/4＝0.75、3/5＝0.6、5/8＝0.625 は0.5より大きい。2/5＝0.4、3/8＝0.375、1/4＝0.25 は小さい。", "fixed": true}, {"type": "order", "q": "小さい順にならべよう。", "c": ["1/8", "1/5", "1/4", "3/8"], "e": "1/8＝0.125、1/5＝0.2、1/4＝0.25、3/8＝0.375"}, {"type": "order", "q": "小さい順にならべよう。", "c": ["3/5", "5/8", "3/4", "4/5"], "e": "3/5＝0.6、5/8＝0.625、3/4＝0.75、4/5＝0.8"}, {"type": "match", "q": "分数と小数を線でつなごう。", "pairs": [["1/2", "0.5"], ["3/4", "0.75"], ["2/5", "0.4"], ["5/8", "0.625"], ["7/8", "0.875"]], "e": "1/2＝0.5、3/4＝0.75、2/5＝0.4、5/8＝0.625、7/8＝0.875"}]}
+  ]
 }
 /* ↑ 次の単元はこの下に { id:"rika-12", ... } を追加（既存の id は絶対に変えない） */
 ];
@@ -1529,6 +1563,7 @@ function partsFront(o, P, a, uid){
 }
 let PUID=0;
 function art(id, lv=1, opt={}){
+  if(SP[id] && SP[id].custom==="frac") return urFracSVG(!!opt.sil);
   const s = SP[id], f = opt.f!=null ? opt.f : s.legend ? 2 : formIdx(id, lv), sil = !!opt.sil, K = "#24324a";
   const arch = Array.isArray(s.arch) ? s.arch[f] : (s.arch || "beast");
   const C = sil?K:s.color, A = sil?K:s.accent;
@@ -1708,8 +1743,8 @@ function showMap(){
     <div class="stats"><span class="pill">${flaskSVG} フラスコ ×${save.balls}</span><span class="pill">ずかん ${caught} / ${DEX_ORDER.length}</span></div></div>`;
   if(!STORE_OK || saveErr) h += `<div class="card bkcard warn"><b>この開き方では記録を保存できません</b><span>Safariの「プライベート」や、Cookieをすべてブロックする設定だと保存できないことがあります。バックアップコードで記録を守ってください。</span></div>`;
   h += '<!--BKTOP-->';
-  const rg = grantRares(), mg = grantMegas(); if(rg.length||mg.length) h += `<div class="gets">${mg.map(megaCard).join("")}${rg.map(rareCard).join("")}</div>`;
-  const evoId = [...DEX_ORDER,...RARE_ORDER,...QD_ORDER,...MEGA_ORDER].find(id=>canEvo(id));
+  const rg = grantRares(), mg = grantMegas(), ug = grantUR(); if(rg.length||mg.length||ug.length) h += `<div class="gets">${ug.map(urCard).join("")}${mg.map(megaCard).join("")}${rg.map(rareCard).join("")}</div>`;
+  const evoId = [...DEX_ORDER,...RARE_ORDER,...QD_ORDER,...MEGA_ORDER,...UR_ORDER].find(id=>canEvo(id));
   if(evoId) h += `<button class="card prof gift" id="evoNote"><div class="mon" style="width:52px;height:52px;flex:none">${artMine(evoId)}</div><div style="text-align:left"><p>しんかできるなかまがいるよ！</p><p style="font-weight:500">${esc(nameOf(evoId))}をしんかさせよう。タップで「なかま」へ。</p></div></button>`;
   const giftReady = !save.owned.toratch && save.cleared["rika-11|s1"];
   if(giftReady) h += `<button class="card prof gift" id="gift"><div class="face">${profFace}</div><div style="text-align:left"><p>ソラノはかせからプレゼント！</p><p style="font-weight:500">ルート1クリアおめでとう。タップしてうけとろう。</p></div></button>`;
@@ -1734,7 +1769,7 @@ function showMap(){
     const mnote = mp && !save.owned[mid] ? (mp.ever>=MEGA_NEED ? `全部正解すると、メガモンスターがなかまに！` : `まちがえた問題が${MEGA_NEED}問以上になると、克服でメガモンスターが手に入る`) : '';
     if(wn) h += `<button class="card route review" data-u="${u.id}" data-s="review"><div><span class="rn">ふくしゅう</span><b>ニガテの森</b><span class="note">まちがえた問題 のこり${wn}問${mnote?'<br>'+mnote:''}</span></div><div></div>${MEGA[mid]?`<div class="wilds"><div class="mon">${art(mid,1,{sil:!save.owned[mid]})}</div></div>`:''}</button>`;
     else if(MEGA[mid] && save.owned[mid]) h += `<div class="card route review" style="opacity:.8"><div><span class="rn">ふくしゅう</span><b>ニガテの森（克服ずみ）</b><span class="note">メガ${esc(SP[u.legend].forms[0].n)}がなかまになった</span></div><div></div></div>`;
-    h += `</div></section>`;
+    h += `</div>${u.cards?fracPanelHTML(u):''}</section>`;
   }
   const lb = save.lastBackup ? new Date(save.lastBackup) : null;
   const stale = !lb || (Date.now()-lb.getTime() > 3*24*3600*1000);
@@ -1838,7 +1873,7 @@ let partySel = null;
 function showParty(){
   const lead = save.party[0], o = save.owned[lead], s = SP[lead];
   const nf = s.forms[curF(lead)+1];
-  const ids = [...DEX_ORDER, ...RARE_ORDER, ...QD_ORDER, ...MEGA_ORDER].filter(id=>save.owned[id]);
+  const ids = [...UR_ORDER, ...DEX_ORDER, ...RARE_ORDER, ...QD_ORDER, ...MEGA_ORDER].filter(id=>save.owned[id]);
   if(!partySel || !save.owned[partySel]) partySel = lead;
   const d = partySel, dO = save.owned[d], inP = save.party.includes(d);
   app.innerHTML = `<h2 class="sec-h">なかま</h2>
@@ -1872,7 +1907,7 @@ function showDex(){
   let h = `<h2 class="sec-h">モンスターずかん</h2><p class="dexcount">つかまえた ${caught}・見つけた ${seen}・ぜんぶで ${DEX_ORDER.length}</p>`;
   if(dexSel && save.seen[dexSel]){
     const s=SP[dexSel], own=save.owned[dexSel];
-    h += `<div class="card detail" style="margin:0 0 14px"><div class="row"><div class="mon">${(own?artMine(dexSel):art(dexSel,1,{sil:true}))}</div><div style="min-width:0"><span class="mini">${s.mega?'メガモンスター（'+esc(megaWhere(dexSel))+'を克服）':s.qd?'クイズダンジョンの伝説のドラゴン':s.egg?'たまごから生まれるモンスター':s.rare?`${MAPD[s.pref][0]}のレアモンスター`:`No.${String(DEX_ORDER.indexOf(dexSel)+1).padStart(3,"0")}`}</span><h3>${esc(own?nameOf(dexSel):s.forms[0].n)}</h3>${typeChip(s.type)}</div></div>
+    h += `<div class="card detail" style="margin:0 0 14px"><div class="row"><div class="mon">${(own?artMine(dexSel):art(dexSel,1,{sil:true}))}</div><div style="min-width:0"><span class="mini">${s.ur?'ウルトラレアモンスター':s.mega?'メガモンスター（'+esc(megaWhere(dexSel))+'を克服）':s.qd?'クイズダンジョンの伝説のドラゴン':s.egg?'たまごから生まれるモンスター':s.rare?`${MAPD[s.pref][0]}のレアモンスター`:`No.${String(DEX_ORDER.indexOf(dexSel)+1).padStart(3,"0")}`}</span><h3>${esc(own?nameOf(dexSel):s.forms[0].n)}</h3>${typeChip(s.type)}</div></div>
       <p>${own?esc(s.dex):'まだつかまえていない。つかまえると、くわしいことがわかるよ。'}</p>${own&&s.forms.length>1?`<p class="mini">しんか：${s.forms.map(f=>f.n+(f.lv?`（Lv.${f.lv}）`:'')).join(" → ")}</p>`:''}</div>`;
   }
   h += `<div class="grid3">${DEX_ORDER.map((id,i)=>{
@@ -1881,6 +1916,7 @@ function showDex(){
     const own = save.owned[id];
     return `<button class="card mcard" data-id="${id}"><span class="no">${no}</span><div class="mon">${(own?artMine(id):art(id,1,{sil:true}))}</div><b>${esc(own?nameOf(id):SP[id].forms[0].n)}</b>${own?typeChip(SP[id].type):'<span class="mini">見つけた</span>'}</button>`;
   }).join("")}</div>`;
+  h += `<h2 class="sec-h" style="margin-top:22px">ウルトラレア</h2><p class="dexcount">算数4「ぶんすうの城」の分数カードを全部★3にすると…</p><div class="grid3">${UR_ORDER.map(id=>save.owned[id]?`<button class="card mcard urcell" data-id="${id}"><span class="no">ウルトラレア</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typeChip(SP[id].type)}</button>`:`<div class="card mcard unseen"><span class="no">ウルトラレア</span><div class="mon">${art(id,1,{sil:true})}</div><b>？？？</b></div>`).join("")}</div>`;
   const rc = RARE_ORDER.filter(id=>save.owned[id]).length;
   h += `<h2 class="sec-h" style="margin-top:22px">都道府県のレアモンスター</h2><p class="dexcount">なかまにした ${rc} / 47　（「ちず」でその都道府県を「かんぜん」にすると手に入る）</p>`;
   h += `<div class="grid3">${RARE_ORDER.map(id=>{ const pn=MAPD[RARE[id].pref][0];
@@ -2209,6 +2245,69 @@ const megaCard = id => `<div class="card get evo megacard"><div class="mon">${ar
 
 /* さんすう道場（v20）は v21 で廃止。数字モンスターは算数の単元（sansu-1〜3）に移した。save.calc は使わない */
 
+/* ---------- ウルトラレア：分数の神 フラクシオン（専用の絵） ---------- */
+function urFracSVG(sil){
+  const K="#24324a", P=(c)=>sil?K:c;
+  const wedge=(cx,cy,r,a0,a1,fill)=>{ const p=a=>[cx+r*Math.cos(a*Math.PI/180), cy+r*Math.sin(a*Math.PI/180)];
+    const [x0,y0]=p(a0),[x1,y1]=p(a1); return `<path d="M${cx} ${cy} L${x0.toFixed(1)} ${y0.toFixed(1)} A${r} ${r} 0 ${a1-a0>180?1:0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}Z" fill="${fill}" stroke="${K}" stroke-width="2" stroke-linejoin="round"/>`; };
+  const RB=["#ff5a6e","#ff9a3d","#ffd23f","#7ed957","#3dd6c6","#3d8bff","#8f6bff","#ff6ad5"];
+  let s="";
+  if(!sil){ for(let i=0;i<8;i++){ const a0=-90+i*45+3, a1=a0+39, r=56, p=a=>[60+r*Math.cos(a*Math.PI/180), 64+r*Math.sin(a*Math.PI/180)]; const [x0,y0]=p(a0),[x1,y1]=p(a1);
+      s+=`<path d="M${x0.toFixed(1)} ${y0.toFixed(1)} A${r} ${r} 0 0 1 ${x1.toFixed(1)} ${y1.toFixed(1)}" fill="none" stroke="${RB[i]}" stroke-width="5" stroke-linecap="round" opacity=".85"/>`; }
+    s+=`<circle cx="60" cy="64" r="48" fill="#fff6c9" opacity=".35"/>`; }
+  // つばさ：左は4分の1、右は4分の1を8分の1ずつに
+  s+=wedge(44,62,40,180,225,P("#b39bff"))+wedge(44,62,40,225,270,P("#8f6bff"));
+  s+=wedge(76,62,40,270,315,P("#7cc8ff"))+wedge(76,62,40,315,360,P("#3d8bff"));
+  // しっぽ（2分の1の半円）
+  s+=`<path d="M60 96 Q86 104 98 90 Q92 104 76 108 Q64 110 60 104Z" fill="${P("#ffcf3a")}" stroke="${K}" stroke-width="2.5" stroke-linejoin="round"/>`;
+  // 足
+  s+=`<rect x="46" y="92" width="9" height="13" rx="4" fill="${P("#f3c84b")}" stroke="${K}" stroke-width="2.5"/><rect x="65" y="92" width="9" height="13" rx="4" fill="${P("#f3c84b")}" stroke="${K}" stroke-width="2.5"/>`;
+  // 体：8つに分けたまるい体（ピザ）
+  for(let i=0;i<8;i++) s+=wedge(60,76,22,-90+i*45,-45+i*45,P(i%2?"#fff4d6":(i<3?"#ff9a3d":"#ffd23f")));
+  s+=`<circle cx="60" cy="76" r="5" fill="${P("#fff")}" stroke="${K}" stroke-width="2"/>`;
+  // 頭
+  s+=`<path d="M40 44 Q40 24 60 24 Q80 24 80 44 Q80 58 60 58 Q40 58 40 44Z" fill="${P("#ffe28a")}" stroke="${K}" stroke-width="3" stroke-linejoin="round"/>`;
+  // 王冠（5つの先）
+  s+=`<path d="M45 27 L44 13 L51 21 L55 9 L60 19 L65 9 L69 21 L76 13 L75 27Z" fill="${P("#ffcf3a")}" stroke="${K}" stroke-width="2.5" stroke-linejoin="round"/>`;
+  if(!sil) s+=`<circle cx="60" cy="20" r="2.6" fill="#ff6ad5" stroke="${K}" stroke-width="1.2"/><circle cx="51" cy="22" r="1.8" fill="#3d8bff"/><circle cx="69" cy="22" r="1.8" fill="#7ed957"/>`;
+  // 目と口
+  if(!sil) s+=`<ellipse cx="52" cy="42" rx="4" ry="5" fill="#fff" stroke="${K}" stroke-width="2"/><ellipse cx="68" cy="42" rx="4" ry="5" fill="#fff" stroke="${K}" stroke-width="2"/><circle cx="53" cy="43" r="2.4" fill="#8f6bff"/><circle cx="69" cy="43" r="2.4" fill="#8f6bff"/><circle cx="54" cy="41.5" r=".9" fill="#fff"/><circle cx="70" cy="41.5" r=".9" fill="#fff"/><path d="M55 51 Q60 55 65 51" fill="none" stroke="${K}" stroke-width="2" stroke-linecap="round"/><circle cx="46" cy="49" r="2.5" fill="#ff9db0" opacity=".7"/><circle cx="74" cy="49" r="2.5" fill="#ff9db0" opacity=".7"/>`;
+  // きらきら
+  if(!sil) for(const [x,y,r] of [[10,22,5],[110,30,6],[106,98,4],[14,96,4],[60,4,4],[22,60,3],[100,64,3]]) s+=`<path transform="translate(${x} ${y}) scale(${r/5})" d="M0 -5 L1.3 -1.3 L5 0 L1.3 1.3 L0 5 L-1.3 1.3 L-5 0 L-1.3 -1.3Z" fill="#fff6a8" stroke="${K}" stroke-width="1"/>`;
+  return `<svg viewBox="0 0 120 120" aria-hidden="true"${sil?'':' class="ursvg"'}><ellipse cx="60" cy="110" rx="30" ry="5" fill="${K}" opacity=".12"/>${s}</svg>`;
+}
+/* ウルトラレア：分数カード（sansu-4 の cards）を全部★3（ちがう日に3回、1回目で正解）にするとなかまに。save.fracCards = {"1/2":{n,last}} */
+const UR = {
+  ur_frac:{arch:"dragon", custom:"frac", type:"mizu", color:"#ffe28a", accent:"#8f6bff", skill:"power", legend:true, ur:true, forms:[{n:"フラクシオン"}],
+    dex:"分数の神。つばさは4分の1、体は8分の1ずつに分かれ、しっぽは2分の1の半月。1/2・1/4・3/4・1/5〜4/5・1/8〜7/8 の11の分数と小数をすべておぼえた人の前にだけあらわれる、ウルトラレアモンスター。"}
+};
+Object.assign(SP, UR);
+const UR_ORDER = Object.keys(UR);
+const FRAC_DEC = {"1/2": "0.5", "1/4": "0.25", "3/4": "0.75", "1/5": "0.2", "2/5": "0.4", "3/5": "0.6", "4/5": "0.8", "1/8": "0.125", "3/8": "0.375", "5/8": "0.625", "7/8": "0.875"};
+const FRAC_UNIT = () => UNITS.find(u=>u.id==="sansu-4");
+function fracS(){ return save.fracCards || (save.fracCards={}); }
+function fracMark(f){ const c=fracS()[f]||(fracS()[f]={n:0,last:""}), t=today(); if(c.last===t || c.n>=3) return false; c.n++; c.last=t; return true; }
+function fracDone(){ const u=FRAC_UNIT(); return u.cards.filter(f=>(fracS()[f]||{}).n>=3).length; }
+function grantUR(){ const u=FRAC_UNIT(); if(!u || save.owned.ur_frac) return []; if(fracDone()<u.cards.length) return [];
+  save.owned.ur_frac={lv:30,exp:0,form:0}; save.seen.ur_frac=1; if(save.party.length<3) save.party.push("ur_frac"); persist(); return ["ur_frac"]; }
+const urCard = id => `<button class="card get urcard" data-ur="${id}"><div class="mon">${artMine(id)}</div><div style="text-align:left"><b>ウルトラレア ${esc(nameOf(id))}</b><span>分数カードが全部そろった！ タップして会いにいこう</span></div></button>`;
+function fracPanelHTML(u){
+  const c=fracS(), done=fracDone(), own=save.owned.ur_frac;
+  return `<div class="card fracpanel"><div class="fphead"><div class="mon">${own?artMine("ur_frac"):art("ur_frac",1,{sil:true})}</div><div><b>分数カード ${done} / ${u.cards.length}</b><span class="mini">${own?'ウルトラレア フラクシオンがなかまになった！':'1回目で正解すると、その分数のカードに★がつく（1まい1日1つまで）。11まい全部★3にすると、ウルトラレアモンスターが…！'}</span></div></div>
+    <div class="fpcards">${u.cards.map(f=>{ const n=(c[f]||{}).n||0; return `<div class="fpc ${n>=3?'full':n?'part':''}"><b>${n?`${f} ＝ ${FRAC_DEC[f]}`:`${f} ＝ ？`}</b><i>${[0,1,2].map(i=>i<n?'★':'<span class="off">★</span>').join("")}</i></div>`; }).join("")}</div></div>`;
+}
+function showUR(id){
+  showTabs(false); window.scrollTo(0,0);
+  app.innerHTML=`<div class="evo-stage urstage" id="es"><p class="evo-msg" id="em">ぶんすうの城の奥から、まぶしい光が…！</p>
+    <div class="evo-box"><div class="evo-glow"></div><div class="mon evo-a">${art(id,1,{sil:true})}</div><div class="mon evo-b">${art(id,1)}</div>${'<i class="spark"></i>'.repeat(8)}</div><div id="eb" class="evo-btns"></div></div>`;
+  const es=document.getElementById("es"); requestAnimationFrame(()=>es.classList.add("run"));
+  setTimeout(()=>{ es.classList.remove("run"); es.classList.add("done");
+    document.getElementById("em").innerHTML=`ウルトラレア <b>${esc(nameOf(id))}</b> があらわれた！<br><span style="font-size:13px;font-weight:500">${esc(SP[id].dex)}</span>`;
+    document.getElementById("eb").innerHTML=`<button class="btn go" id="ok">なかまにする！</button>`;
+    document.getElementById("ok").onclick=()=>{ tab="party"; partySel=id; home(); }; }, 3400);
+}
+document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest("[data-ur]"); if(b){ B=null; showUR(b.dataset.ur); } });
+
 /* ---------- battle ---------- */
 let B = null;
 function startBattle(uid, sid){
@@ -2439,6 +2538,7 @@ function judge(picked){
     if(B.combo%3===0){ save.balls++; B.ballsGot++; bonus=`<p><b>${B.combo}コンボ！ フラスコを1つひろった！</b></p>`; }
     if(B.sid==="review") delete save.wrong[item.key];
     if(!B.qd) (save.okOnce=save.okOnce||{})[item.key]=1;
+    if(!B.qd && q.f && !item.missed && fracMark(q.f)) B.fracUp=(B.fracUp||0)+1;
     B.queue.shift(); persist();
     addExp(B.lead, 6); save.party.forEach(id=>{ if(id!==B.lead) addExp(id,3); });
     const {m} = dmgOf();
@@ -2450,6 +2550,7 @@ function judge(picked){
     setLog(`<b>${esc(nameOf(B.lead))}</b>がやる気になった！ どうする？`);
   }else{
     B.combo=0; B.hearts--; B.mistakes++;
+    item.missed=true;
     if(!B.qd){ save.wrong[item.key]=(save.wrong[item.key]||0)+1; (save.wrongEver=save.wrongEver||{})[item.key]=1; }
     item.hidden=[]; item.seq=[]; item.pairs={}; item.selL=null; item.selP=null; item.input="";
     if(B.tower){ B.queue.shift(); B.queue.push(towerNext()); } else B.queue.push(B.queue.shift());
@@ -2529,9 +2630,11 @@ function finish(win){
     addExp(B.lead, stars*5);
   }
   persist();
-  const rares = grantRares(), megas = grantMegas();
+  const rares = grantRares(), megas = grantMegas(), urs = grantUR();
   const lvAfter = prefLevels(), newCol = Object.keys(lvAfter).filter(p=>lvAfter[p]>(B.colBefore[p]||0));
   const gets = [
+    ...urs.map(urCard),
+    ...(B.fracUp?[`<div class="card get"><div class="mon">${art("ur_frac",1,{sil:true})}</div><div><b>分数カードに★が ${B.fracUp}こ ついた！</b><span>分数カード ${fracDone()} / ${FRAC_UNIT().cards.length} が★3</span></div></div>`]:[]),
     ...megas.map(megaCard),
     ...rares.map(rareCard),
     ...(newCol.length?[`<div class="card get evo"><div class="mon" style="width:64px;height:64px">${mapSVG({view:newCol, fill:Object.fromEntries(newCol.map(p=>[p,MAPLV[lvAfter[p]]]))})}</div><div><b>地図の ${newCol.map(p=>MAPD[p][0]).join("・")} の色がこくなった！</b><span>色の段階 ${[...new Set(newCol.map(p=>lvAfter[p]))].join("・")}／4　「ちず」で見てみよう</span></div></div>`]:[]),
@@ -2554,7 +2657,7 @@ function finish(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261024090304";
+const APP_VER="20261026105417";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
