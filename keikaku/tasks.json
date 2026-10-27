@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated": "2026-10-27T05:55+09:00",
+ "updated": "2026-10-28T05:53+09:00",
  "week": {
   "0": "テニス",
   "1": "",
@@ -699,6 +699,19 @@
    "due": "2026-11-17",
    "suggest": "2026-11-15",
    "doneInNotebook": false
+  },
+  {
+   "id": "h_rmvd9jjaq_20261111",
+   "kind": "habit",
+   "subj": "算数",
+   "src": "塾",
+   "title": "計算",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-11-11",
+   "due": "",
+   "suggest": "2026-11-11",
+   "doneInNotebook": false
   }
  ],
  "tests": [
@@ -770,6 +783,11 @@
   {
    "title": "冬期講習",
    "due": "2026-12-26",
+   "off": false
+  },
+  {
+   "title": "冬期講習",
+   "due": "2026-12-27",
    "off": false
   }
  ]
