@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated": "2026-10-28T05:53+09:00",
+ "updated": "2026-10-28T16:53+09:00",
  "week": {
   "0": "テニス",
   "1": "",
@@ -87,7 +87,7 @@
    "assigned": "2026-10-20",
    "due": "2026-10-27",
    "suggest": "2026-10-24",
-   "doneInNotebook": false
+   "doneInNotebook": true
   },
   {
    "id": "r_r2_20261020",
@@ -100,7 +100,7 @@
    "assigned": "2026-10-20",
    "due": "2026-10-27",
    "suggest": "2026-10-25",
-   "doneInNotebook": false
+   "doneInNotebook": true
   },
   {
    "id": "h_rmvd9jjaq_20261021",
@@ -165,7 +165,7 @@
    "assigned": "2026-10-23",
    "due": "2026-10-30",
    "suggest": "2026-10-26",
-   "doneInNotebook": false
+   "doneInNotebook": true
   },
   {
    "id": "r_r4_20261023",
@@ -178,7 +178,7 @@
    "assigned": "2026-10-23",
    "due": "2026-10-30",
    "suggest": "2026-10-26",
-   "doneInNotebook": false
+   "doneInNotebook": true
   },
   {
    "id": "h_hmvhef369_20261024",
@@ -243,7 +243,7 @@
    "assigned": "2026-10-26",
    "due": "",
    "suggest": "2026-10-26",
-   "doneInNotebook": false
+   "doneInNotebook": true
   },
   {
    "id": "h_rmvd9jjaq_20261026",
@@ -256,7 +256,7 @@
    "assigned": "2026-10-26",
    "due": "",
    "suggest": "2026-10-26",
-   "doneInNotebook": false
+   "doneInNotebook": true
   },
   {
    "id": "r_r1_20261027",
@@ -265,7 +265,7 @@
    "src": "塾",
    "title": "算数の宿題",
    "lesson": "4下第13回 分数と分数のかけ算・わり算",
-   "detail": "4下第13回",
+   "detail": "ノートワーク\nトレーニング\n基本\n計日73~75\n＋αアタック対策6~9回基本",
    "assigned": "2026-10-27",
    "due": "2026-11-03",
    "suggest": "2026-10-31",
@@ -278,7 +278,7 @@
    "src": "塾",
    "title": "理科の宿題",
    "lesson": "4下第13回 冬の植物・動物",
-   "detail": "",
+   "detail": "①ノートワーク\n②第13回トレーニング・基本問題\n③ポイント発見、リトライ",
    "assigned": "2026-10-27",
    "due": "2026-11-03",
    "suggest": "2026-11-01",
@@ -451,7 +451,7 @@
    "assigned": "2026-11-02",
    "due": "2026-11-09",
    "suggest": "",
-   "doneInNotebook": false
+   "doneInNotebook": true
   },
   {
    "id": "r_rmvheee72_20261102",
@@ -464,7 +464,7 @@
    "assigned": "2026-11-02",
    "due": "2026-11-09",
    "suggest": "",
-   "doneInNotebook": false
+   "doneInNotebook": true
   },
   {
    "id": "r_r1_20261103",
