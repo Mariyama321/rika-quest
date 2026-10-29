@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated": "2026-10-29T05:55+09:00",
+ "updated": "2026-10-30T05:54+09:00",
  "week": {
   "0": "テニス",
   "1": "",
@@ -88,45 +88,6 @@
    "due": "2026-10-27",
    "suggest": "2026-10-25",
    "doneInNotebook": true
-  },
-  {
-   "id": "h_hmvd9w2ye_20261022",
-   "kind": "habit",
-   "subj": "国語",
-   "src": "学校",
-   "title": "漢字",
-   "lesson": "",
-   "detail": "",
-   "assigned": "2026-10-22",
-   "due": "",
-   "suggest": "2026-10-22",
-   "doneInNotebook": false
-  },
-  {
-   "id": "h_hmvheencv_20261022",
-   "kind": "habit",
-   "subj": "理科",
-   "src": "学校",
-   "title": "理科ノート整理",
-   "lesson": "",
-   "detail": "",
-   "assigned": "2026-10-22",
-   "due": "",
-   "suggest": "2026-10-22",
-   "doneInNotebook": false
-  },
-  {
-   "id": "h_rmvd9jjaq_20261022",
-   "kind": "habit",
-   "subj": "算数",
-   "src": "塾",
-   "title": "計算",
-   "lesson": "",
-   "detail": "",
-   "assigned": "2026-10-22",
-   "due": "",
-   "suggest": "2026-10-22",
-   "doneInNotebook": false
   },
   {
    "id": "r_r3_20261023",
@@ -725,6 +686,32 @@
    "due": "",
    "suggest": "2026-11-12",
    "doneInNotebook": false
+  },
+  {
+   "id": "r_r3_20261113",
+   "kind": "hw",
+   "subj": "国語",
+   "src": "塾",
+   "title": "国語の宿題",
+   "lesson": "4下第10回 第6回～第9回のまとめ",
+   "detail": "",
+   "assigned": "2026-11-13",
+   "due": "2026-11-20",
+   "suggest": "2026-11-16",
+   "doneInNotebook": false
+  },
+  {
+   "id": "r_r4_20261113",
+   "kind": "hw",
+   "subj": "社会",
+   "src": "塾",
+   "title": "社会の宿題",
+   "lesson": "4下第10回 第6回～第9回のまとめ",
+   "detail": "",
+   "assigned": "2026-11-13",
+   "due": "2026-11-20",
+   "suggest": "2026-11-16",
+   "doneInNotebook": false
   }
  ],
  "tests": [
@@ -806,6 +793,11 @@
   {
    "title": "冬期講習",
    "due": "2026-12-28",
+   "off": false
+  },
+  {
+   "title": "冬期講習",
+   "due": "2026-12-29",
    "off": false
   }
  ]
