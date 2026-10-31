@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated": "2026-10-31T05:54+09:00",
+ "updated": "2026-11-01T05:53+09:00",
  "week": {
   "0": "テニス",
   "1": "",
@@ -114,32 +114,6 @@
    "due": "2026-10-30",
    "suggest": "2026-10-26",
    "doneInNotebook": true
-  },
-  {
-   "id": "h_hmvhef369_20261024",
-   "kind": "habit",
-   "subj": "社会",
-   "src": "家",
-   "title": "社会ノート整理",
-   "lesson": "",
-   "detail": "",
-   "assigned": "2026-10-24",
-   "due": "",
-   "suggest": "2026-10-24",
-   "doneInNotebook": false
-  },
-  {
-   "id": "h_rmvd9jjaq_20261024",
-   "kind": "habit",
-   "subj": "算数",
-   "src": "塾",
-   "title": "計算",
-   "lesson": "",
-   "detail": "",
-   "assigned": "2026-10-24",
-   "due": "",
-   "suggest": "2026-10-24",
-   "doneInNotebook": false
   },
   {
    "id": "h_hmvd9w2ye_20261025",
@@ -291,7 +265,7 @@
    "src": "塾",
    "title": "社会の宿題",
    "lesson": "4下第13回 野菜づくり",
-   "detail": "",
+   "detail": "ノートワーク\n第13回トレーニング\n第13回基本問題\n（リトライまで頑張ろう）",
    "assigned": "2026-10-30",
    "due": "2026-11-06",
    "suggest": "2026-11-02",
@@ -738,6 +712,32 @@
    "due": "",
    "suggest": "2026-11-14",
    "doneInNotebook": false
+  },
+  {
+   "id": "h_hmvd9w2ye_20261115",
+   "kind": "habit",
+   "subj": "国語",
+   "src": "学校",
+   "title": "学校の漢字",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-11-15",
+   "due": "",
+   "suggest": "2026-11-15",
+   "doneInNotebook": false
+  },
+  {
+   "id": "h_rmvd9jjaq_20261115",
+   "kind": "habit",
+   "subj": "算数",
+   "src": "塾",
+   "title": "計算",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-11-15",
+   "due": "",
+   "suggest": "2026-11-15",
+   "doneInNotebook": false
   }
  ],
  "tests": [
@@ -829,6 +829,11 @@
   {
    "title": "塾",
    "due": "2026-12-30",
+   "off": true
+  },
+  {
+   "title": "塾",
+   "due": "2026-12-31",
    "off": true
   }
  ]
