@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated": "2026-11-01T05:53+09:00",
+ "updated": "2026-11-02T05:53+09:00",
  "week": {
   "0": "テニス",
   "1": "",
@@ -114,32 +114,6 @@
    "due": "2026-10-30",
    "suggest": "2026-10-26",
    "doneInNotebook": true
-  },
-  {
-   "id": "h_hmvd9w2ye_20261025",
-   "kind": "habit",
-   "subj": "国語",
-   "src": "学校",
-   "title": "漢字",
-   "lesson": "",
-   "detail": "",
-   "assigned": "2026-10-25",
-   "due": "",
-   "suggest": "2026-10-25",
-   "doneInNotebook": false
-  },
-  {
-   "id": "h_rmvd9jjaq_20261025",
-   "kind": "habit",
-   "subj": "算数",
-   "src": "塾",
-   "title": "計算",
-   "lesson": "",
-   "detail": "",
-   "assigned": "2026-10-25",
-   "due": "",
-   "suggest": "2026-10-25",
-   "doneInNotebook": false
   },
   {
    "id": "h_hmvd9w2ye_20261026",
@@ -738,6 +712,58 @@
    "due": "",
    "suggest": "2026-11-15",
    "doneInNotebook": false
+  },
+  {
+   "id": "h_hmvd9w2ye_20261116",
+   "kind": "habit",
+   "subj": "国語",
+   "src": "学校",
+   "title": "学校の漢字",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-11-16",
+   "due": "",
+   "suggest": "2026-11-16",
+   "doneInNotebook": false
+  },
+  {
+   "id": "h_rmvd9jjaq_20261116",
+   "kind": "habit",
+   "subj": "算数",
+   "src": "塾",
+   "title": "計算",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-11-16",
+   "due": "",
+   "suggest": "2026-11-16",
+   "doneInNotebook": false
+  },
+  {
+   "id": "r_rmvhedklj_20261116",
+   "kind": "hw",
+   "subj": "国語",
+   "src": "学校",
+   "title": "ピラミッド2",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-11-16",
+   "due": "2026-11-23",
+   "suggest": "",
+   "doneInNotebook": false
+  },
+  {
+   "id": "r_rmvheee72_20261116",
+   "kind": "hw",
+   "subj": "国語",
+   "src": "学校",
+   "title": "ピラミッド3",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-11-16",
+   "due": "2026-11-23",
+   "suggest": "",
+   "doneInNotebook": false
   }
  ],
  "tests": [
@@ -834,6 +860,11 @@
   {
    "title": "塾",
    "due": "2026-12-31",
+   "off": true
+  },
+  {
+   "title": "塾",
+   "due": "2027-01-01",
    "off": true
   }
  ]
