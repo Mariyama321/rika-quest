@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated": "2026-11-02T05:53+09:00",
+ "updated": "2026-11-03T05:54+09:00",
  "week": {
   "0": "テニス",
   "1": "",
@@ -112,32 +112,6 @@
    "detail": "ノートワーク\n第12回トレーニング\n第12回基本問題\n（リトライまで頑張ろう）",
    "assigned": "2026-10-23",
    "due": "2026-10-30",
-   "suggest": "2026-10-26",
-   "doneInNotebook": true
-  },
-  {
-   "id": "h_hmvd9w2ye_20261026",
-   "kind": "habit",
-   "subj": "国語",
-   "src": "学校",
-   "title": "漢字",
-   "lesson": "",
-   "detail": "",
-   "assigned": "2026-10-26",
-   "due": "",
-   "suggest": "2026-10-26",
-   "doneInNotebook": true
-  },
-  {
-   "id": "h_rmvd9jjaq_20261026",
-   "kind": "habit",
-   "subj": "算数",
-   "src": "塾",
-   "title": "計算",
-   "lesson": "",
-   "detail": "",
-   "assigned": "2026-10-26",
-   "due": "",
    "suggest": "2026-10-26",
    "doneInNotebook": true
   },
@@ -764,6 +738,32 @@
    "due": "2026-11-23",
    "suggest": "",
    "doneInNotebook": false
+  },
+  {
+   "id": "r_r1_20261117",
+   "kind": "hw",
+   "subj": "算数",
+   "src": "塾",
+   "title": "算数の宿題",
+   "lesson": "アタックテスト 6-10回",
+   "detail": "アタックテスト\n6-10回",
+   "assigned": "2026-11-17",
+   "due": "2026-11-24",
+   "suggest": "2026-11-21",
+   "doneInNotebook": false
+  },
+  {
+   "id": "r_r2_20261117",
+   "kind": "hw",
+   "subj": "理科",
+   "src": "塾",
+   "title": "理科の宿題",
+   "lesson": "アタックテスト 6-10回",
+   "detail": "",
+   "assigned": "2026-11-17",
+   "due": "2026-11-24",
+   "suggest": "2026-11-22",
+   "doneInNotebook": false
   }
  ],
  "tests": [
@@ -865,6 +865,11 @@
   {
    "title": "塾",
    "due": "2027-01-01",
+   "off": true
+  },
+  {
+   "title": "塾",
+   "due": "2027-01-02",
    "off": true
   }
  ]
