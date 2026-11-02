@@ -177,7 +177,18 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .dmg.big{color:var(--sun);font-size:30px}
 @keyframes pop{0%{opacity:0;transform:translateY(8px)}20%{opacity:1}100%{opacity:0;transform:translateY(-34px)}}
 .log{margin-top:8px;min-height:48px;padding:6px 12px;font-weight:800;font-size:14px;line-height:1.5;border:3px solid var(--ink);border-radius:12px;background:var(--panel)}
-.qpanel{margin-top:12px;padding:14px}
+.qpanel{margin-top:12px;padding:14px;position:relative}
+.rlock{position:absolute;left:6px;right:6px;z-index:4;background:rgba(255,255,255,.6);border-radius:12px;display:flex;flex-direction:column;align-items:center;padding-top:14px;gap:8px}
+.rlock span{font-weight:800;background:var(--ink);color:#fff;border-radius:999px;padding:3px 14px;font-size:14px}
+.rlock i{display:block;width:60%;height:8px;border-radius:5px;background:#dfe6ee;border:2px solid var(--ink);overflow:hidden}
+.rlock i b{display:block;height:100%;width:0;background:var(--accent);animation:rlk linear forwards}
+@keyframes rlk{to{width:100%}}
+.hasty{color:var(--bad)}
+.plog summary{font-weight:800;cursor:pointer}
+.plog table{border-collapse:collapse;width:100%;font-size:12px;margin-top:8px;font-variant-numeric:tabular-nums}
+.plog th,.plog td{border:1.5px solid #c9d6e6;padding:2px 4px;text-align:center}
+.plog th{background:var(--soft)}
+.plog td.warn{background:#ffe1e5;font-weight:800}
 .qmeta{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);font-weight:800;font-variant-numeric:tabular-nums}
 .qtext{font-size:18px;font-weight:800;margin:4px 0 0;line-height:1.5}
 .qnote{margin-top:8px;background:#eef6ff;border:2px solid var(--t-mizu);border-radius:12px;padding:8px 10px;font-size:14px;line-height:1.5}
@@ -2398,6 +2409,7 @@ function showMap(){
   const stale = !lb || (Date.now()-lb.getTime() > 3*24*3600*1000);
   const bkHTML = `<button class="card bkcard ${stale?'warn':''}" id="bk"><b>きろくのバックアップ</b><span>${lb?`さいごにバックアップ：${lb.getMonth()+1}月${lb.getDate()}日`:'まだバックアップしていません'}${stale?'　→ タップしてバックアップしよう':''}</span></button>`;
   if(stale) h = h.replace('<!--BKTOP-->', bkHTML); else h += bkHTML;
+  h += parentLogHTML();
   h += saveStatusHTML();
   h += `<div class="tools"><button id="reset">きろくをリセット</button>${resetAsk?`<div class="confirm">なかまも全部いなくなるよ。本当に消す？ <button id="ry">消す</button><button id="rn">やめる</button></div>`:''}</div>`;
   app.innerHTML = h;
@@ -3059,9 +3071,9 @@ const maxHPOf = id => 24 + ((save.owned[id]||{}).lv||1)*4;
 const useHP = () => !!B && !B.tower;
 function hpOf(id){ B.hp=B.hp||{}; if(B.hp[id]==null) B.hp[id]=maxHPOf(id); return Math.min(B.hp[id], maxHPOf(id)); }
 function aliveIds(){ return save.party.filter(id=>save.owned[id] && hpOf(id)>0); }
-function hurtLead(){
+function hurtLead(x=1){
   const me=B.lead, w=B.wild, mm=defMult(SP[w.id].type, me), dm=mm===2?1.5:mm===.5?.7:1;
-  let d=Math.max(3, Math.round((5+w.lv*0.8)*dm)), guarded=false;
+  let d=Math.max(3, Math.round((5+w.lv*0.8)*dm))*x, guarded=false;
   if(B.guard){ d=Math.ceil(d/2); B.guard=false; guarded=true; }
   B.hp[me]=Math.max(0, hpOf(me)-d);
   return {d, mm, guarded};
@@ -3075,6 +3087,42 @@ function nextMoveText(id){ const lv=(save.owned[id]||{}).lv||1, nx=learnable(id)
 const sizeLabel = sz => sz>=1.2?'でかい！':sz<=.8?'ちびっこ':'';
 function heightOf(id, sz, f){ return Math.max(.1, Math.round(.4*spSize(id,f)*[1,1.6,2.4][f]*(sz||1)*10)/10); }
 function sizeText(id){ const o=save.owned[id]||{}, f=SP[id].legend?2:curF(id), lb=sizeLabel(o.sz||1); return `たかさ ${heightOf(id,o.sz,f)}m${lb?`（${lb}）`:''}`; }
+
+/* ============================================================
+   しっかり読んで答えるための工夫（v33、ユーザーの要望「こどもが適当に答えるので、もう少し真剣に答える工夫」）
+   - 読むまで押せない: 問題が出てから readSecs 秒は答えの場所に「よく読んでから答えよう」のカバー（1.5〜6秒、問題文・ほそく・選択肢の長さで決まる）
+   - あわてんぼう: 押せるようになってから FAST_MS 以内に答えてまちがえると、ダメージ2倍（塔はそのまま）
+   - 1回目正解だけごほうび: まちがえたあとの正解は EXP 半分・コンボがふえない（フラスコもひろえない）
+   - まちがえたら解説を読む時間: 「わかった！」が 2〜5秒押せない
+   - きろく: save.alog = {日付:{a:回答, ng:まちがい, f:すぐ答えた, fng:すぐ答えてまちがい}}（60日分）。ぼうけん画面の下「おうちの人へ」
+   ============================================================ */
+const FAST_MS = 1200;
+function readSecs(q){
+  const c=(q.q||"").length + (q.note?q.note.length*.4:0) + (Array.isArray(q.c)?q.c.join("").length*.3:0) + (q.pairs?q.pairs.flat().join("").length*.3:0) + (q.table||q.graph||q.bars||q.map||q.img?8:0);
+  return Math.min(6, Math.max(1.5, 1+c*.05));
+}
+function applyReadLock(item, q){
+  if(!item.readUntil) item.readUntil = Date.now() + readSecs(q)*1000;
+  const left = item.readUntil - Date.now(); if(left<=50 || B.busy) return;
+  const qp=app.querySelector(".qpanel"), qt=app.querySelector(".qtext"), sub=document.getElementById("sub"); if(!qp||!qt) return;
+  const d=document.createElement("div"); d.className="rlock";
+  d.style.top=(qt.offsetTop+qt.offsetHeight)+"px"; d.style.bottom=(sub?Math.max(0,qp.offsetHeight-sub.offsetTop):0)+"px";
+  d.innerHTML=`<span>よく読んでから答えよう</span><i><b style="animation-duration:${left}ms"></b></i>`;
+  qp.appendChild(d); setTimeout(()=>d.remove(), left);
+}
+function logAnswer(ok, fast){
+  const L=save.alog||(save.alog={}), t=today(), r=L[t]||(L[t]={a:0,ng:0,f:0,fng:0});
+  r.a++; if(!ok) r.ng++; if(fast){ r.f++; if(!ok) r.fng++; }
+  const ks=Object.keys(L).sort(); while(ks.length>60) delete L[ks.shift()];
+}
+function parentLogHTML(){
+  const L=save.alog||{}, ks=Object.keys(L).sort().reverse().slice(0,14);
+  const rows=ks.map(k=>{ const r=L[k], [y,m,d]=k.split("-"); const warn=r.a>=5 && r.fng/r.a>=.2;
+    return `<tr><td>${+m}/${+d}</td><td>${r.a}</td><td>${r.ng}</td><td>${r.f}</td><td class="${warn?'warn':''}">${r.fng}</td></tr>`; }).join("");
+  return `<details class="card plog" style="margin-top:14px;padding:10px 14px"><summary>おうちの人へ：こたえ方のきろく</summary>
+    <p class="mini" style="margin:6px 0 0">「すぐ答えた」は、答えを押せるようになってから${FAST_MS/1000}秒以内に答えた回数です。そのうちまちがえた数が多い日（回答の2割以上）は赤く表示します。</p>
+    ${ks.length?`<table><tr><th>日付</th><th>回答</th><th>まちがい</th><th>すぐ答えた</th><th>うち まちがい</th></tr>${rows}</table>`:'<p class="mini">まだきろくがありません。</p>'}</details>`;
+}
 
 /* ---------- battle ---------- */
 let B = null;
@@ -3207,6 +3255,7 @@ function renderBattle(enter){
     logMsg=`いけっ！ <b>${esc(nameOf(B.lead))}</b>！`+(m===2?' あいしょうはばつぐん！':m===.5?' あいしょうが悪いかも…':'');
     renderBattle();
   });
+  applyReadLock(item, q);
 }
 const PCOL=["#3d8bff","#ff7a2f","#24a865","#b06ad9","#e8475a","#a0784b"];
 function orderHTML(item,q){
@@ -3290,6 +3339,8 @@ function judge(picked){
   const dec=document.getElementById("dec"); if(dec) dec.hidden=true;
   document.getElementById("sub").hidden=true;
   const fb=document.getElementById("fb"); B.n++;
+  const fast = !!item.readUntil && (Date.now()-item.readUntil) < FAST_MS;
+  logAnswer(ok, fast);
   let qmsg="";
   if(B.qd){ const lb=qdLv(item.key); qmsg=qdMark(item, ok); const la=qdLv(item.key); if(la>lb) B.ups++; if(la>=5&&lb<5) B.mastered++; }
   const qm = qmsg?`<p class="mini"><b>${esc(qmsg)}</b></p>`:"";
@@ -3306,17 +3357,18 @@ function judge(picked){
     return;
   }
   if(ok){
-    B.combo++; B.maxCombo=Math.max(B.maxCombo,B.combo);
-    let bonus="";
-    if(B.combo%3===0){ save.balls++; B.ballsGot++; bonus=`<p><b>${B.combo}コンボ！ フラスコを1つひろった！</b></p>`; }
+    const first = !item.missed;
+    if(first){ B.combo++; B.maxCombo=Math.max(B.maxCombo,B.combo); }
+    let bonus = first ? "" : `<p class="mini">まちがえたあとの正解なので、ごほうびは少なめ（EXP半分・コンボはふえない）。1回で正解するとたくさんもらえるよ。</p>`;
+    if(first && B.combo%3===0){ save.balls++; B.ballsGot++; bonus=`<p><b>${B.combo}コンボ！ フラスコを1つひろった！</b></p>`; }
     if(B.sid==="review") delete save.wrong[item.key];
     if(!B.qd) (save.okOnce=save.okOnce||{})[item.key]=1;
     if(!B.qd && q.f && !item.missed && fracMark(q.f)) B.fracUp=(B.fracUp||0)+1;
     B.queue.shift(); persist();
-    addExp(B.lead, 6); save.party.forEach(id=>{ if(id!==B.lead) addExp(id,3); });
-    let first=true;
+    addExp(B.lead, first?6:3); save.party.forEach(id=>{ if(id!==B.lead) addExp(id, first?3:1); });
+    let firstMv=true;
     const mvh = movesOf(B.lead).map(k=>{ const M=MOVES[k], lock=!!M.combo&&B.combo<M.combo, {m}=dmgOf(k), t=moveType(B.lead,k);
-      const ida = (!lock&&first) ? (first=false, ' id="atk"') : '';
+      const ida = (!lock&&firstMv) ? (firstMv=false, ' id="atk"') : '';
       return `<button class="btn mv mt-${t||'none'}" data-mv="${k}"${ida} ${lock?'disabled':''}>${esc(M.n)}<small>${lock?`${M.combo}コンボで使える（いま${B.combo}）`:(m===2?'こうかばつぐん':m===.5?'いまひとつ':t?TYPES[t]:'ふつう')+(M.eff?'・'+EFF[M.eff]:'')+(B.power?'・2倍':'')}</small></button>`; }).join("");
     fb.innerHTML = `<div class="fb ok"><h3>せいかい！</h3>${q.e?`<p>${esc(q.e)}</p>`:""}${qm}${bonus}</div>
       <div class="acts mvs">${mvh}</div><div class="acts one">
@@ -3327,14 +3379,15 @@ function judge(picked){
   }else{
     B.combo=0; B.mistakes++;
     let hurt="", down=false;
-    if(useHP()){ const r=hurtLead(); down=hpOf(B.lead)<=0;
-      hurt=`やせいの <b>${esc(nameOf(B.wild.id,B.wild.lv))}</b>のこうげき！ ${r.mm===2?'こうかはばつぐんだ！ ':r.mm===.5?'こうかはいまひとつ。 ':''}${r.guarded?'まもりでダメージが半分！ ':''}<b>${esc(nameOf(B.lead))}</b>に ${r.d}ダメージ！`+(down?` <b>${esc(nameOf(B.lead))}</b>はたおれてしまった…`:'');
+    const hasty = fast && !B.tower;
+    if(useHP()){ const r=hurtLead(hasty?2:1); down=hpOf(B.lead)<=0;
+      hurt=(hasty?'<span class="hasty">あわてんぼう！</span> ':'')+`やせいの <b>${esc(nameOf(B.wild.id,B.wild.lv))}</b>のこうげき！ ${r.mm===2?'こうかはばつぐんだ！ ':r.mm===.5?'こうかはいまひとつ。 ':''}${r.guarded?'まもりでダメージが半分！ ':''}<b>${esc(nameOf(B.lead))}</b>に ${r.d}ダメージ！`+(down?` <b>${esc(nameOf(B.lead))}</b>はたおれてしまった…`:'');
       B.lastHurt=r.d; }
     else { B.hearts--; hurt=`やせいの <b>${esc(nameOf(B.wild.id,B.wild.lv))}</b>のこうげき！ ハートが1つへった。`; }
     const lost = useHP() ? !aliveIds().length : B.hearts<=0;
     item.missed=true;
     if(!B.qd){ save.wrong[item.key]=(save.wrong[item.key]||0)+1; (save.wrongEver=save.wrongEver||{})[item.key]=1; }
-    item.hidden=[]; item.seq=[]; item.pairs={}; item.selL=null; item.selP=null; item.input="";
+    item.hidden=[]; item.seq=[]; item.pairs={}; item.selL=null; item.selP=null; item.input=""; item.readUntil=null;
     if(B.tower){ B.queue.shift(); B.queue.push(towerNext()); } else B.queue.push(B.queue.shift());
     persist();
     const wm=document.getElementById("wildMon"), mm=document.getElementById("meMon");
@@ -3343,10 +3396,13 @@ function judge(picked){
         const pt=app.querySelector(".ptm"); if(pt) pt.outerHTML=hpMiniHTML(); } },200);
     if(!useHP()){ const hs=app.querySelectorAll(".hearts svg path"); if(hs[B.hearts]) hs[B.hearts].setAttribute("fill","#dfe6ee"); }
     setLog(hurt);
-    fb.innerHTML = `<div class="fb ng">${ansText.length>18?`<h3>ざんねん…</h3><p><b>正解：${esc(ansText)}</b></p>`:`<h3>ざんねん… 正解は「${esc(ansText)}」</h3>`}${q.e?`<p>${esc(q.e)}</p>`:""}${qm}<p class="mini">${B.tower?'ハートが0になると塔からおりるよ。':lost?'なかまが全員たおれてしまった…':down?'つぎのなかまにこうたいするよ。この問題は、あとでもう一度出てくるよ。':'この問題は、あとでもう一度出てくるよ。'}</p></div><button class="btn" id="next" style="margin-top:12px">${lost?'…':down?'つぎのなかまを出す':'つぎへ'}</button>`;
+    fb.innerHTML = `<div class="fb ng">${ansText.length>18?`<h3>ざんねん…</h3><p><b>正解：${esc(ansText)}</b></p>`:`<h3>ざんねん… 正解は「${esc(ansText)}」</h3>`}${q.e?`<p>${esc(q.e)}</p>`:""}${qm}${hasty&&useHP()?'<p class="mini hasty">すぐに答えてまちがえたので、ダメージが2倍になった！ 問題をよく読んでから答えよう。</p>':''}<p class="mini">解説を読んでから「わかった！」をおそう。</p><p class="mini">${B.tower?'ハートが0になると塔からおりるよ。':lost?'なかまが全員たおれてしまった…':down?'つぎのなかまにこうたいするよ。この問題は、あとでもう一度出てくるよ。':'この問題は、あとでもう一度出てくるよ。'}</p></div><button class="btn" id="next" style="margin-top:12px" disabled>${lost?'わかった！ …':down?'わかった！ つぎのなかまを出す':'わかった！'}</button>`;
     document.getElementById("next").onclick=()=>{ B.busy=false; if(lost) return finish(false);
       if(useHP() && hpOf(B.lead)<=0){ B.lead=aliveIds()[0]; B.swapOpen=false; const m2=bestMult(B.lead,B.wild.id); logMsg=`いけっ！ <b>${esc(nameOf(B.lead))}</b>！`+(m2===2?' あいしょうはばつぐん！':m2===.5?' あいしょうが悪いかも…':''); }
       renderBattle(); };
+    { const nb=document.getElementById("next"), lab=nb.textContent; let k=Math.min(5, Math.max(2, 1+Math.ceil((q.e||"").length*.04)));
+      nb.textContent=`${lab}（${k}）`;
+      const iv=setInterval(()=>{ k--; if(k<=0 || !document.body.contains(nb)){ clearInterval(iv); nb.disabled=false; nb.textContent=lab; } else nb.textContent=`${lab}（${k}）`; },1000); }
   }
   fb.scrollIntoView({behavior:"smooth",block:"nearest"});
 }
@@ -3450,7 +3506,7 @@ function finish(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261102124256";
+const APP_VER="20261102125247";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
