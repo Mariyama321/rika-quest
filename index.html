@@ -153,6 +153,7 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .info{position:absolute;background:var(--panel);border:2px solid var(--ink);border-radius:10px;padding:4px 10px 6px;width:168px}
 .info .nm{display:flex;align-items:center;gap:4px;font-weight:800;font-size:13px;line-height:1.4}
 .info .nm .lv{margin-left:auto;font-variant-numeric:tabular-nums}
+.info .nm{flex-wrap:wrap;row-gap:0}.info .nmt{white-space:nowrap}.info .nm .chip{font-size:10px;padding:0 5px;line-height:16px}
 .info .nums{font-size:11px;text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
 .info.w{left:10px;top:10px}
 .info.m{right:10px;bottom:12px}
@@ -1828,6 +1829,10 @@ function canEvo(id){ const o=save.owned[id]; if(!o) return false; const nx=SP[id
 const artMine = (id,opt={}) => art(id, 1, Object.assign({}, opt, {f: SP[id].legend?2:curF(id), sz:(save.owned[id]||{}).sz}));
 const nameOf = (id, lv) => SP[id].forms[lv==null && save.owned[id] ? curF(id) : formIdx(id, lv ?? 1)].n;
 const typeChip = t => `<span class="chip t-${t}">${TYPES[t]}</span>`;
+const typesChip = x => typeChip(SP[x].type) + (SP[x].type2 ? " "+typeChip(SP[x].type2) : "");
+/* うける側が2つのタイプをもつときは、2つのあいしょうをかけ合わせて 0.5〜2倍におさめる */
+const defMult = (a, id) => Math.min(2, Math.max(.5, mult(a, SP[id].type) * (SP[id].type2 ? mult(a, SP[id].type2) : 1)));
+const bestMult = (me, id) => Math.max(defMult(SP[me].type, id), SP[me].type2 ? defMult(SP[me].type2, id) : 0);
 
 /* ---------- monster art (procedural SVG) ---------- */
 function shade(hex,a){
@@ -1854,6 +1859,7 @@ function eye(x, y, f, K, iris){
     `<circle cx="${x-1}" cy="${y-.5}" r="3.3" fill="${iris}"/><circle cx="${x-1.4}" cy="${y-.5}" r="1.7" fill="${K}"/><circle cx="${x-2.4}" cy="${y-2}" r="1" fill="#fff"/>`+
     `<path d="M${x-9} ${y-5} L${x+8} ${y-(f>1?11:9)}" stroke="${K}" stroke-width="3" stroke-linecap="round"/>`;
 }
+const TCOL = {mizu:"#59b4ff", hono:"#ff7a2f", kusa:"#56c26a", iwa:"#c09366", denki:"#ffd23f", koori:"#9fe3ff", kaze:"#b9adff", hikari:"#ff9fd0"};
 const IRIS = {mizu:"#1e6fe0", hono:"#e0451b", kusa:"#1f8a3a", iwa:"#8a5a2b", denki:"#c48a00", koori:"#1b98c2", kaze:"#6a55d8", hikari:"#d9488c"};
 
 const ARCH = {
@@ -2185,6 +2191,7 @@ function art(id, lv=1, opt={}){
   let g = ARCH[arch](o);
   if(s.mega && !sil){ const gid="mg"+(++PUID); g = `<defs><radialGradient id="${gid}"><stop offset="0" stop-color="#ff3df0" stop-opacity="0"/><stop offset=".62" stop-color="#ff3df0" stop-opacity="0"/><stop offset=".8" stop-color="#b06aff" stop-opacity=".45"/><stop offset="1" stop-color="#3dd6ff" stop-opacity="0"/></radialGradient></defs><circle cx="60" cy="64" r="58" fill="url(#${gid})"/>` + g + `<g transform="translate(100 18)"><circle r="11" fill="#24324a"/><circle r="8.5" fill="none" stroke="#ff3df0" stroke-width="2.5"/><path d="M-4 3 V-3 L0 1 L4 -3 V3" fill="none" stroke="#3dd6ff" stroke-width="2.2" stroke-linejoin="round"/></g>`; }
   if(s.rare && !sil){ let sp=""; for(const [x,y,r] of [[14,30,5],[104,26,6],[100,80,4],[18,86,4],[60,10,4]]) sp+=`<path transform="translate(${x} ${y}) scale(${r/5})" d="M0 -5 L1.3 -1.3 L5 0 L1.3 1.3 L0 5 L-1.3 1.3 L-5 0 L-1.3 -1.3Z" fill="#ffcf3a" stroke="#24324a" stroke-width="1"/>`; g = g + sp; }
+  if(s.type2 && PANCH[arch]){ const a=PANCH[arch](f), [kx,ky]=a.k; g = feat(s.type2, kx+8, ky-6, 24, .6+.08*f, sil?K:TCOL[s.type2], K) + g; }
   if(s.parts){ const a=PANCH[arch](f); g = partsBack(o,s.parts,a) + g + partsFront(o,s.parts,a,++PUID); }
   if(s.numMark && !sil){ const a=PANCH[arch]?PANCH[arch](f):null, t=String(s.numMark), fs=t.length>4?9.5:11, w=8+t.length*fs*.6;
     const [cx,cy]=a&&a.p?[a.p[0],a.p[1]]:[60,84];
@@ -2341,7 +2348,7 @@ function showStarter(){
 
   app.innerHTML = `<div class="hero"><div class="sun"></div><div class="hill"></div><div class="hill2"></div><h1>理科クエスト</h1><p>正解してモンスターをなかまにしよう</p></div>
   <div class="card prof"><div class="face">${profFace}</div><div><p>ソラノはかせ</p><p style="font-weight:500">理科の草原へようこそ！ いっしょに冒険する、さいしょのなかまをえらんでね。</p></div></div>
-  <div class="starters">${Object.keys(STARTERS).map(id=>`<button class="card starter ${starterSel===id?'sel':''}" data-id="${id}"><div class="mon">${art(id,1)}</div><b>${SP[id].forms[0].n}</b>${typeChip(SP[id].type)}<div class="skilltxt" style="margin-top:4px">${SKILLS[SP[id].skill].n}</div></button>`).join("")}</div>
+  <div class="starters">${Object.keys(STARTERS).map(id=>`<button class="card starter ${starterSel===id?'sel':''}" data-id="${id}"><div class="mon">${art(id,1)}</div><b>${SP[id].forms[0].n}</b>${typesChip(id)}<div class="skilltxt" style="margin-top:4px">${SKILLS[SP[id].skill].n}</div></button>`).join("")}</div>
   ${starterSel?`<p class="skilltxt" style="text-align:center;margin:12px 0 0">${esc(SP[starterSel].dex)}<br>スキル：${SKILLS[SP[starterSel].skill].d}</p><button class="btn go" id="ok" style="margin-top:12px">${SP[starterSel].forms[0].n}にする！</button>`:''}`;
   app.querySelectorAll(".starter").forEach(b=>b.onclick=()=>{ starterSel=b.dataset.id; showStarter(); });
   if(starterSel) document.getElementById("ok").onclick=()=>{
@@ -2413,7 +2420,7 @@ function showGift(){
   const id="toratch", lv=Math.max(1, save.owned[save.party[0]].lv);
   app.innerHTML = `<div class="result"><div class="card prof"><div class="face">${profFace}</div><div style="text-align:left"><p>ソラノはかせ</p><p style="font-weight:500">がんばっているね！ 草原で見つけたトラの子どもを、きみにあずけるよ。</p></div></div>
     <div class="mon" style="width:200px;height:200px;margin:16px auto 0">${art(id,1,{f:0})}</div>
-    <h2>${esc(SP[id].forms[0].n)}</h2><p>${typeChip(SP[id].type)} <span class="mini">Lv.${lv}</span></p>
+    <h2>${esc(SP[id].forms[0].n)}</h2><p>${typesChip(id)} <span class="mini">Lv.${lv}</span></p>
     <p class="line" style="font-weight:500">${esc(SP[id].dex)}</p><p class="mini">スキル：${SKILLS[SP[id].skill].n}（${SKILLS[SP[id].skill].d}）</p>
     <button class="btn go" id="take">うけとる！</button></div>`;
   document.getElementById("take").onclick=()=>{
@@ -2493,15 +2500,15 @@ function showParty(){
   if(!partySel || !save.owned[partySel]) partySel = lead;
   const d = partySel, dO = save.owned[d], inP = save.party.includes(d);
   app.innerHTML = `<h2 class="sec-h">なかま</h2>
-  <div class="card leadcard"><div class="mon">${artMine(lead)}</div><div style="min-width:0"><span class="mini">せんとう</span><h3>${esc(nameOf(lead))}</h3><div>${typeChip(s.type)} <span class="mini">Lv.${o.lv}</span></div>
+  <div class="card leadcard"><div class="mon">${artMine(lead)}</div><div style="min-width:0"><span class="mini">せんとう</span><h3>${esc(nameOf(lead))}</h3><div>${typesChip(lead)} <span class="mini">Lv.${o.lv}</span></div>
     <div class="bar expbar" style="margin-top:6px"><i style="width:${o.exp/need(o.lv)*100}%"></i></div><div class="mini" style="margin-top:4px">${SKILLS[s.skill].n}：${SKILLS[s.skill].d}</div>${canEvo(lead)?`<div class="mini" style="color:var(--accent)">しんかできる！</div>`:nf?`<div class="mini">Lv.${nf.lv}でしんかできる</div>`:''}</div></div>
   <p class="mini" style="margin:16px 0 8px">パーティ（3ひきまで）は黄色。タップしてえらぼう。</p>
   <div class="grid3">${ids.map(id=>`<button class="card mcard ${save.party.includes(id)?'inparty':''}" data-id="${id}"><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b><span class="mini">Lv.${save.owned[id].lv}</span>${canEvo(id)?'<span class="evotag">しんかOK</span>':''}</button>`).join("")}</div>
-  <div class="card detail"><div class="row"><div class="mon">${artMine(d)}</div><div style="min-width:0"><h3>${esc(nameOf(d))}</h3><div>${typeChip(SP[d].type)} <span class="mini">Lv.${dO.lv}</span></div><p class="mini">${SKILLS[SP[d].skill].n}：${SKILLS[SP[d].skill].d}</p><p class="mini">さいだいHP ${maxHPOf(d)}・${sizeText(d)}</p></div></div>
+  <div class="card detail"><div class="row"><div class="mon">${artMine(d)}</div><div style="min-width:0"><h3>${esc(nameOf(d))}</h3><div>${typesChip(d)} <span class="mini">Lv.${dO.lv}</span></div><p class="mini">${SKILLS[SP[d].skill].n}：${SKILLS[SP[d].skill].d}</p><p class="mini">さいだいHP ${maxHPOf(d)}・${sizeText(d)}</p></div></div>
     <div class="mvlist">${movesOf(d).map(k=>`<span class="mvchip mt-${moveType(d,k)||'none'}"><b>${esc(MOVES[k].n)}</b><small>${moveInfo(d,k)}</small></span>`).join("")}</div>${nextMoveText(d)}
     ${canEvo(d)?`<button class="btn go evobtn" id="evo">${esc(nameOf(d))}をしんかさせる！</button>`:(SP[d].forms[curF(d)+1]?`<p class="mini">Lv.${SP[d].forms[curF(d)+1].lv}になると、しんかできる</p>`:'')}
     <div class="btns">${save.party[0]!==d?`<button class="btn go" id="mklead">せんとうにする</button>`:''}${inP?(save.party.length>1?`<button class="btn alt" id="rm">パーティからはずす</button>`:''):`<button class="btn alt" id="add" ${save.party.length>=3?'disabled':''}>${save.party.length>=3?'パーティがいっぱい':'パーティに入れる'}</button>`}</div></div>
-  <div class="card" style="padding:12px 14px;margin-top:14px"><b>タイプのあいしょう</b><p class="mini" style="margin:2px 0 8px">左のタイプのわざは、右のタイプに「こうかばつぐん」（2倍）。ぎゃくむきだと半分になるよ。わざのタイプで決まるので、あいてに合わせてわざをえらぼう。</p>${typeChartHTML()}</div>`;
+  <div class="card" style="padding:12px 14px;margin-top:14px"><b>タイプのあいしょう</b><p class="mini" style="margin:2px 0 8px">左のタイプのわざは、右のタイプに「こうかばつぐん」（2倍）。ぎゃくむきだと半分になるよ。わざのタイプで決まるので、あいてに合わせてわざをえらぼう。タイプを2つもつモンスターは、2つのあいしょうをかけ合わせる（いちばん大きくて2倍、小さくて半分）。</p>${typeChartHTML()}</div>`;
   app.querySelectorAll(".mcard").forEach(b=>b.onclick=()=>{ partySel=b.dataset.id; showParty(); });
   const g=id=>document.getElementById(id);
   if(g("evo")) g("evo").onclick=()=>showEvolve(d);
@@ -2518,38 +2525,38 @@ function showDex(){
   let h = `<h2 class="sec-h">モンスターずかん</h2><p class="dexcount">つかまえた ${caught}・見つけた ${seen}・ぜんぶで ${DEX_ORDER.length}</p>`;
   if(dexSel && save.seen[dexSel]){
     const s=SP[dexSel], own=save.owned[dexSel];
-    h += `<div class="card detail" style="margin:0 0 14px"><div class="row"><div class="mon">${(own?artMine(dexSel):art(dexSel,1,{sil:true}))}</div><div style="min-width:0"><span class="mini">${s.umega?'ウルトラメガモンスター':s.week?`${WDAY[s.day]}曜日のモンスター`:s.ur?'ウルトラレアモンスター':s.mega?'メガモンスター（'+esc(megaWhere(dexSel))+'を克服）':s.qd?'クイズダンジョンの伝説のドラゴン':s.egg?'たまごから生まれるモンスター':s.rare?`${MAPD[s.pref][0]}のレアモンスター`:`No.${String(DEX_ORDER.indexOf(dexSel)+1).padStart(3,"0")}`}</span><h3>${esc(own?nameOf(dexSel):s.forms[0].n)}</h3>${typeChip(s.type)}</div></div>
+    h += `<div class="card detail" style="margin:0 0 14px"><div class="row"><div class="mon">${(own?artMine(dexSel):art(dexSel,1,{sil:true}))}</div><div style="min-width:0"><span class="mini">${s.umega?'ウルトラメガモンスター':s.week?`${WDAY[s.day]}曜日のモンスター`:s.ur?'ウルトラレアモンスター':s.mega?'メガモンスター（'+esc(megaWhere(dexSel))+'を克服）':s.qd?'クイズダンジョンの伝説のドラゴン':s.egg?'たまごから生まれるモンスター':s.rare?`${MAPD[s.pref][0]}のレアモンスター`:`No.${String(DEX_ORDER.indexOf(dexSel)+1).padStart(3,"0")}`}</span><h3>${esc(own?nameOf(dexSel):s.forms[0].n)}</h3>${typesChip(dexSel)}</div></div>
       <p>${own?esc(s.dex):'まだつかまえていない。つかまえると、くわしいことがわかるよ。'}</p>${own&&s.forms.length>1?`<p class="mini">しんか：${s.forms.map(f=>f.n+(f.lv?`（Lv.${f.lv}）`:'')).join(" → ")}</p>`:''}</div>`;
   }
   h += `<div class="grid3">${DEX_ORDER.map((id,i)=>{
     const no = `No.${String(i+1).padStart(3,"0")}`;
     if(!save.seen[id]) return `<div class="card mcard unseen"><span class="no">${no}</span><div class="mon">？</div><b>？？？</b></div>`;
     const own = save.owned[id];
-    return `<button class="card mcard" data-id="${id}"><span class="no">${no}</span><div class="mon">${(own?artMine(id):art(id,1,{sil:true}))}</div><b>${esc(own?nameOf(id):SP[id].forms[0].n)}</b>${own?typeChip(SP[id].type):'<span class="mini">見つけた</span>'}</button>`;
+    return `<button class="card mcard" data-id="${id}"><span class="no">${no}</span><div class="mon">${(own?artMine(id):art(id,1,{sil:true}))}</div><b>${esc(own?nameOf(id):SP[id].forms[0].n)}</b>${own?typesChip(id):'<span class="mini">見つけた</span>'}</button>`;
   }).join("")}</div>`;
-  h += `<h2 class="sec-h" style="margin-top:22px">ウルトラレア</h2><p class="dexcount">算数4「ぶんすうの城」の分数カードを全部★3にすると…</p><div class="grid3">${UR_ORDER.map(id=>save.owned[id]?`<button class="card mcard urcell" data-id="${id}"><span class="no">ウルトラレア</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typeChip(SP[id].type)}</button>`:`<div class="card mcard unseen"><span class="no">ウルトラレア</span><div class="mon">${art(id,1,{sil:true})}</div><b>？？？</b></div>`).join("")}</div>`;
+  h += `<h2 class="sec-h" style="margin-top:22px">ウルトラレア</h2><p class="dexcount">算数4「ぶんすうの城」の分数カードを全部★3にすると…</p><div class="grid3">${UR_ORDER.map(id=>save.owned[id]?`<button class="card mcard urcell" data-id="${id}"><span class="no">ウルトラレア</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typesChip(id)}</button>`:`<div class="card mcard unseen"><span class="no">ウルトラレア</span><div class="mon">${art(id,1,{sil:true})}</div><b>？？？</b></div>`).join("")}</div>`;
   const uc = UMEGA_ORDER.filter(id=>save.owned[id]).length, wc = WEEK_ORDER.filter(id=>save.owned[id]).length;
   h += `<h2 class="sec-h" style="margin-top:22px">ウルトラメガモンスター</h2><p class="dexcount">なかまにした ${uc} / ${UMEGA_ORDER.length}　（単元のルートとでんせつを全部クリアして、ニガテの森を0問にすると手に入る）</p><div class="grid3">${UMEGA_ORDER.map(id=>{ const lb=unitLabel(UNITS.find(u=>u.id===UMEGA[id].unit));
-    return save.owned[id]?`<button class="card mcard urcell" data-id="${id}"><span class="no">${esc(lb)}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typeChip(SP[id].type)}</button>`:`<div class="card mcard unseen"><span class="no">${esc(lb)}</span><div class="mon">${art(id,1,{sil:true})}</div><b>？？？</b></div>`; }).join("")}</div>`;
+    return save.owned[id]?`<button class="card mcard urcell" data-id="${id}"><span class="no">${esc(lb)}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typesChip(id)}</button>`:`<div class="card mcard unseen"><span class="no">${esc(lb)}</span><div class="mon">${art(id,1,{sil:true})}</div><b>？？？</b></div>`; }).join("")}</div>`;
   h += `<h2 class="sec-h" style="margin-top:22px">曜日のモンスター</h2><p class="dexcount">なかまにした ${wc} / 7　（その曜日だけ、ぼうけん・ダンジョンで出やすい）</p><div class="grid3">${WEEK_ORDER.map(id=>{ const lb=WDAY[SP[id].day]+"曜日";
-    if(save.owned[id]) return `<button class="card mcard rarecell" data-id="${id}"><span class="no">${lb}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typeChip(SP[id].type)}</button>`;
+    if(save.owned[id]) return `<button class="card mcard rarecell" data-id="${id}"><span class="no">${lb}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typesChip(id)}</button>`;
     if(save.seen[id]) return `<button class="card mcard" data-id="${id}"><span class="no">${lb}</span><div class="mon">${art(id,1,{sil:true})}</div><b>${esc(SP[id].forms[0].n)}</b><span class="mini">見つけた</span></button>`;
     return `<div class="card mcard unseen"><span class="no">${lb}</span><div class="mon">？</div><b>？？？</b></div>`; }).join("")}</div>`;
   const rc = RARE_ORDER.filter(id=>save.owned[id]).length;
   h += `<h2 class="sec-h" style="margin-top:22px">都道府県のレアモンスター</h2><p class="dexcount">なかまにした ${rc} / 47　（「ちず」でその都道府県を「かんぜん」にすると手に入る）</p>`;
   h += `<div class="grid3">${RARE_ORDER.map(id=>{ const pn=MAPD[RARE[id].pref][0];
     if(!save.owned[id]) return `<div class="card mcard unseen"><span class="no">${pn}</span><div class="mon">${art(id,1,{sil:true})}</div><b>？？？</b></div>`;
-    return `<button class="card mcard rarecell" data-id="${id}"><span class="no">${pn}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typeChip(SP[id].type)}</button>`; }).join("")}</div>`;
+    return `<button class="card mcard rarecell" data-id="${id}"><span class="no">${pn}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typesChip(id)}</button>`; }).join("")}</div>`;
   const qc = QD_ORDER.filter(id=>save.owned[id]).length;
   h += `<h2 class="sec-h" style="margin-top:22px">クイズダンジョンのモンスター</h2><p class="dexcount">なかまにした ${qc} / ${QD_ORDER.length}　（ドラゴン：フロアを全部マスター／たまご：毎日のたんけん）</p>`;
   h += `<div class="grid3">${QD_ORDER.map(id=>{ const lb=SP[id].qd?QD_FLOORS.find(f=>f.dragon===id).lb:'たまご';
     if(!save.owned[id]) return `<div class="card mcard unseen"><span class="no">${lb}</span><div class="mon">${art(id,1,{sil:true})}</div><b>？？？</b></div>`;
-    return `<button class="card mcard ${SP[id].qd?'rarecell':''}" data-id="${id}"><span class="no">${lb}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typeChip(SP[id].type)}</button>`; }).join("")}</div>`;
+    return `<button class="card mcard ${SP[id].qd?'rarecell':''}" data-id="${id}"><span class="no">${lb}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typesChip(id)}</button>`; }).join("")}</div>`;
   const mc = MEGA_ORDER.filter(id=>save.owned[id]).length;
   h += `<h2 class="sec-h" style="margin-top:22px">メガモンスター</h2><p class="dexcount">なかまにした ${mc} / ${MEGA_ORDER.length}　（ニガテの森・ダンジョンのニガテを克服すると手に入る）</p>`;
   h += `<div class="grid3">${MEGA_ORDER.map(id=>{ const w=MEGA[id].where, lb=w.unit?((u=>u.label||(u.subject+"第"+u.no+"回"))(UNITS.find(u=>u.id===w.unit))):("ダンジョン"+QD_FLOORS.find(f=>f.id===w.floor).lb);
     if(!save.owned[id]) return `<div class="card mcard unseen"><span class="no">${lb}</span><div class="mon">${art(id,1,{sil:true})}</div><b>？？？</b></div>`;
-    return `<button class="card mcard rarecell" data-id="${id}"><span class="no">${lb}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typeChip(SP[id].type)}</button>`; }).join("")}</div>`;
+    return `<button class="card mcard rarecell" data-id="${id}"><span class="no">${lb}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typesChip(id)}</button>`; }).join("")}</div>`;
   app.innerHTML = h;
   app.querySelectorAll(".mcard[data-id]").forEach(b=>b.onclick=()=>{ dexSel=b.dataset.id; showDex(); });
 }
@@ -2827,11 +2834,15 @@ function finishQD(win){
    - 見た目は、その単元のでんせつ／フロアのドラゴンのメガシンカした姿（自動生成。新しい単元にも自動で付く）
    id: mega_<元のid>（変更しない）
    ============================================================ */
+/* 2つ目のタイプ（v32、ユーザーの要望「今まで捕まえたモンスターにもわざと属性を加えて」）。v31 以前からいるモンスター全部に付ける。メガ・ウルトラメガは元から引きつぐ
+   あいしょうは2つのタイプをかけ合わせ、0.5〜2倍におさめる（defMult）。わざは2つ目のタイプのものも Lv5・11・18 でおぼえる */
+const TYPE2 = {shizukun:"koori", hibatch:"hikari", mebukin:"hikari", toratch:"kaze", doronko:"mizu", milkle:"kaze", toumein:"hikari", myoban:"koori", salty:"mizu", heaton:"kaze", fundon:"denki", spoit:"kaze", sugarn:"mizu", sekkai:"iwa", housan:"koori", tokerudon:"hikari", hiebat:"koori", kesshon:"koori", hexagon:"hikari", rotomushi:"mizu", roshika:"kaze", tsutawase:"hikari", steamdra:"kaze", atsuzara:"iwa", shiokabuto:"mizu", cubix:"hikari", octa:"kaze", ryusan:"iwa", harisho:"koori", curvel:"kaze", ondorin:"hikari", memorisu:"denki", crystalos:"koori", tanemomi:"mizu", dorokaki:"iwa", nakaboshi:"kaze", karitori:"denki", shinano:"koori", ishikari:"kaze", mogami:"kusa", reigai:"koori", hikario:"hikari", hitomebo:"kaze", komachi:"koori", kirara:"hikari", watari:"kaze", tazukuri:"kusa", komeko:"kaze", nukazuke:"mizu", mizuhodra:"hikari", num_suji:"hikari", num_kake:"kaze", enban:"koori", hankei:"kaze", compas:"denki", num_pi:"hikari", num_sosu:"hikari", yakusu:"kaze", warikiren:"kaze", gousei:"denki", num_prime:"hikari", heihou:"denki", baibain:"denki", bunsuu:"koori", shousuu:"kaze", num_keisan:"hikari", komugin:"kaze", daizun:"mizu", tomoron:"hikari", jagaimon:"koori", satsumain:"iwa", pinattsu:"kusa", sobacchi:"kaze", kanshodra:"hikari", num_half:"hikari", num_quarter:"kaze", num_fifth:"denki", num_eighth:"koori", num_pizza:"kusa", num_bunsuuou:"hikari", gasshoun:"koori", raichon:"denki", kurobedon:"denki", riasun:"iwa", wajiman:"hikari", retasun:"kaze", unagin:"denki", terugiku:"denki", alpsdra:"koori", shirasagin:"hikari", shigarakin:"hono", kingyon:"mizu", hashidaten:"iwa", umeboshin:"kusa", tamanegin:"mizu", sennaribat:"kusa", miyakoryu:"hikari", nanaboshin:"hikari", hagimin:"kaze", juhyon:"koori", magatamun:"hikari", barabon:"kaze", tateyaman:"koori", asahin:"hikari", shinjun:"hikari", sensun:"kaze", torin:"kaze", izumon:"kaze", umehanan:"kaze", hatopi:"hikari", kenshodra:"hikari", nasubit:"hono", kyabecchi:"kaze", daikoon:"iwa", ninjinko:"iwa", hakusain:"koori", vinyrun:"hikari", coldon:"koori", doronbo:"denki", vegedra:"hikari", rare_hokkaido:"koori", rare_aomori:"koori", rare_iwate:"hono", rare_miyagi:"mizu", rare_akita:"hikari", rare_yamagata:"hikari", rare_fukushima:"iwa", rare_ibaraki:"kaze", rare_tochigi:"hikari", rare_gunma:"kusa", rare_saitama:"kaze", rare_chiba:"kusa", rare_tokyo:"denki", rare_kanagawa:"kaze", rare_niigata:"kaze", rare_toyama:"koori", rare_ishikawa:"hikari", rare_fukui:"hikari", rare_yamanashi:"hikari", rare_nagano:"koori", rare_gifu:"kaze", rare_shizuoka:"koori", rare_aichi:"denki", rare_mie:"hikari", rare_shiga:"kaze", rare_kyoto:"hikari", rare_osaka:"denki", rare_hyogo:"hikari", rare_nara:"kaze", rare_wakayama:"hikari", rare_tottori:"kaze", rare_shimane:"iwa", rare_okayama:"kaze", rare_hiroshima:"iwa", rare_yamaguchi:"kaze", rare_tokushima:"kaze", rare_kagawa:"kusa", rare_ehime:"hikari", rare_kochi:"kaze", rare_fukuoka:"hono", rare_saga:"iwa", rare_nagasaki:"kaze", rare_kumamoto:"kusa", rare_oita:"mizu", rare_miyazaki:"hikari", rare_kagoshima:"iwa", rare_okinawa:"kaze", qd_dou:"kaze", qd_gin:"denki", qd_kin:"hikari", qd_tro:"denki", qd_sho:"kaze", qd_chu:"iwa", qd_jo:"hikari", egg_piyo:"kaze", egg_koro:"koori", egg_yuki:"koori", egg_hoshi:"hikari"};
+for(const [id,t] of Object.entries(TYPE2)) if(SP[id] && SP[id].type!==t) SP[id].type2=t;
 const MEGA_NEED = 3;
 const MEGA = {};
 function megaOf(src, where){
   const b = SP[src];
-  return {arch:b.arch, body:b.body, beak:b.beak, numMark:b.numMark, type:b.type, color:b.accent, accent:b.color, skill:b.skill, legend:true, mega:true, src, where,
+  return {arch:b.arch, body:b.body, beak:b.beak, numMark:b.numMark, type:b.type, type2:b.type2, color:b.accent, accent:b.color, skill:b.skill, legend:true, mega:true, src, where,
     parts:Object.assign({}, b.parts||{}, {horn:(b.parts&&b.parts.horn)==="crown"?"twin":"crown", pat:"stars", wing:"crystal", acc:"gem", accColor:"#ff3df0"}),
     forms:[{n:"メガ"+b.forms[0].n}],
     dex:`${b.forms[0].n}が、ニガテをのりこえた力でメガシンカした姿。まちがえた問題を全部とりかえした人だけが出会える。`};
@@ -2897,7 +2908,7 @@ function urFracSVG(sil){
 }
 /* ウルトラレア：分数カード（sansu-4 の cards）を全部★3（ちがう日に3回、1回目で正解）にするとなかまに。save.fracCards = {"1/2":{n,last}} */
 const UR = {
-  ur_frac:{arch:"dragon", custom:"frac", type:"mizu", color:"#ffe28a", accent:"#8f6bff", skill:"power", legend:true, ur:true, forms:[{n:"フラクシオン"}],
+  ur_frac:{arch:"dragon", custom:"frac", type:"mizu", type2:"hikari", color:"#ffe28a", accent:"#8f6bff", skill:"power", legend:true, ur:true, forms:[{n:"フラクシオン"}],
     dex:"分数の神。つばさは4分の1、体は8分の1ずつに分かれ、しっぽは2分の1の半月。1/2・1/4・3/4・1/5〜4/5・1/8〜7/8 の11の分数と小数をすべておぼえた人の前にだけあらわれる、ウルトラレアモンスター。"}
 };
 Object.assign(SP, UR);
@@ -2937,7 +2948,7 @@ document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closes
    ============================================================ */
 const UMEGA = {};
 for(const u of UNITS) if(u.legend && SP[u.legend]){ const b=SP[u.legend];
-  UMEGA["umega_"+u.legend] = {arch:b.arch, body:b.body, beak:b.beak, numMark:b.numMark, type:b.type, color:b.color, accent:"#ffcf3a", skill:b.skill, legend:true, umega:true, src:u.legend, unit:u.id,
+  UMEGA["umega_"+u.legend] = {arch:b.arch, body:b.body, beak:b.beak, numMark:b.numMark, type:b.type, type2:b.type2, color:b.color, accent:"#ffcf3a", skill:b.skill, legend:true, umega:true, src:u.legend, unit:u.id,
     parts:Object.assign({}, b.parts||{}, {horn:"crown", pat:"stars", wing:"crystal", acc:"gem", accColor:"#3dd6ff"}),
     forms:[{n:"ウルトラメガ"+b.forms[0].n}],
     dex:`${b.forms[0].n}が、単元のルートとでんせつをすべてクリアし、ニガテを1つ残らずなくした力でたどりついた究極の姿。`}; }
@@ -3033,9 +3044,13 @@ const MOVES = {
 };
 const EFF = {heal:"HPも回復", catch:"フラスコが入りやすく", guard:"次のダメージ半分", week:"その曜日は2倍"};
 function sigOf(id){ const s=SP[id]; return s.umega?"sig_umega":s.mega?"sig_mega":s.ur?"sig_ur":s.week?"sig_week":s.legend?"sig_legend":null; }
-function learnable(id){ const t=SP[id].type; return ["tackle",t+"1",t+"2",t+"3"]; }
+function learnSet(id){ const s=SP[id], a=[["tackle",1],[s.type+"1",3],[s.type+"2",8],[s.type+"3",15]];
+  if(s.type2 && s.type2!==s.type) a.push([s.type2+"1",5],[s.type2+"2",11],[s.type2+"3",18]);
+  return a.sort((x,y)=>x[1]-y[1]); }
+function learnable(id){ return learnSet(id).map(x=>x[0]); }
+function learnLv(id,k){ const e=learnSet(id).find(x=>x[0]===k); return e?e[1]:(MOVES[k].lv||0); }
 function movesOf(id){
-  const lv=(save.owned[id]||{}).lv||1, sig=sigOf(id), learn=learnable(id).filter(k=>MOVES[k].lv<=lv);
+  const lv=(save.owned[id]||{}).lv||1, sig=sigOf(id), learn=learnable(id).filter(k=>learnLv(id,k)<=lv);
   return sig ? [sig, ...learn.slice(-3)] : learn.slice(-4);
 }
 function moveType(id,k){ const M=MOVES[k]; return M.t || (M.sig ? SP[id].type : null); }
@@ -3045,7 +3060,7 @@ const useHP = () => !!B && !B.tower;
 function hpOf(id){ B.hp=B.hp||{}; if(B.hp[id]==null) B.hp[id]=maxHPOf(id); return Math.min(B.hp[id], maxHPOf(id)); }
 function aliveIds(){ return save.party.filter(id=>save.owned[id] && hpOf(id)>0); }
 function hurtLead(){
-  const me=B.lead, w=B.wild, mm=mult(SP[w.id].type, SP[me].type), dm=mm===2?1.5:mm===.5?.7:1;
+  const me=B.lead, w=B.wild, mm=defMult(SP[w.id].type, me), dm=mm===2?1.5:mm===.5?.7:1;
   let d=Math.max(3, Math.round((5+w.lv*0.8)*dm)), guarded=false;
   if(B.guard){ d=Math.ceil(d/2); B.guard=false; guarded=true; }
   B.hp[me]=Math.max(0, hpOf(me)-d);
@@ -3055,7 +3070,7 @@ function healLead(r){ const me=B.lead, mx=maxHPOf(me), before=hpOf(me); B.hp[me]
 function hpMiniHTML(){ return `<div class="ptm">${save.party.filter(id=>save.owned[id]).map(id=>{ const r=hpOf(id)/maxHPOf(id); return `<span class="${id===B.lead?'cur':''} ${r<=0?'down':''}"><span class="bar hpbar ${hpClass(r)}"><i style="width:${r*100}%"></i></span></span>`; }).join("")}</div>`; }
 
 function updMyHP(){ const b=document.getElementById("mhp"), n=document.getElementById("mhpn"); if(!b) return; const h=hpOf(B.lead), mx=maxHPOf(B.lead), r=h/mx; b.className="bar hpbar "+hpClass(r); b.firstElementChild.style.width=(r*100)+"%"; if(n) n.textContent=`HP ${h}/${mx}`; }
-function nextMoveText(id){ const lv=(save.owned[id]||{}).lv||1, nx=learnable(id).find(k=>MOVES[k].lv>lv); return nx?`<p class="mini">Lv.${MOVES[nx].lv}で「${MOVES[nx].n}」をおぼえる</p>`:''; }
+function nextMoveText(id){ const lv=(save.owned[id]||{}).lv||1, nx=learnable(id).find(k=>learnLv(id,k)>lv); return nx?`<p class="mini">Lv.${learnLv(id,nx)}で「${MOVES[nx].n}」をおぼえる</p>`:''; }
 /* 大きさ：種類ごとの大きさ（size か ARCH_SIZE）×個体ごとの大きさ（sz。出会うたびに 0.92〜1.08、ときどき でかい 1.22／ちびっこ 0.78） */
 const sizeLabel = sz => sz>=1.2?'でかい！':sz<=.8?'ちびっこ':'';
 function heightOf(id, sz, f){ return Math.max(.1, Math.round(.4*spSize(id,f)*[1,1.6,2.4][f]*(sz||1)*10)/10); }
@@ -3098,22 +3113,22 @@ function addExp(id, n){
   const could = canEvo(id), lv0 = o.lv;
   o.exp += n;
   while(o.lv<30 && o.exp>=need(o.lv)){ o.exp-=need(o.lv); o.lv++; }
-  if(B && o.lv>lv0){ B.lvups[id]=o.lv; for(const k of learnable(id)) if(MOVES[k].lv>lv0 && MOVES[k].lv<=o.lv) (B.newMoves=B.newMoves||[]).push([id,k]); }
+  if(B && o.lv>lv0){ B.lvups[id]=o.lv; for(const k of learnable(id)) if(learnLv(id,k)>lv0 && learnLv(id,k)<=o.lv) (B.newMoves=B.newMoves||[]).push([id,k]); }
   if(B && !could && canEvo(id) && !B.evoReady.includes(id)) B.evoReady.push(id);
   persist();
 }
 function dmgOf(k){
-  const me = B.lead, lv = save.owned[me].lv, M = MOVES[k||"tackle"], t = moveType(me, k||"tackle"), m = t ? mult(t, SP[B.wild.id].type) : 1;
+  const me = B.lead, lv = save.owned[me].lv, M = MOVES[k||"tackle"], t = moveType(me, k||"tackle"), m = t ? defMult(t, B.wild.id) : 1;
   let pow = M.pow; if(M.eff==="week" && SP[me].day===new Date().getDay()) pow *= 2;
   return {m, d: Math.max(2, Math.round(8*m*pow*(1+lv*0.1)*(B.power?2:1)))};
 }
 function fieldHTML(enter){
   const w=B.wild, me=B.lead, o=save.owned[me], r=w.hp/w.max, ws=SP[w.id];
   return `<div class="field" id="field"><div class="plat w"></div><div class="plat m"></div>
-    <div class="info w"><div class="nm">${esc(nameOf(w.id,w.lv))} ${typeChip(ws.type)}${sizeLabel(w.sz||1)?`<span class="sztag">${sizeLabel(w.sz)}</span>`:''}<span class="lv">Lv.${w.lv}</span></div><div class="bar hpbar ${hpClass(r)}" id="whp"><i style="width:${r*100}%"></i></div></div>
+    <div class="info w"><div class="nm"><span class="nmt">${esc(nameOf(w.id,w.lv))}</span> ${typesChip(w.id)}${sizeLabel(w.sz||1)?`<span class="sztag">${sizeLabel(w.sz)}</span>`:''}<span class="lv">Lv.${w.lv}</span></div><div class="bar hpbar ${hpClass(r)}" id="whp"><i style="width:${r*100}%"></i></div></div>
     <div class="mon ${enter?'enter':''}" id="wildMon">${art(w.id,w.lv,{sz:w.sz})}</div>
     <div class="mon" id="meMon">${artMine(me)}</div>
-    <div class="info m"><div class="nm">${esc(nameOf(me))} ${typeChip(SP[me].type)}<span class="lv">Lv.${o.lv}</span></div>${useHP()?(()=>{ const h=hpOf(me), mx=maxHPOf(me), r2=h/mx; return `<div class="bar hpbar ${hpClass(r2)}" id="mhp"><i style="width:${r2*100}%"></i></div><div class="hpn" id="mhpn">HP ${h}/${mx}</div>`; })():''}<div class="bar expbar${useHP()?' thin':''}"><i style="width:${o.exp/need(o.lv)*100}%"></i></div></div>
+    <div class="info m"><div class="nm"><span class="nmt">${esc(nameOf(me))}</span> ${typesChip(me)}<span class="lv">Lv.${o.lv}</span></div>${useHP()?(()=>{ const h=hpOf(me), mx=maxHPOf(me), r2=h/mx; return `<div class="bar hpbar ${hpClass(r2)}" id="mhp"><i style="width:${r2*100}%"></i></div><div class="hpn" id="mhpn">HP ${h}/${mx}</div>`; })():''}<div class="bar expbar${useHP()?' thin':''}"><i style="width:${o.exp/need(o.lv)*100}%"></i></div></div>
   </div>`;
 }
 let logMsg = "";
@@ -3126,7 +3141,7 @@ function renderBattle(enter){
   item.hidden = item.hidden || [];
   if(item.num==null) item.num = !!(q.n && !B.qd && save.okOnce && save.okOnce[item.key]);
   const isNum = item.num; if(isNum) item.input = item.input || "";
-  if(enter) logMsg = (SP[B.wild.id].week?`きょうは${WDAY[SP[B.wild.id].day]}曜日！ 曜日のモンスター `:sizeLabel(B.wild.sz||1)==='でかい！'?'でかい！ ':sizeLabel(B.wild.sz||1)?'ちびっこの ':'') + `やせいの <b>${esc(nameOf(B.wild.id,B.wild.lv))}</b> があらわれた！` + (mult(SP[B.lead].type,SP[B.wild.id].type)===2?' あいしょうはばつぐん！':mult(SP[B.lead].type,SP[B.wild.id].type)===.5?' あいしょうが悪いかも…':'');
+  if(enter) logMsg = (SP[B.wild.id].week?`きょうは${WDAY[SP[B.wild.id].day]}曜日！ 曜日のモンスター `:sizeLabel(B.wild.sz||1)==='でかい！'?'でかい！ ':sizeLabel(B.wild.sz||1)?'ちびっこの ':'') + `やせいの <b>${esc(nameOf(B.wild.id,B.wild.lv))}</b> があらわれた！` + (bestMult(B.lead,B.wild.id)===2?' あいしょうはばつぐん！':bestMult(B.lead,B.wild.id)===.5?' あいしょうが悪いかも…':'');
   const me=B.lead, sk=SKILLS[SP[me].skill];
   app.innerHTML = `
   <div class="btop"><button class="back" id="back">← にげる</button><span class="pill">${flaskSVG} ×${save.balls}</span>${useHP()?hpMiniHTML():`<div class="hearts">${Array.from({length:B.maxHearts||MAX_HP},(_,i)=>heart(i<B.hearts)).join("")}</div>`}</div>
@@ -3188,7 +3203,7 @@ function renderBattle(enter){
   document.getElementById("swapBtn").onclick=()=>{ B.swapOpen=!B.swapOpen; renderBattle(); };
   app.querySelectorAll(".swap button").forEach(b=>b.onclick=()=>{
     B.lead=b.dataset.id; B.swapOpen=false;
-    const m=mult(SP[B.lead].type,SP[B.wild.id].type);
+    const m=bestMult(B.lead,B.wild.id);
     logMsg=`いけっ！ <b>${esc(nameOf(B.lead))}</b>！`+(m===2?' あいしょうはばつぐん！':m===.5?' あいしょうが悪いかも…':'');
     renderBattle();
   });
@@ -3330,7 +3345,7 @@ function judge(picked){
     setLog(hurt);
     fb.innerHTML = `<div class="fb ng">${ansText.length>18?`<h3>ざんねん…</h3><p><b>正解：${esc(ansText)}</b></p>`:`<h3>ざんねん… 正解は「${esc(ansText)}」</h3>`}${q.e?`<p>${esc(q.e)}</p>`:""}${qm}<p class="mini">${B.tower?'ハートが0になると塔からおりるよ。':lost?'なかまが全員たおれてしまった…':down?'つぎのなかまにこうたいするよ。この問題は、あとでもう一度出てくるよ。':'この問題は、あとでもう一度出てくるよ。'}</p></div><button class="btn" id="next" style="margin-top:12px">${lost?'…':down?'つぎのなかまを出す':'つぎへ'}</button>`;
     document.getElementById("next").onclick=()=>{ B.busy=false; if(lost) return finish(false);
-      if(useHP() && hpOf(B.lead)<=0){ B.lead=aliveIds()[0]; B.swapOpen=false; const m2=mult(SP[B.lead].type,SP[B.wild.id].type); logMsg=`いけっ！ <b>${esc(nameOf(B.lead))}</b>！`+(m2===2?' あいしょうはばつぐん！':m2===.5?' あいしょうが悪いかも…':''); }
+      if(useHP() && hpOf(B.lead)<=0){ B.lead=aliveIds()[0]; B.swapOpen=false; const m2=bestMult(B.lead,B.wild.id); logMsg=`いけっ！ <b>${esc(nameOf(B.lead))}</b>！`+(m2===2?' あいしょうはばつぐん！':m2===.5?' あいしょうが悪いかも…':''); }
       renderBattle(); };
   }
   fb.scrollIntoView({behavior:"smooth",block:"nearest"});
@@ -3435,7 +3450,7 @@ function finish(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261102123308";
+const APP_VER="20261102124256";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
