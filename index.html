@@ -31,6 +31,7 @@ img{max-width:100%}
   --ink:#24324a; --muted:#5d6c86; --panel:#ffffff; --soft:#f3f8fc;
   --sun:#ffcf3a; --accent:#ff7a2f; --good:#24a865; --bad:#e8475a;
   --t-mizu:#3d8bff; --t-hono:#ff6a2b; --t-kusa:#34a853; --t-iwa:#a0784b;
+  --t-denki:#e0a400; --t-koori:#2fb3d9; --t-kaze:#8a7bf0; --t-hikari:#f06aa8;
   --display:"Dela Gothic One","Hiragino Kaku Gothic StdN","Yu Gothic",sans-serif;
   --body:"M PLUS Rounded 1c","Hiragino Maru Gothic ProN","Yu Gothic",sans-serif;
   color-scheme:light;
@@ -44,7 +45,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .card{background:var(--panel);border:3px solid var(--ink);border-radius:16px;box-shadow:0 4px 0 var(--ink)}
 .chip{display:inline-block;font-size:11px;font-weight:800;color:#fff;border-radius:999px;padding:0 8px;line-height:20px;white-space:nowrap}
-.t-mizu{background:var(--t-mizu)}.t-hono{background:var(--t-hono)}.t-kusa{background:var(--t-kusa)}.t-iwa{background:var(--t-iwa)}
+.t-mizu{background:var(--t-mizu)}.t-hono{background:var(--t-hono)}.t-kusa{background:var(--t-kusa)}.t-iwa{background:var(--t-iwa)}.t-denki{background:var(--t-denki)}.t-koori{background:var(--t-koori)}.t-kaze{background:var(--t-kaze)}.t-hikari{background:var(--t-hikari)}
 .bar{height:9px;background:#dfe6ee;border-radius:6px;overflow:hidden;border:2px solid var(--ink)}
 .bar>i{display:block;height:100%;transition:width .45s}
 .hpbar>i{background:var(--good)}.hpbar.mid>i{background:var(--sun)}.hpbar.low>i{background:var(--bad)}
@@ -214,6 +215,33 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .acts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
 .acts .btn{font-size:16px;padding:10px 6px}
 .acts small{display:block;font-family:var(--body);font-weight:800;font-size:11px}
+.acts.one{grid-template-columns:1fr;margin-top:10px}
+.btn.mv{background:var(--panel);border-left-width:10px;font-size:15px;padding:9px 6px;line-height:1.3}
+.btn.mv.mt-none{border-left-color:#9aa6b8}.btn.mv.mt-mizu{border-left-color:var(--t-mizu)}.btn.mv.mt-hono{border-left-color:var(--t-hono)}.btn.mv.mt-kusa{border-left-color:var(--t-kusa)}.btn.mv.mt-iwa{border-left-color:var(--t-iwa)}.btn.mv.mt-denki{border-left-color:var(--t-denki)}.btn.mv.mt-koori{border-left-color:var(--t-koori)}.btn.mv.mt-kaze{border-left-color:var(--t-kaze)}.btn.mv.mt-hikari{border-left-color:var(--t-hikari)}
+.ptm{display:flex;gap:4px;margin-left:auto}
+.ptm>span{display:block;width:34px;padding:2px;border-radius:6px}
+.ptm>span.cur{background:#fff4d6;outline:2px solid var(--ink)}
+.ptm>span.down{opacity:.4}
+.ptm .bar{display:block;height:9px;border-width:1.5px}
+.info .expbar.thin{height:5px;border-width:1.5px;margin-top:2px}
+.info .hpn{font-size:11px;text-align:right;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.2}
+.dmg.me{right:auto;left:70px;top:auto;bottom:110px}
+.sztag{font-size:10px;font-weight:800;background:var(--ink);color:#fff;border-radius:999px;padding:0 5px;line-height:16px}
+.swap button small{display:block;font-size:10px;font-weight:800;color:var(--muted)}
+.swap button:disabled{opacity:.4}
+.mon svg{overflow:visible}
+.mvlist{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0 4px}
+.mvchip{display:block;border:2px solid var(--ink);border-left-width:8px;border-radius:10px;padding:3px 8px;background:var(--soft);line-height:1.3}
+.mvchip b{display:block;font-size:13px}.mvchip small{display:block;font-size:10.5px;color:var(--muted);font-weight:700}
+.mvchip.mt-none{border-left-color:#9aa6b8}.mvchip.mt-mizu{border-left-color:var(--t-mizu)}.mvchip.mt-hono{border-left-color:var(--t-hono)}.mvchip.mt-kusa{border-left-color:var(--t-kusa)}.mvchip.mt-iwa{border-left-color:var(--t-iwa)}.mvchip.mt-denki{border-left-color:var(--t-denki)}.mvchip.mt-koori{border-left-color:var(--t-koori)}.mvchip.mt-kaze{border-left-color:var(--t-kaze)}.mvchip.mt-hikari{border-left-color:var(--t-hikari)}
+.umegacard{border-color:#e0a400;box-shadow:0 4px 0 #e0a400;background:linear-gradient(120deg,#fff9d6,#ffe9f6,#e6fff4,#e8f1ff)}
+.umegaline,.weekcard{display:flex;gap:10px;align-items:center;padding:8px 12px;margin-top:10px}
+.umegaline .mon,.weekcard .mon{width:56px;height:56px;flex:none}
+.umegaline>div>b,.weekcard>div>b{display:block}
+.umegaline{border-color:#e0a400;box-shadow:0 4px 0 #e0a400;background:#fffbe8}
+.weekcard{margin:12px 0 0;background:#f4f1ff;border-color:#8a7bf0;box-shadow:0 4px 0 #8a7bf0}
+.tchart{display:grid;grid-template-columns:auto auto 1fr;gap:6px 6px;align-items:center;font-size:12px;margin-bottom:8px}
+.tchart .ar{font-weight:800}
 
 /* party / dex */
 .sec-h{font-size:22px;margin:6px 0 12px}
@@ -1717,13 +1745,50 @@ for(const [p,n,arch,type,color,accent,skill,parts,dex] of RARE_LIST)
 const RARE_ORDER = Object.keys(RARE);
 const SP = Object.assign({}, STARTERS, ...UNITS.map(u=>u.monsters));
 const DEX_ORDER = Object.keys(SP);
+/* ============================================================
+   追加モンスター（v31）：新しいタイプ（でんき・こおり・かぜ・ひかり）。各単元のルートに2ひきずつ
+   - DEX_ORDER の最後に足す（今までの No. は変えない）。u.monsters と s.wild にも足す
+   - id は変更しない
+   ============================================================ */
+const EXTRA_LIST = [
+  ["rika-11","s2","tokenokori","slime","koori","#bfe9ff","#5fb8e8","heal",.7,null,["トケノコリ","ヒョウケツスライム"],"水にとけきれずに底にのこったつぶが、ひんやりかたまったスライム。水をふやすと、またとけて小さくなる。"],
+  ["rika-11","s4","shuwacchi","jelly","denki","#fff07a","#ffb800","power",.85,null,["シュワッチ","シュワライデン"],"炭酸水のあわから生まれた。あわがはじけるたびに、パチパチ電気が走る。"],
+  ["rika-12","s1","hierin","fish","koori","#9fe3ff","#3d8bff","hint",.8,null,["ヒエリン","ヒョウガギョ"],"水よう液を冷やすと出てくる結しょうを、ひれにつけて泳ぐ魚。"],
+  ["rika-12","s3","yugefuwa","jelly","kaze","#f4f6ff","#9c8cff","luck",1.05,null,["ユゲフワ","ユゲグモン"],"湯気（小さな水のつぶ）がふわふわ集まったモンスター。冷えると水にもどる。"],
+  ["shakai-11","s1","inabika","serpent","denki","#ffe14d","#7a5cff","power",1.12,{horn:"twin"},["イナビカ","イナズマオロチ"],"かみなりの多い年は米がよくとれるといわれ、「稲妻（いなずま）」という名がついたという言い伝えから生まれた。"],
+  ["shakai-11","s4","kazeminori","bird","kaze","#c7f0d8","#e8c85a","heal",.85,null,["カゼミノリ","ホウサクフウ"],"実った稲穂をゆらす、秋の風のモンスター。"],
+  ["sansu-1","s3","marupika","slime","hikari","#fff3b0","#ff8fc8","luck",.75,{pat:"stars"},["マルピカ","エンゲツコウ"],"まんまるにかがやく。直径×3.14で、まわりの長さがわかる。"],
+  ["sansu-1","s4","kururin","fish","kaze","#d9d2ff","#7a6cff","hint",.8,null,["クルリン","センプウエン"],"円のまわりをぐるぐる回る風の魚。1周すると、直径の3.14倍の道のりを進む。"],
+  ["sansu-2","s1","hitoriboshi","bat","hikari","#fff6c9","#ff8fc8","hint",.68,null,["ヒトリボシ","ソスウセイ"],"1とその数でしか割り切れない、ひとりぼっちの星。でも、同じなかまの星は数えきれないほどある。"],
+  ["sansu-2","s3","warenain","golem","koori","#d9f4ff","#6fc7ff","heal",1.16,null,["ワレナイン","ムテキヒョウガ"],"1と自分でしか割り切れない、素数のような氷のゴーレム。とても大きい。"],
+  ["sansu-3","s2","nibaichi","jelly","denki","#ffe066","#3d8bff","power",.9,null,["ニバイチ","ジュウデンバイ"],"電気を2倍、4倍、8倍…とためていく。2を10回かけると1024。"],
+  ["sansu-3","s4","hyakupika","slime","hikari","#fff1c1","#ffb84d","luck",.72,null,["ヒャクピカ","センピカリ"],"25×4＝100のように、ちょうど100になると光る。"],
+  ["shakai-12","s1","mugikazen","fox","kaze","#f3dfa2","#9c8cff","power",.95,null,["ムギカゼン","ムギアラシ"],"小麦畑をかけぬける風のキツネ。日本で使う小麦の多くは輸入されている。"],
+  ["shakai-12","s2","hieimo","slime","koori","#d8b48a","#9fe3ff","heal",.7,{pat:"spots"},["ヒエイモ","イモツララ"],"すずしい北海道の畑で育ったじゃがいものスライム。"],
+  ["sansu-4","s2","handenki","slime","denki","#ffe97a","#ff6ad5","power",.72,null,["ハンデンキ","マンタンデン"],"電気が2分の1（0.5）だけたまったところ。半分と半分で1になる。"],
+  ["sansu-4","s3","hyopen","fish","koori","#c9f1ff","#ffb84d","hint",.82,null,["ヒョウペン","アイスピザン"],"8つに分けた氷のかけら。1こが8分の1（0.125）。"],
+  ["shakai-6","s1","shiroyukin","fox","koori","#ffffff","#7cc8ff","luck",.92,{acc:"scarf",accColor:"#e8475a"},["シロユキン","ホクリクフブキ"],"冬に雪の多い北陸（日本海側）にすむキツネ。"],
+  ["shakai-6","s3","takanekaze","bird","kaze","#cfe8ff","#5c7fc4","hint",.9,null,["タカネッパ","タカネオロシ"],"中央高地の高い山からふく風のモンスター。夏でもすずしい。"],
+  ["shakai-7","s2","biwapika","fish","hikari","#b8f0ff","#ff8fc8","heal",1.08,null,["ビワピカ","ビワコウ"],"日本一大きい湖、琵琶湖（滋賀県）にすむ光る魚。"],
+  ["shakai-7","s3","neonbat","bat","denki","#7a5cff","#ffe14d","luck",.8,null,["ネオンバット","ドウトンボルト"],"大阪の街のネオンの電気でとぶコウモリ。"],
+  ["shakai-mark","s2","shinborun","jelly","hikari","#ffe9f6","#ffcf3a","hint",.9,{acc:"gem",accColor:"#3d8bff"},["シンボルン","エンブレムーン"],"県のマークのように、形に意味をこめて光る。"],
+  ["shakai-mark","s5","setokaze","bird","kaze","#bfe6ff","#3dd6c6","power",.88,null,["セトカゼ","セトウチアラシ"],"瀬戸内海をわたる風のモンスター。瀬戸内は1年を通して雨が少ない。"],
+  ["shakai-13","s2","hinyarin","slime","koori","#d6f5d0","#7cc8ff","heal",.72,null,["ヒンヤリン","ヨレイキング"],"とれた野菜をすぐに冷やす「予冷」で、新せんさを守るスライム。"],
+  ["shakai-13","s3","kogenkaze","fox","kaze","#d6f0c2","#9c8cff","luck",.94,null,["スズカゼン","コウゲンカゼ"],"夏もすずしい高原の風のキツネ。高原ではキャベツやレタスが育てられる。"]
+];
+for(const [uid,sid,id,arch,type,color,accent,skill,size,parts,names,dex] of EXTRA_LIST){
+  const u=UNITS.find(x=>x.id===uid), st=u&&u.stages.find(x=>x.id===sid); if(!st) continue;
+  const m={arch, type, color, accent, skill, size, forms:[{n:names[0]},{n:names[1],lv:8}], dex, extra:true}; if(parts) m.parts=parts;
+  SP[id]=m; u.monsters[id]=m; DEX_ORDER.push(id); if(!st.wild.includes(id)) st.wild.push(id);
+}
 Object.assign(SP, RARE);
-const TYPES = {mizu:"みず", hono:"ほのお", kusa:"くさ", iwa:"いわ"};
-const BEATS = {mizu:"hono", hono:"kusa", kusa:"iwa", iwa:"mizu"};
-const mult = (a,d) => BEATS[a]===d ? 2 : BEATS[d]===a ? 0.5 : 1;
+const TYPES = {mizu:"みず", hono:"ほのお", kusa:"くさ", iwa:"いわ", denki:"でんき", koori:"こおり", kaze:"かぜ", hikari:"ひかり"};
+/* あいしょう（v31で8タイプ）：左のタイプのわざは、右のタイプに 2倍。ぎゃくむきは 0.5倍。もとの4タイプの輪はそのまま */
+const BEATS = {mizu:["hono"], hono:["kusa","koori"], kusa:["iwa"], iwa:["mizu","denki","hikari"], denki:["mizu","kaze"], koori:["kusa","kaze"], kaze:["hono"], hikari:["koori"]};
+const mult = (a,d) => (BEATS[a]||[]).includes(d) ? 2 : (BEATS[d]||[]).includes(a) ? 0.5 : 1;
 const SKILLS = {
   hint:{n:"ヒントの光", d:"まちがいの選択肢を1つ消す"},
-  heal:{n:"いやしの雨", d:"ハートを1つ回復"},
+  heal:{n:"いやしの雨", d:"HPを回復（塔ではハート1つ）"},
   power:{n:"パワーため", d:"次のこうげきが2倍"},
   luck:{n:"ラッキーフラスコ", d:"次のフラスコがつかまえやすい"}
 };
@@ -1760,7 +1825,7 @@ function saveStatusHTML(){
 function formIdx(id, lv){ const f=SP[id].forms; let k=0; f.forEach((x,i)=>{ if(i && lv>=x.lv) k=i; }); return k; }
 const curF = id => { const o=save.owned[id]; return o.form ?? formIdx(id,o.lv); };
 function canEvo(id){ const o=save.owned[id]; if(!o) return false; const nx=SP[id].forms[curF(id)+1]; return !!nx && o.lv>=nx.lv; }
-const artMine = (id,opt={}) => art(id, 1, Object.assign({}, opt, {f: SP[id].legend?2:curF(id)}));
+const artMine = (id,opt={}) => art(id, 1, Object.assign({}, opt, {f: SP[id].legend?2:curF(id), sz:(save.owned[id]||{}).sz}));
 const nameOf = (id, lv) => SP[id].forms[lv==null && save.owned[id] ? curF(id) : formIdx(id, lv ?? 1)].n;
 const typeChip = t => `<span class="chip t-${t}">${TYPES[t]}</span>`;
 
@@ -1777,6 +1842,10 @@ function feat(t, x, y, rot, sc, A, K){
   if(t==="kusa") p = `<path d="M0 2 C-10 -8 -8 -22 0 -30 C8 -22 10 -8 0 2Z" fill="${A}" ${st}/><path d="M0 -1 L0 -25" stroke="${K}" stroke-width="${(1.6/sc).toFixed(2)}"/>`;
   if(t==="mizu") p = `<path d="M-5 2 C-8 -12 2 -24 14 -28 C7 -17 9 -8 9 2Z" fill="${A}" ${st}/><path d="M-1 -4 C0 -12 4 -18 9 -21" stroke="#ffffff" stroke-width="${(2/sc).toFixed(2)}" fill="none" opacity=".6"/>`;
   if(t==="iwa") p = `<polygon points="-7,2 -5,-16 0,-26 5,-16 7,2" fill="${A}" ${st}/><polygon points="5,2 9,-10 14,-14 13,2" fill="${shade(A,-.2)}" ${st}/><polygon points="0,-24 2,-16 -3,-8" fill="#ffffff" opacity=".55"/>`;
+  if(t==="denki") p = `<path d="M3 2 L-6 -13 L0 -13 L-5 -29 L9 -10 L3 -10 L7 2Z" fill="${A}" ${st}/><path d="M-1 -16 L-3 -24" stroke="#fff" stroke-width="${(1.6/sc).toFixed(2)}" opacity=".7"/>`;
+  if(t==="koori") p = `<polygon points="-6,2 -8,-10 -3,-24 0,-31 3,-24 8,-10 6,2" fill="${A}" ${st}/><path d="M0 -26 V-4 M-5 -18 L5 -11 M5 -18 L-5 -11" stroke="#fff" stroke-width="${(1.8/sc).toFixed(2)}" stroke-linecap="round" opacity=".85"/>`;
+  if(t==="kaze") p = `<path d="M-8 1 C-15 -10 -7 -25 5 -23 C14 -21 14 -9 5 -9 C-1 -9 -1 -16 4 -16" fill="none" stroke="${K}" stroke-width="${(8/sc).toFixed(2)}" stroke-linecap="round"/><path d="M-8 1 C-15 -10 -7 -25 5 -23 C14 -21 14 -9 5 -9 C-1 -9 -1 -16 4 -16" fill="none" stroke="${A}" stroke-width="${(4.4/sc).toFixed(2)}" stroke-linecap="round"/>`;
+  if(t==="hikari") p = `<path d="M0 -30 L4 -18 L16 -16 L6 -8 L9 3 L0 -3 L-9 3 L-6 -8 L-16 -16 L-4 -18Z" fill="${A}" ${st}/><circle cx="0" cy="-12" r="3" fill="#fff" opacity=".8"/>`;
   return `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${sc})">${p}</g>`;
 }
 function eye(x, y, f, K, iris){
@@ -1785,9 +1854,51 @@ function eye(x, y, f, K, iris){
     `<circle cx="${x-1}" cy="${y-.5}" r="3.3" fill="${iris}"/><circle cx="${x-1.4}" cy="${y-.5}" r="1.7" fill="${K}"/><circle cx="${x-2.4}" cy="${y-2}" r="1" fill="#fff"/>`+
     `<path d="M${x-9} ${y-5} L${x+8} ${y-(f>1?11:9)}" stroke="${K}" stroke-width="3" stroke-linecap="round"/>`;
 }
-const IRIS = {mizu:"#1e6fe0", hono:"#e0451b", kusa:"#1f8a3a", iwa:"#8a5a2b"};
+const IRIS = {mizu:"#1e6fe0", hono:"#e0451b", kusa:"#1f8a3a", iwa:"#8a5a2b", denki:"#c48a00", koori:"#1b98c2", kaze:"#6a55d8", hikari:"#d9488c"};
 
 const ARCH = {
+  /* v31：スライム・さかな・クラゲ */
+  slime(o){
+    const {C,D,L,A,K,f,t,st}=o; let s="";
+    const w=[30,34,38][f], top=[58,50,42][f];
+    s+=`<path d="M${60-w} 100 C${60-w-4} 80 ${60-w*.6} ${top} 60 ${top} C${60+w*.6} ${top} ${60+w+4} 80 ${60+w} 100 C${60+w*.5} 106 ${60-w*.5} 106 ${60-w} 100Z" fill="${C}" ${st}/>`;
+    s+=`<path d="M${60+w*.55} 94 q4 7 0 11 q-4 -4 0 -11Z" fill="${C}" ${st}/>`;
+    s+=`<ellipse cx="${60-w*.42}" cy="${top+13}" rx="${w*.22}" ry="${w*.12}" fill="#fff" opacity=".55" transform="rotate(-28 ${60-w*.42} ${top+13})"/>`;
+    s+=`<ellipse cx="60" cy="97" rx="${w*.6}" ry="4.5" fill="${L}" opacity=".75"/>`;
+    if(f>=1) s+=feat(t, 60, top+3, 0, .6+.15*f, A, K);
+    if(f>=2) s+=feat(t, 60-w*.72, top+26, -40, .55, A, K)+feat(t, 60+w*.72, top+26, 40, .55, A, K);
+    const ey=top+26; s+=eye(51,ey,f,K,IRIS[t])+eye(69,ey,f,K,IRIS[t]);
+    s+=`<path d="M55 ${ey+10} Q60 ${ey+14} 65 ${ey+10}" stroke="${K}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`;
+    return s;
+  },
+  fish(o){
+    const {C,D,L,A,K,f,t,st}=o; let s="";
+    const rx=[26,30,34][f], ry=[18,20,23][f], cx=56, cy=62;
+    s+=`<path d="M${cx+rx-4} ${cy} L${cx+rx+18} ${cy-16-f*3} Q${cx+rx+11} ${cy} ${cx+rx+18} ${cy+16+f*3}Z" fill="${A}" ${st}/>`;
+    s+=`<path d="M${cx-6} ${cy-ry+3} Q${cx+4} ${cy-ry-14-f*4} ${cx+18} ${cy-ry+5}Z" fill="${A}" ${st}/>`;
+    s+=`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${C}" ${st}/>`;
+    s+=`<path d="M${cx-rx+6} ${cy+7} Q${cx} ${cy+ry+1} ${cx+rx-6} ${cy+7} Q${cx} ${cy+ry-6} ${cx-rx+6} ${cy+7}Z" fill="${L}"/>`;
+    s+=`<path d="M${cx+4} ${cy-ry+5} Q${cx-3} ${cy} ${cx+4} ${cy+ry-5} M${cx+14} ${cy-ry+7} Q${cx+8} ${cy} ${cx+14} ${cy+ry-7}" stroke="${D}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+    s+=`<path d="M${cx-2} ${cy+8} L${cx+9} ${cy+21} L${cx+11} ${cy+8}Z" fill="${A}" ${st}/>`;
+    if(f>=1) s+=feat(t, cx+5, cy-ry-3, 8, .55+.12*f, A, K);
+    s+=eye(cx-rx*.5, cy-4, f, K, IRIS[t]);
+    s+=`<path d="M${cx-rx+3} ${cy+7} Q${cx-rx+8} ${cy+10} ${cx-rx+12} ${cy+6}" stroke="${K}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`;
+    s+=`<circle cx="${cx-rx-8}" cy="${cy-14}" r="3" fill="#fff" stroke="${K}" stroke-width="1.5" opacity=".85"/><circle cx="${cx-rx-3}" cy="${cy-24}" r="2" fill="#fff" stroke="${K}" stroke-width="1.2" opacity=".85"/>`;
+    return s;
+  },
+  jelly(o){
+    const {C,D,L,A,K,f,t,st}=o; let s="";
+    const w=[22,26,30][f], top=[34,28,22][f], base=66, n=[3,4,5][f];
+    for(let i=0;i<n;i++){ const x=60-w*.7+i*(w*1.4/(n-1)), d=`M${x.toFixed(1)} ${base-2} q-6 10 0 18 q6 8 0 17`;
+      s+=`<path d="${d}" stroke="${K}" stroke-width="7" fill="none" stroke-linecap="round"/><path d="${d}" stroke="${A}" stroke-width="3.6" fill="none" stroke-linecap="round"/>`; }
+    s+=`<path d="M${60-w} ${base} C${60-w} ${top} ${60+w} ${top} ${60+w} ${base} Q${60+w*.5} ${base+6} 60 ${base} Q${60-w*.5} ${base+6} ${60-w} ${base}Z" fill="${C}" ${st}/>`;
+    s+=`<path d="M${60-w*.6} ${top+14} Q${60-w*.2} ${top+4} ${60+w*.2} ${top+7}" stroke="#fff" stroke-width="3" fill="none" opacity=".65" stroke-linecap="round"/>`;
+    s+=`<path d="M${60-w+4} ${base-5} Q60 ${base-11} ${60+w-4} ${base-5}" stroke="${D}" stroke-width="2.5" fill="none"/>`;
+    if(f>=1) s+=feat(t, 60, top+5, 0, .55+.12*f, A, K);
+    const ey=(top+base)/2+2; s+=eye(52,ey,f,K,IRIS[t])+eye(68,ey,f,K,IRIS[t]);
+    s+=`<path d="M56 ${ey+8} Q60 ${ey+11} 64 ${ey+8}" stroke="${K}" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+    return s;
+  },
   bat(o){
     const {C,D,L,A,K,f,t,st}=o; let s="";
     const span=[30,36,42][f], wy=[60,54,48][f];
@@ -2015,7 +2126,10 @@ const PANCH = {
   bat:    f=>({h:[60,39], k:[60,62], n:[60,68], p:[60,80,9,10], ownWing:true}),
   turtle: f=>({h:[16,52], k:[64,62], n:[26,74], p:[82,82,10,6], ownWing:false}),
   beetle: f=>({h:[44,58], k:[70,62], n:[52,72], p:[80,74,12,9], ownWing:false}),
-  fox:    f=>({h:[40,[36,34,32][f]], k:[70,62], n:[48,62], p:[74,74,10,8], ownWing:false})
+  fox:    f=>({h:[40,[36,34,32][f]], k:[70,62], n:[48,62], p:[74,74,10,8], ownWing:false}),
+  slime:  f=>({h:[60,[58,50,42][f]], k:[60,[70,64,58][f]], n:[60,[82,76,70][f]], p:[60,90,14,5], ownWing:false}),
+  fish:   f=>({h:[52,[44,42,39][f]], k:[60,52], n:[40,64], p:[66,66,7,7], ownWing:false}),
+  jelly:  f=>({h:[60,[34,28,22][f]], k:[60,44], n:[60,62], p:null, ownWing:false})
 };
 function partsBack(o, P, a){
   const {D,A,K,f,st}=o; if(!P.wing || a.ownWing===true) return "";
@@ -2057,6 +2171,9 @@ function partsFront(o, P, a, uid){
   return s;
 }
 let PUID=0;
+/* 種類ごとの大きさ（v31）。SP[id].size があればそれ、なければ体の形で決まる */
+const ARCH_SIZE = {bat:.82, bird:.88, beetle:.84, fox:.94, beast:1, tiger:1, turtle:1, serpent:1.02, golem:1.1, dragon:1.08, slime:.72, fish:.84, jelly:.95};
+function spSize(id, f=0){ const s=SP[id]; if(!s) return 1; if(s.size) return s.size; const a=Array.isArray(s.arch)?s.arch[f]:(s.arch||"beast"); return ARCH_SIZE[a]||1; }
 function art(id, lv=1, opt={}){
   if(SP[id] && SP[id].custom==="frac") return urFracSVG(!!opt.sil);
   const s = SP[id], f = opt.f!=null ? opt.f : s.legend ? 2 : formIdx(id, lv), sil = !!opt.sil, K = "#24324a";
@@ -2072,8 +2189,11 @@ function art(id, lv=1, opt={}){
   if(s.numMark && !sil){ const a=PANCH[arch]?PANCH[arch](f):null, t=String(s.numMark), fs=t.length>4?9.5:11, w=8+t.length*fs*.6;
     const [cx,cy]=a&&a.p?[a.p[0],a.p[1]]:[60,84];
     g += `<g transform="translate(${cx} ${cy})"><rect x="${-w/2}" y="-8.5" width="${w}" height="17" rx="7" fill="#fff" stroke="#24324a" stroke-width="2.2"/><text y="${fs*.37}" text-anchor="middle" font-size="${fs}" font-weight="900" fill="#24324a" font-family="system-ui,sans-serif">${esc(t)}</text></g>`; }
+  if(s.umega && !sil){ const gid="ug"+(++PUID), RB=["#ff5a6e","#ff9a3d","#ffd23f","#7ed957","#3dd6c6","#3d8bff","#8f6bff","#ff6ad5"]; let ring="";
+    for(let i=0;i<8;i++){ const a0=(-90+i*45+4)*Math.PI/180, a1=(-90+i*45+41)*Math.PI/180, r=57; ring+=`<path d="M${(60+r*Math.cos(a0)).toFixed(1)} ${(62+r*Math.sin(a0)).toFixed(1)} A${r} ${r} 0 0 1 ${(60+r*Math.cos(a1)).toFixed(1)} ${(62+r*Math.sin(a1)).toFixed(1)}" fill="none" stroke="${RB[i]}" stroke-width="4" stroke-linecap="round" opacity=".85"/>`; }
+    g = `<defs><radialGradient id="${gid}"><stop offset="0" stop-color="#fff6a8" stop-opacity="0"/><stop offset=".6" stop-color="#ffd23f" stop-opacity=".18"/><stop offset=".85" stop-color="#ffb800" stop-opacity=".5"/><stop offset="1" stop-color="#ffb800" stop-opacity="0"/></radialGradient></defs><circle cx="60" cy="62" r="58" fill="url(#${gid})"/>${ring}` + g + `<g transform="translate(100 18)"><circle r="11" fill="#24324a"/><circle r="8.5" fill="none" stroke="#ffd23f" stroke-width="2.5"/><path d="M-4 -4 V1 Q-4 4.5 0 4.5 Q4 4.5 4 1 V-4" fill="none" stroke="#fff6a8" stroke-width="2.2" stroke-linecap="round"/></g>`; }
   if(sil) g = g.replace(/fill="#[0-9a-f]{3,6}"/gi,`fill="${K}"`).replace(/stroke="#[0-9a-f]{3,6}"/gi,`stroke="${K}"`);
-  const sc = [0.84, 0.92, 0.97][f];
+  const sc = Math.min(1.18, Math.max(.5, [0.84, 0.92, 0.97][f] * spSize(id, f) * (opt.sz||1)));
   return `<svg viewBox="0 0 120 120" aria-hidden="true"><ellipse cx="60" cy="108" rx="${34*sc}" ry="5" fill="${K}" opacity=".12"/><g transform="translate(60 108) scale(${sc}) translate(-60 -108)">${g}</g></svg>`;
 }
 /* ---------- ほそくのグラフ ---------- */
@@ -2238,7 +2358,8 @@ function showMap(){
     <div class="stats"><span class="pill">${flaskSVG} フラスコ ×${save.balls}</span><span class="pill">ずかん ${caught} / ${DEX_ORDER.length}</span></div></div>`;
   if(!STORE_OK || saveErr) h += `<div class="card bkcard warn"><b>この開き方では記録を保存できません</b><span>Safariの「プライベート」や、Cookieをすべてブロックする設定だと保存できないことがあります。バックアップコードで記録を守ってください。</span></div>`;
   h += '<!--BKTOP-->';
-  const rg = grantRares(), mg = grantMegas(), ug = grantUR(); if(rg.length||mg.length||ug.length) h += `<div class="gets">${ug.map(urCard).join("")}${mg.map(megaCard).join("")}${rg.map(rareCard).join("")}</div>`;
+  const rg = grantRares(), mg = grantMegas(), ug = grantUR(), umg = grantUMegas(); if(rg.length||mg.length||ug.length||umg.length) h += `<div class="gets">${umg.map(umegaCard).join("")}${ug.map(urCard).join("")}${mg.map(megaCard).join("")}${rg.map(rareCard).join("")}</div>`;
+  h += weekNote();
   const evoId = [...DEX_ORDER,...RARE_ORDER,...QD_ORDER,...MEGA_ORDER,...UR_ORDER].find(id=>canEvo(id));
   if(evoId) h += `<button class="card prof gift" id="evoNote"><div class="mon" style="width:52px;height:52px;flex:none">${artMine(evoId)}</div><div style="text-align:left"><p>しんかできるなかまがいるよ！</p><p style="font-weight:500">${esc(nameOf(evoId))}をしんかさせよう。タップで「なかま」へ。</p></div></button>`;
   const giftReady = !save.owned.toratch && save.cleared["rika-11|s1"];
@@ -2264,7 +2385,7 @@ function showMap(){
     const mnote = mp && !save.owned[mid] ? (mp.ever>=MEGA_NEED ? `全部正解すると、メガモンスターがなかまに！` : `まちがえた問題が${MEGA_NEED}問以上になると、克服でメガモンスターが手に入る`) : '';
     if(wn) h += `<button class="card route review" data-u="${u.id}" data-s="review"><div><span class="rn">ふくしゅう</span><b>ニガテの森</b><span class="note">まちがえた問題 のこり${wn}問${mnote?'<br>'+mnote:''}</span></div><div></div>${MEGA[mid]?`<div class="wilds"><div class="mon">${art(mid,1,{sil:!save.owned[mid]})}</div></div>`:''}</button>`;
     else if(MEGA[mid] && save.owned[mid]) h += `<div class="card route review" style="opacity:.8"><div><span class="rn">ふくしゅう</span><b>ニガテの森（克服ずみ）</b><span class="note">メガ${esc(SP[u.legend].forms[0].n)}がなかまになった</span></div><div></div></div>`;
-    h += `</div>${u.cards?fracPanelHTML(u):''}</section>`;
+    h += `</div>${umegaNote(u)}${u.cards?fracPanelHTML(u):''}</section>`;
   }
   const lb = save.lastBackup ? new Date(save.lastBackup) : null;
   const stale = !lb || (Date.now()-lb.getTime() > 3*24*3600*1000);
@@ -2368,7 +2489,7 @@ let partySel = null;
 function showParty(){
   const lead = save.party[0], o = save.owned[lead], s = SP[lead];
   const nf = s.forms[curF(lead)+1];
-  const ids = [...UR_ORDER, ...DEX_ORDER, ...RARE_ORDER, ...QD_ORDER, ...MEGA_ORDER].filter(id=>save.owned[id]);
+  const ids = [...UR_ORDER, ...UMEGA_ORDER, ...DEX_ORDER, ...WEEK_ORDER, ...RARE_ORDER, ...QD_ORDER, ...MEGA_ORDER].filter(id=>save.owned[id]);
   if(!partySel || !save.owned[partySel]) partySel = lead;
   const d = partySel, dO = save.owned[d], inP = save.party.includes(d);
   app.innerHTML = `<h2 class="sec-h">なかま</h2>
@@ -2376,10 +2497,11 @@ function showParty(){
     <div class="bar expbar" style="margin-top:6px"><i style="width:${o.exp/need(o.lv)*100}%"></i></div><div class="mini" style="margin-top:4px">${SKILLS[s.skill].n}：${SKILLS[s.skill].d}</div>${canEvo(lead)?`<div class="mini" style="color:var(--accent)">しんかできる！</div>`:nf?`<div class="mini">Lv.${nf.lv}でしんかできる</div>`:''}</div></div>
   <p class="mini" style="margin:16px 0 8px">パーティ（3ひきまで）は黄色。タップしてえらぼう。</p>
   <div class="grid3">${ids.map(id=>`<button class="card mcard ${save.party.includes(id)?'inparty':''}" data-id="${id}"><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b><span class="mini">Lv.${save.owned[id].lv}</span>${canEvo(id)?'<span class="evotag">しんかOK</span>':''}</button>`).join("")}</div>
-  <div class="card detail"><div class="row"><div class="mon">${artMine(d)}</div><div style="min-width:0"><h3>${esc(nameOf(d))}</h3><div>${typeChip(SP[d].type)} <span class="mini">Lv.${dO.lv}</span></div><p class="mini">${SKILLS[SP[d].skill].n}：${SKILLS[SP[d].skill].d}</p></div></div>
+  <div class="card detail"><div class="row"><div class="mon">${artMine(d)}</div><div style="min-width:0"><h3>${esc(nameOf(d))}</h3><div>${typeChip(SP[d].type)} <span class="mini">Lv.${dO.lv}</span></div><p class="mini">${SKILLS[SP[d].skill].n}：${SKILLS[SP[d].skill].d}</p><p class="mini">さいだいHP ${maxHPOf(d)}・${sizeText(d)}</p></div></div>
+    <div class="mvlist">${movesOf(d).map(k=>`<span class="mvchip mt-${moveType(d,k)||'none'}"><b>${esc(MOVES[k].n)}</b><small>${moveInfo(d,k)}</small></span>`).join("")}</div>${nextMoveText(d)}
     ${canEvo(d)?`<button class="btn go evobtn" id="evo">${esc(nameOf(d))}をしんかさせる！</button>`:(SP[d].forms[curF(d)+1]?`<p class="mini">Lv.${SP[d].forms[curF(d)+1].lv}になると、しんかできる</p>`:'')}
     <div class="btns">${save.party[0]!==d?`<button class="btn go" id="mklead">せんとうにする</button>`:''}${inP?(save.party.length>1?`<button class="btn alt" id="rm">パーティからはずす</button>`:''):`<button class="btn alt" id="add" ${save.party.length>=3?'disabled':''}>${save.party.length>=3?'パーティがいっぱい':'パーティに入れる'}</button>`}</div></div>
-  <div class="card typechart">${typeChartSVG()}<p><b>タイプのあいしょう</b><br>やじるしの先のタイプに「こうかばつぐん」（2倍）。ぎゃくむきだと半分になるよ。あいてに合わせて、なかまをこうたいしよう。</p></div>`;
+  <div class="card" style="padding:12px 14px;margin-top:14px"><b>タイプのあいしょう</b><p class="mini" style="margin:2px 0 8px">左のタイプのわざは、右のタイプに「こうかばつぐん」（2倍）。ぎゃくむきだと半分になるよ。わざのタイプで決まるので、あいてに合わせてわざをえらぼう。</p>${typeChartHTML()}</div>`;
   app.querySelectorAll(".mcard").forEach(b=>b.onclick=()=>{ partySel=b.dataset.id; showParty(); });
   const g=id=>document.getElementById(id);
   if(g("evo")) g("evo").onclick=()=>showEvolve(d);
@@ -2387,13 +2509,7 @@ function showParty(){
   if(g("rm")) g("rm").onclick=()=>{ save.party=save.party.filter(x=>x!==d); persist(); showParty(); };
   if(g("add")) g("add").onclick=()=>{ if(save.party.length<3){ save.party.push(d); persist(); showParty(); } };
 }
-function typeChartSVG(){
-  const P = {mizu:[65,14], hono:[116,65], kusa:[65,116], iwa:[14,65]}, col={mizu:"#3d8bff",hono:"#ff6a2b",kusa:"#34a853",iwa:"#a0784b"};
-  let s = `<svg viewBox="0 0 130 130"><defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="#24324a"/></marker></defs>`;
-  for(const [a,b] of Object.entries(BEATS)){ const [x1,y1]=P[a],[x2,y2]=P[b]; const k=.3; s+=`<line x1="${x1+(x2-x1)*k}" y1="${y1+(y2-y1)*k}" x2="${x2-(x2-x1)*k}" y2="${y2-(y2-y1)*k}" stroke="#24324a" stroke-width="3" marker-end="url(#ar)"/>`; }
-  for(const [t,[x,y]] of Object.entries(P)) s+=`<circle cx="${x}" cy="${y}" r="13" fill="${col[t]}" stroke="#24324a" stroke-width="2.5"/><text x="${x}" y="${y+4}" text-anchor="middle" font-size="11" font-weight="800" fill="#fff">${TYPES[t][0]}</text>`;
-  return s+`</svg>`;
-}
+function typeChartHTML(){ return `<div class="tchart">${Object.entries(BEATS).map(([a,ds])=>`<span>${typeChip(a)}</span><span class="ar">→</span><span>${ds.map(typeChip).join(" ")}</span>`).join("")}</div>`; }
 
 /* ---------- dex ---------- */
 let dexSel = null;
@@ -2402,7 +2518,7 @@ function showDex(){
   let h = `<h2 class="sec-h">モンスターずかん</h2><p class="dexcount">つかまえた ${caught}・見つけた ${seen}・ぜんぶで ${DEX_ORDER.length}</p>`;
   if(dexSel && save.seen[dexSel]){
     const s=SP[dexSel], own=save.owned[dexSel];
-    h += `<div class="card detail" style="margin:0 0 14px"><div class="row"><div class="mon">${(own?artMine(dexSel):art(dexSel,1,{sil:true}))}</div><div style="min-width:0"><span class="mini">${s.ur?'ウルトラレアモンスター':s.mega?'メガモンスター（'+esc(megaWhere(dexSel))+'を克服）':s.qd?'クイズダンジョンの伝説のドラゴン':s.egg?'たまごから生まれるモンスター':s.rare?`${MAPD[s.pref][0]}のレアモンスター`:`No.${String(DEX_ORDER.indexOf(dexSel)+1).padStart(3,"0")}`}</span><h3>${esc(own?nameOf(dexSel):s.forms[0].n)}</h3>${typeChip(s.type)}</div></div>
+    h += `<div class="card detail" style="margin:0 0 14px"><div class="row"><div class="mon">${(own?artMine(dexSel):art(dexSel,1,{sil:true}))}</div><div style="min-width:0"><span class="mini">${s.umega?'ウルトラメガモンスター':s.week?`${WDAY[s.day]}曜日のモンスター`:s.ur?'ウルトラレアモンスター':s.mega?'メガモンスター（'+esc(megaWhere(dexSel))+'を克服）':s.qd?'クイズダンジョンの伝説のドラゴン':s.egg?'たまごから生まれるモンスター':s.rare?`${MAPD[s.pref][0]}のレアモンスター`:`No.${String(DEX_ORDER.indexOf(dexSel)+1).padStart(3,"0")}`}</span><h3>${esc(own?nameOf(dexSel):s.forms[0].n)}</h3>${typeChip(s.type)}</div></div>
       <p>${own?esc(s.dex):'まだつかまえていない。つかまえると、くわしいことがわかるよ。'}</p>${own&&s.forms.length>1?`<p class="mini">しんか：${s.forms.map(f=>f.n+(f.lv?`（Lv.${f.lv}）`:'')).join(" → ")}</p>`:''}</div>`;
   }
   h += `<div class="grid3">${DEX_ORDER.map((id,i)=>{
@@ -2412,6 +2528,13 @@ function showDex(){
     return `<button class="card mcard" data-id="${id}"><span class="no">${no}</span><div class="mon">${(own?artMine(id):art(id,1,{sil:true}))}</div><b>${esc(own?nameOf(id):SP[id].forms[0].n)}</b>${own?typeChip(SP[id].type):'<span class="mini">見つけた</span>'}</button>`;
   }).join("")}</div>`;
   h += `<h2 class="sec-h" style="margin-top:22px">ウルトラレア</h2><p class="dexcount">算数4「ぶんすうの城」の分数カードを全部★3にすると…</p><div class="grid3">${UR_ORDER.map(id=>save.owned[id]?`<button class="card mcard urcell" data-id="${id}"><span class="no">ウルトラレア</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typeChip(SP[id].type)}</button>`:`<div class="card mcard unseen"><span class="no">ウルトラレア</span><div class="mon">${art(id,1,{sil:true})}</div><b>？？？</b></div>`).join("")}</div>`;
+  const uc = UMEGA_ORDER.filter(id=>save.owned[id]).length, wc = WEEK_ORDER.filter(id=>save.owned[id]).length;
+  h += `<h2 class="sec-h" style="margin-top:22px">ウルトラメガモンスター</h2><p class="dexcount">なかまにした ${uc} / ${UMEGA_ORDER.length}　（単元のルートとでんせつを全部クリアして、ニガテの森を0問にすると手に入る）</p><div class="grid3">${UMEGA_ORDER.map(id=>{ const lb=unitLabel(UNITS.find(u=>u.id===UMEGA[id].unit));
+    return save.owned[id]?`<button class="card mcard urcell" data-id="${id}"><span class="no">${esc(lb)}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typeChip(SP[id].type)}</button>`:`<div class="card mcard unseen"><span class="no">${esc(lb)}</span><div class="mon">${art(id,1,{sil:true})}</div><b>？？？</b></div>`; }).join("")}</div>`;
+  h += `<h2 class="sec-h" style="margin-top:22px">曜日のモンスター</h2><p class="dexcount">なかまにした ${wc} / 7　（その曜日だけ、ぼうけん・ダンジョンで出やすい）</p><div class="grid3">${WEEK_ORDER.map(id=>{ const lb=WDAY[SP[id].day]+"曜日";
+    if(save.owned[id]) return `<button class="card mcard rarecell" data-id="${id}"><span class="no">${lb}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typeChip(SP[id].type)}</button>`;
+    if(save.seen[id]) return `<button class="card mcard" data-id="${id}"><span class="no">${lb}</span><div class="mon">${art(id,1,{sil:true})}</div><b>${esc(SP[id].forms[0].n)}</b><span class="mini">見つけた</span></button>`;
+    return `<div class="card mcard unseen"><span class="no">${lb}</span><div class="mon">？</div><b>？？？</b></div>`; }).join("")}</div>`;
   const rc = RARE_ORDER.filter(id=>save.owned[id]).length;
   h += `<h2 class="sec-h" style="margin-top:22px">都道府県のレアモンスター</h2><p class="dexcount">なかまにした ${rc} / 47　（「ちず」でその都道府県を「かんぜん」にすると手に入る）</p>`;
   h += `<div class="grid3">${RARE_ORDER.map(id=>{ const pn=MAPD[RARE[id].pref][0];
@@ -2652,7 +2775,7 @@ function startQD(fid, mode){
   else pool = DEX_ORDER.filter(id=>!SP[id].legend);
   B = {colBefore:prefLevels(), u:{id:"qd"}, sid:mode==="boss"?"boss":"qd", qd:{fid, mode}, name, queue, total:queue.length, pool, lvBase,
        hearts:mode==="tower"?3:MAX_HP, maxHearts:mode==="tower"?3:MAX_HP, lead:save.party[0], wild:null, combo:0, maxCombo:0, mistakes:0, n:0, used:{}, power:false, luck:false,
-       caught:[], defeated:0, evoReady:[], lvups:{}, ballsGot:0, busy:false, swapOpen:false, mastered:0, ups:0, recent:[]};
+       caught:[], defeated:0, evoReady:[], lvups:{}, ballsGot:0, busy:false, swapOpen:false, mastered:0, ups:0, recent:[], hp:{}, guard:false, lure:false, newMoves:[]};
   if(mode==="tower"){ B.tower={floor:1}; B.queue=[towerNext()]; }
   if(!B.queue.length){ B=null; return home(); }
   spawn(); renderBattle(true);
@@ -2686,6 +2809,7 @@ function finishQD(win){
     ...B.caught.map(c=>`<div class="card get"><div class="mon">${art(c.id,c.lv)}</div><div><b>${esc(nameOf(c.id,c.lv))}</b><span>${c.dup?'もういたのでパワーアップ':'あたらしいなかま！'}</span></div></div>`)].join("");
   window.scrollTo(0,0);
   app.innerHTML=`<div class="result">${head}
+    ${newMovesHTML()}
     ${m!=="tower"?`<p class="line">おぼえ度アップ ${B.ups}問${B.mastered?`・<b>マスター ${B.mastered}問！</b>`:''}</p>`:''}
     ${st?`<div class="card" style="padding:10px 12px;margin:10px 0;text-align:left"><b>${esc(f.name)}</b>　マスター ${st.mastered}/${st.total}${qdBar(st)}</div>`:''}
     <div class="gets">${gets}</div>
@@ -2803,6 +2927,140 @@ function showUR(id){
 }
 document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest("[data-ur]"); if(b){ B=null; showUR(b.dataset.ur); } });
 
+/* ============================================================
+   ウルトラメガモンスター（v31）
+   - ぼうけんの単元ごとに1ぴき（ダンジョンはふくまない）
+   - その単元のルートを全部＋でんせつをクリアし、ニガテの森の「のこり」が0問になったらなかまに
+     （一度もまちがえなかった場合も、全部クリアした時点でなかまに）
+   - メガ（とちゅうでも取れる）とは別。メガはそのまま
+   id: umega_<でんせつのid>（変更しない）
+   ============================================================ */
+const UMEGA = {};
+for(const u of UNITS) if(u.legend && SP[u.legend]){ const b=SP[u.legend];
+  UMEGA["umega_"+u.legend] = {arch:b.arch, body:b.body, beak:b.beak, numMark:b.numMark, type:b.type, color:b.color, accent:"#ffcf3a", skill:b.skill, legend:true, umega:true, src:u.legend, unit:u.id,
+    parts:Object.assign({}, b.parts||{}, {horn:"crown", pat:"stars", wing:"crystal", acc:"gem", accColor:"#3dd6ff"}),
+    forms:[{n:"ウルトラメガ"+b.forms[0].n}],
+    dex:`${b.forms[0].n}が、単元のルートとでんせつをすべてクリアし、ニガテを1つ残らずなくした力でたどりついた究極の姿。`}; }
+Object.assign(SP, UMEGA);
+const UMEGA_ORDER = Object.keys(UMEGA);
+const unitLabel = u => u.label||`${u.subject}第${u.no}回`;
+function umegaProgress(id){
+  const u=UNITS.find(x=>x.id===UMEGA[id].unit), done=u.stages.filter(s=>save.cleared[u.id+"|"+s.id]).length, boss=!!save.cleared[u.id+"|boss"];
+  const now=Object.keys(save.wrong).filter(k=>k.startsWith(u.id+"|")).length;
+  return {u, done, total:u.stages.length, boss, now, ok: done===u.stages.length && boss && now===0};
+}
+function grantUMegas(){
+  const got=[];
+  for(const id of UMEGA_ORDER){ if(save.owned[id]) continue;
+    if(umegaProgress(id).ok){ save.owned[id]={lv:35,exp:0,form:0}; save.seen[id]=1; if(save.party.length<3) save.party.push(id); got.push(id); } }
+  if(got.length) persist();
+  return got;
+}
+const umegaCard = id => `<div class="card get evo umegacard"><div class="mon">${artMine(id)}</div><div><b>ウルトラメガ！ ${esc(nameOf(id))}</b><span>${esc(unitLabel(UNITS.find(u=>u.id===UMEGA[id].unit)))}「${esc(UNITS.find(u=>u.id===UMEGA[id].unit).title)}」を全部クリアして、ニガテを0にした！</span></div></div>`;
+function umegaNote(u){
+  const id="umega_"+u.legend; if(!UMEGA[id]) return "";
+  if(save.owned[id]) return `<div class="card umegaline"><div class="mon">${artMine(id)}</div><div><b>${esc(nameOf(id))}</b><span class="mini">ウルトラメガモンスターがなかまになった！</span></div></div>`;
+  const p=umegaProgress(id);
+  const steps=[`ルート ${p.done}/${p.total}`, `でんせつ ${p.boss?'クリア':'まだ'}`, `ニガテのこり ${p.now}問`];
+  return `<div class="card umegaline"><div class="mon">${art(id,1,{sil:true})}</div><div><b>ウルトラメガモンスター</b><span class="mini">ルートとでんせつを全部クリアして、ニガテの森を0問にするとなかまになる<br>${steps.join("・")}</span></div></div>`;
+}
+
+/* ============================================================
+   曜日のモンスター（v31）：その曜日だけ、ぼうけん・ダンジョンで出やすくなる（でんせつ・ボスいがいの戦いで 20%）
+   id: week_<0〜6>（0=日曜。変更しない）
+   ============================================================ */
+const WEEK_RATE = 0.2, WDAY = ["日","月","火","水","木","金","土"];
+const WEEK_LIST = [
+  [0,"サンライオ","tiger","hono","#ffb23f","#e8475a","power",{horn:"crown",acc:"scarf",accColor:"#e8475a"},"日曜日にあらわれる、太陽のたてがみのライオン。「日」は太陽のこと。"],
+  [1,"ツキミン","fox","mizu","#c9d8ff","#ffe28a","heal",{pat:"stars",acc:"bell",accColor:"#ffe28a"},"月曜日にあらわれる、月の光をあびたキツネ。満月の夜は、しっぽが金色にかがやく。"],
+  [2,"カエンオー","dragon","hono","#ff5a3d","#ffd23f","power",{horn:"twin",wing:"bat"},"火曜日にあらわれる、ほのおの王さま。火のついたつばさで空をとぶ。"],
+  [3,"スイリュウ","serpent","mizu","#3dd6c6","#3d8bff","hint",{horn:"uni",pat:"zigzag"},"水曜日にあらわれる、川の水の竜。雨の日はとくに元気。"],
+  [4,"モクリン","beetle","kusa","#6cc46a","#a0784b","heal",{horn:"antler",pat:"spots"},"木曜日にあらわれる、森の木のカブトムシ。角は木の枝でできている。"],
+  [5,"キンピカ","bird","iwa","#ffd23f","#fff4d6","luck",{wing:"crystal",acc:"gem",accColor:"#3d8bff"},"金曜日にあらわれる、金色の鳥。羽が金属のようにピカピカ光る。"],
+  [6,"ツチノコン","turtle","iwa","#a0784b","#e9c27a","hint",{pat:"spots",acc:"scarf",accColor:"#24a865"},"土曜日にあらわれる、土の中でくらすカメ。こうらは畑の土でできている。"]
+];
+const WEEK = {};
+for(const [d,n,arch,type,color,accent,skill,parts,dex] of WEEK_LIST)
+  WEEK["week_"+d] = {day:d, arch, type, color, accent, skill, parts, dex, numMark:WDAY[d], legend:true, week:true, forms:[{n}]};
+Object.assign(SP, WEEK);
+const WEEK_ORDER = Object.keys(WEEK);
+const weekToday = () => "week_"+new Date().getDay();
+function weekNote(){
+  const id=weekToday(), own=save.owned[id];
+  return `<div class="card weekcard"><div class="mon">${own||save.seen[id]?art(id):art(id,1,{sil:true})}</div><div><b>きょうは${WDAY[SP[id].day]}曜日</b><span class="mini">${own||save.seen[id]?`<b>${esc(SP[id].forms[0].n)}</b>`:'曜日のモンスター'}が出やすい日！（ぼうけん・ダンジョンで出会える）<br>曜日のモンスター ${WEEK_ORDER.filter(x=>save.owned[x]).length}/7</span></div></div>`;
+}
+
+/* ============================================================
+   たいりょく（HP）とわざ（v31）
+   - ふつうのバトル・ダンジョン（無限の塔いがい）は、ハートのかわりに「なかまのHP」で戦う
+     まちがえると先頭のなかまがダメージ → 0になると次のなかまにこうたい → 全員たおれると負け
+     最大HP = 24 + Lv×4。HPはバトルごとにまんたんから。無限の塔はハート3のまま
+   - わざ：正解したら、おぼえているわざ（4つまで）からえらんでこうげき
+     タイプごとに Lv3・Lv8・Lv15 でおぼえる。つよいわざはコンボが必要
+     でんせつ・メガ・ウルトラメガ・ウルトラレア・曜日のモンスターは専用のわざをもつ
+   ============================================================ */
+const MOVES = {
+  tackle:{n:"たいあたり", t:null, pow:1.0, lv:1},
+  mizu1:{n:"みずでっぽう", t:"mizu", pow:1.3, lv:3},
+  mizu2:{n:"うずしお", t:"mizu", pow:1.0, lv:8, eff:"heal"},
+  mizu3:{n:"ハイドロキャノン", t:"mizu", pow:2.2, lv:15, combo:3},
+  hono1:{n:"ひのこ", t:"hono", pow:1.3, lv:3},
+  hono2:{n:"ほのおのキバ", t:"hono", pow:1.0, lv:8, eff:"catch"},
+  hono3:{n:"だいもんじ", t:"hono", pow:2.2, lv:15, combo:3},
+  kusa1:{n:"はっぱカッター", t:"kusa", pow:1.3, lv:3},
+  kusa2:{n:"やどりぎのタネ", t:"kusa", pow:1.0, lv:8, eff:"heal"},
+  kusa3:{n:"ソーラービーム", t:"kusa", pow:2.2, lv:15, combo:3},
+  iwa1:{n:"いわおとし", t:"iwa", pow:1.3, lv:3},
+  iwa2:{n:"まもるいわ", t:"iwa", pow:1.0, lv:8, eff:"guard"},
+  iwa3:{n:"ストーンエッジ", t:"iwa", pow:2.2, lv:15, combo:3},
+  denki1:{n:"でんきショック", t:"denki", pow:1.3, lv:3},
+  denki2:{n:"ほうでん", t:"denki", pow:1.0, lv:8, eff:"catch"},
+  denki3:{n:"かみなり", t:"denki", pow:2.2, lv:15, combo:3},
+  koori1:{n:"こおりのつぶて", t:"koori", pow:1.3, lv:3},
+  koori2:{n:"こおりのかべ", t:"koori", pow:1.0, lv:8, eff:"guard"},
+  koori3:{n:"ふぶき", t:"koori", pow:2.2, lv:15, combo:3},
+  kaze1:{n:"かぜおこし", t:"kaze", pow:1.3, lv:3},
+  kaze2:{n:"おいかぜ", t:"kaze", pow:1.0, lv:8, eff:"heal"},
+  kaze3:{n:"たつまき", t:"kaze", pow:2.2, lv:15, combo:3},
+  hikari1:{n:"フラッシュ", t:"hikari", pow:1.3, lv:3},
+  hikari2:{n:"いやしのひかり", t:"hikari", pow:1.0, lv:8, eff:"heal"},
+  hikari3:{n:"プリズムレーザー", t:"hikari", pow:2.2, lv:15, combo:3},
+  sig_legend:{n:"でんせつのいぶき", sig:true, pow:1.8, combo:2},
+  sig_mega:{n:"メガバースト", sig:true, pow:2.5, combo:2},
+  sig_umega:{n:"ウルトラメガバースト", sig:true, pow:3.0, combo:2},
+  sig_ur:{n:"ぶんすうスパーク", sig:true, pow:3.0, combo:2},
+  sig_week:{n:"ようびパワー", sig:true, pow:1.5, eff:"week"}
+};
+const EFF = {heal:"HPも回復", catch:"フラスコが入りやすく", guard:"次のダメージ半分", week:"その曜日は2倍"};
+function sigOf(id){ const s=SP[id]; return s.umega?"sig_umega":s.mega?"sig_mega":s.ur?"sig_ur":s.week?"sig_week":s.legend?"sig_legend":null; }
+function learnable(id){ const t=SP[id].type; return ["tackle",t+"1",t+"2",t+"3"]; }
+function movesOf(id){
+  const lv=(save.owned[id]||{}).lv||1, sig=sigOf(id), learn=learnable(id).filter(k=>MOVES[k].lv<=lv);
+  return sig ? [sig, ...learn.slice(-3)] : learn.slice(-4);
+}
+function moveType(id,k){ const M=MOVES[k]; return M.t || (M.sig ? SP[id].type : null); }
+function moveInfo(id,k){ const M=MOVES[k], t=moveType(id,k); return `${t?TYPES[t]:'ふつう'}・いりょく${Math.round(M.pow*10)}${M.combo?`・${M.combo}コンボ`:''}${M.eff?'・'+EFF[M.eff]:''}`; }
+const maxHPOf = id => 24 + ((save.owned[id]||{}).lv||1)*4;
+const useHP = () => !!B && !B.tower;
+function hpOf(id){ B.hp=B.hp||{}; if(B.hp[id]==null) B.hp[id]=maxHPOf(id); return Math.min(B.hp[id], maxHPOf(id)); }
+function aliveIds(){ return save.party.filter(id=>save.owned[id] && hpOf(id)>0); }
+function hurtLead(){
+  const me=B.lead, w=B.wild, mm=mult(SP[w.id].type, SP[me].type), dm=mm===2?1.5:mm===.5?.7:1;
+  let d=Math.max(3, Math.round((5+w.lv*0.8)*dm)), guarded=false;
+  if(B.guard){ d=Math.ceil(d/2); B.guard=false; guarded=true; }
+  B.hp[me]=Math.max(0, hpOf(me)-d);
+  return {d, mm, guarded};
+}
+function healLead(r){ const me=B.lead, mx=maxHPOf(me), before=hpOf(me); B.hp[me]=Math.min(mx, before+Math.ceil(mx*r)); return B.hp[me]-before; }
+function hpMiniHTML(){ return `<div class="ptm">${save.party.filter(id=>save.owned[id]).map(id=>{ const r=hpOf(id)/maxHPOf(id); return `<span class="${id===B.lead?'cur':''} ${r<=0?'down':''}"><span class="bar hpbar ${hpClass(r)}"><i style="width:${r*100}%"></i></span></span>`; }).join("")}</div>`; }
+
+function updMyHP(){ const b=document.getElementById("mhp"), n=document.getElementById("mhpn"); if(!b) return; const h=hpOf(B.lead), mx=maxHPOf(B.lead), r=h/mx; b.className="bar hpbar "+hpClass(r); b.firstElementChild.style.width=(r*100)+"%"; if(n) n.textContent=`HP ${h}/${mx}`; }
+function nextMoveText(id){ const lv=(save.owned[id]||{}).lv||1, nx=learnable(id).find(k=>MOVES[k].lv>lv); return nx?`<p class="mini">Lv.${MOVES[nx].lv}で「${MOVES[nx].n}」をおぼえる</p>`:''; }
+/* 大きさ：種類ごとの大きさ（size か ARCH_SIZE）×個体ごとの大きさ（sz。出会うたびに 0.92〜1.08、ときどき でかい 1.22／ちびっこ 0.78） */
+const sizeLabel = sz => sz>=1.2?'でかい！':sz<=.8?'ちびっこ':'';
+function heightOf(id, sz, f){ return Math.max(.1, Math.round(.4*spSize(id,f)*[1,1.6,2.4][f]*(sz||1)*10)/10); }
+function sizeText(id){ const o=save.owned[id]||{}, f=SP[id].legend?2:curF(id), lb=sizeLabel(o.sz||1); return `たかさ ${heightOf(id,o.sz,f)}m${lb?`（${lb}）`:''}`; }
+
 /* ---------- battle ---------- */
 let B = null;
 function startBattle(uid, sid){
@@ -2822,14 +3080,17 @@ function startBattle(uid, sid){
   const colBefore = prefLevels();
   B = {colBefore, u, sid, name, queue, total:queue.length, pool, lvBase, hearts:MAX_HP, lead:save.party[0],
        wild:null, combo:0, maxCombo:0, mistakes:0, n:0, used:{}, power:false, luck:false,
-       caught:[], defeated:0, evoReady:[], lvups:{}, ballsGot:0, busy:false, swapOpen:false};
+       caught:[], defeated:0, evoReady:[], lvups:{}, ballsGot:0, busy:false, swapOpen:false, hp:{}, guard:false, lure:false, newMoves:[]};
   spawn(); renderBattle(true);
 }
 function spawn(){
-  const id = pick(B.pool), boss = B.sid==="boss";
+  const boss = B.sid==="boss";
+  let id = pick(B.pool);
+  if(!boss && Math.random()<WEEK_RATE) id = weekToday();
   const lv = boss ? B.lvBase : B.lvBase + Math.floor(Math.random()*2);
-  const max = boss ? 150 : 28 + lv*3;
-  B.wild = {id, lv, hp:max, max};
+  const r = Math.random(), sz = boss ? 1 : r<.07 ? 1.22 : r<.14 ? .78 : Math.round((0.92+Math.random()*.16)*100)/100;
+  const max = boss ? 150 : Math.round((28 + lv*3)*sz);
+  B.wild = {id, lv, hp:max, max, sz};
   save.seen[id]=1; persist();
 }
 function addExp(id, n){
@@ -2837,21 +3098,22 @@ function addExp(id, n){
   const could = canEvo(id), lv0 = o.lv;
   o.exp += n;
   while(o.lv<30 && o.exp>=need(o.lv)){ o.exp-=need(o.lv); o.lv++; }
-  if(B && o.lv>lv0) B.lvups[id]=o.lv;
+  if(B && o.lv>lv0){ B.lvups[id]=o.lv; for(const k of learnable(id)) if(MOVES[k].lv>lv0 && MOVES[k].lv<=o.lv) (B.newMoves=B.newMoves||[]).push([id,k]); }
   if(B && !could && canEvo(id) && !B.evoReady.includes(id)) B.evoReady.push(id);
   persist();
 }
-function dmgOf(){
-  const me = B.lead, lv = save.owned[me].lv, m = mult(SP[me].type, SP[B.wild.id].type);
-  return {m, d: Math.max(2, Math.round(8*m*(1+lv*0.1)*(B.power?2:1)))};
+function dmgOf(k){
+  const me = B.lead, lv = save.owned[me].lv, M = MOVES[k||"tackle"], t = moveType(me, k||"tackle"), m = t ? mult(t, SP[B.wild.id].type) : 1;
+  let pow = M.pow; if(M.eff==="week" && SP[me].day===new Date().getDay()) pow *= 2;
+  return {m, d: Math.max(2, Math.round(8*m*pow*(1+lv*0.1)*(B.power?2:1)))};
 }
 function fieldHTML(enter){
   const w=B.wild, me=B.lead, o=save.owned[me], r=w.hp/w.max, ws=SP[w.id];
   return `<div class="field" id="field"><div class="plat w"></div><div class="plat m"></div>
-    <div class="info w"><div class="nm">${esc(nameOf(w.id,w.lv))} ${typeChip(ws.type)}<span class="lv">Lv.${w.lv}</span></div><div class="bar hpbar ${hpClass(r)}" id="whp"><i style="width:${r*100}%"></i></div></div>
-    <div class="mon ${enter?'enter':''}" id="wildMon">${art(w.id,w.lv)}</div>
+    <div class="info w"><div class="nm">${esc(nameOf(w.id,w.lv))} ${typeChip(ws.type)}${sizeLabel(w.sz||1)?`<span class="sztag">${sizeLabel(w.sz)}</span>`:''}<span class="lv">Lv.${w.lv}</span></div><div class="bar hpbar ${hpClass(r)}" id="whp"><i style="width:${r*100}%"></i></div></div>
+    <div class="mon ${enter?'enter':''}" id="wildMon">${art(w.id,w.lv,{sz:w.sz})}</div>
     <div class="mon" id="meMon">${artMine(me)}</div>
-    <div class="info m"><div class="nm">${esc(nameOf(me))} ${typeChip(SP[me].type)}<span class="lv">Lv.${o.lv}</span></div><div class="bar expbar"><i style="width:${o.exp/need(o.lv)*100}%"></i></div></div>
+    <div class="info m"><div class="nm">${esc(nameOf(me))} ${typeChip(SP[me].type)}<span class="lv">Lv.${o.lv}</span></div>${useHP()?(()=>{ const h=hpOf(me), mx=maxHPOf(me), r2=h/mx; return `<div class="bar hpbar ${hpClass(r2)}" id="mhp"><i style="width:${r2*100}%"></i></div><div class="hpn" id="mhpn">HP ${h}/${mx}</div>`; })():''}<div class="bar expbar${useHP()?' thin':''}"><i style="width:${o.exp/need(o.lv)*100}%"></i></div></div>
   </div>`;
 }
 let logMsg = "";
@@ -2864,10 +3126,10 @@ function renderBattle(enter){
   item.hidden = item.hidden || [];
   if(item.num==null) item.num = !!(q.n && !B.qd && save.okOnce && save.okOnce[item.key]);
   const isNum = item.num; if(isNum) item.input = item.input || "";
-  if(enter) logMsg = `やせいの <b>${esc(nameOf(B.wild.id,B.wild.lv))}</b> があらわれた！` + (mult(SP[B.lead].type,SP[B.wild.id].type)===2?' あいしょうはばつぐん！':mult(SP[B.lead].type,SP[B.wild.id].type)===.5?' あいしょうが悪いかも…':'');
+  if(enter) logMsg = (SP[B.wild.id].week?`きょうは${WDAY[SP[B.wild.id].day]}曜日！ 曜日のモンスター `:sizeLabel(B.wild.sz||1)==='でかい！'?'でかい！ ':sizeLabel(B.wild.sz||1)?'ちびっこの ':'') + `やせいの <b>${esc(nameOf(B.wild.id,B.wild.lv))}</b> があらわれた！` + (mult(SP[B.lead].type,SP[B.wild.id].type)===2?' あいしょうはばつぐん！':mult(SP[B.lead].type,SP[B.wild.id].type)===.5?' あいしょうが悪いかも…':'');
   const me=B.lead, sk=SKILLS[SP[me].skill];
   app.innerHTML = `
-  <div class="btop"><button class="back" id="back">← にげる</button><span class="pill">${flaskSVG} ×${save.balls}</span><div class="hearts">${Array.from({length:B.maxHearts||MAX_HP},(_,i)=>heart(i<B.hearts)).join("")}</div></div>
+  <div class="btop"><button class="back" id="back">← にげる</button><span class="pill">${flaskSVG} ×${save.balls}</span>${useHP()?hpMiniHTML():`<div class="hearts">${Array.from({length:B.maxHearts||MAX_HP},(_,i)=>heart(i<B.hearts)).join("")}</div>`}</div>
   ${fieldHTML(enter)}
   <div class="log" id="log">${logMsg}</div>
   <div class="card qpanel">
@@ -2878,7 +3140,7 @@ function renderBattle(enter){
     ${multi?'<button class="btn" id="dec" style="margin-top:12px" disabled>けってい</button>':''}
     ${isOrd||isMat?`<div class="ordrow"><button class="btn alt" id="redo">やりなおし</button><button class="btn" id="dec" ${(isOrd?item.seq.length===q.c.length:Object.keys(item.pairs).length===q.pairs.length)?'':'disabled'}>けってい</button></div>`:''}
     <div id="sub"><div class="subrow"><button id="skill" ${B.used[me]?'disabled':''}>${sk.n}${B.used[me]?'（使った）':''}<small>${sk.d}</small></button><button id="swapBtn" ${save.party.length<2?'disabled':''}>こうたい<small>${save.party.length<2?'なかまをふやそう':'なかまを入れかえる'}</small></button></div>
-    ${B.swapOpen?`<div class="swap">${save.party.map(id=>`<button class="${id===me?'cur':''}" data-id="${id}"><div class="mon">${artMine(id)}</div>${esc(nameOf(id))}</button>`).join("")}</div>`:''}</div>
+    ${B.swapOpen?`<div class="swap">${save.party.map(id=>`<button class="${id===me?'cur':''}" data-id="${id}" ${useHP()&&hpOf(id)<=0?'disabled':''}><div class="mon">${artMine(id)}</div>${esc(nameOf(id))}${useHP()?`<small>HP ${hpOf(id)}/${maxHPOf(id)}</small>`:''}</button>`).join("")}</div>`:''}</div>
     <div id="fb"></div>
   </div>`;
   document.getElementById("back").onclick=()=>{ B=null; home(); };
@@ -2976,7 +3238,8 @@ function useSkill(){
     if(cand.length<=1 && !(q.type==="multi" && cand.length)) { setLog("これ以上は消せないみたい。"); return; }
     item.hidden.push(pick(cand)); logMsg = nm+"まちがいを1つ消した！";
   }
-  if(k==="heal"){ if(B.hearts>=(B.maxHearts||MAX_HP)){ setLog("ハートはまんたんだよ。"); return; } B.hearts++; logMsg = nm+"ハートが1つ回復した！"; }
+  if(k==="heal" && useHP()){ if(hpOf(me)>=maxHPOf(me)){ setLog("HPはまんたんだよ。"); return; } const g=healLead(.4); logMsg = nm+`HPが${g}回復した！`; }
+  else if(k==="heal"){ if(B.hearts>=(B.maxHearts||MAX_HP)){ setLog("ハートはまんたんだよ。"); return; } B.hearts++; logMsg = nm+"ハートが1つ回復した！"; }
   if(k==="power"){ B.power=true; logMsg = nm+"次のこうげきが2倍になる！"; }
   if(k==="luck"){ B.luck=true; logMsg = nm+"次のフラスコがつかまえやすくなった！"; }
   B.used[me]=true; B.swapOpen=false; renderBattle();
@@ -3036,33 +3299,48 @@ function judge(picked){
     if(!B.qd && q.f && !item.missed && fracMark(q.f)) B.fracUp=(B.fracUp||0)+1;
     B.queue.shift(); persist();
     addExp(B.lead, 6); save.party.forEach(id=>{ if(id!==B.lead) addExp(id,3); });
-    const {m} = dmgOf();
+    let first=true;
+    const mvh = movesOf(B.lead).map(k=>{ const M=MOVES[k], lock=!!M.combo&&B.combo<M.combo, {m}=dmgOf(k), t=moveType(B.lead,k);
+      const ida = (!lock&&first) ? (first=false, ' id="atk"') : '';
+      return `<button class="btn mv mt-${t||'none'}" data-mv="${k}"${ida} ${lock?'disabled':''}>${esc(M.n)}<small>${lock?`${M.combo}コンボで使える（いま${B.combo}）`:(m===2?'こうかばつぐん':m===.5?'いまひとつ':t?TYPES[t]:'ふつう')+(M.eff?'・'+EFF[M.eff]:'')+(B.power?'・2倍':'')}</small></button>`; }).join("");
     fb.innerHTML = `<div class="fb ok"><h3>せいかい！</h3>${q.e?`<p>${esc(q.e)}</p>`:""}${qm}${bonus}</div>
-      <div class="acts"><button class="btn go" id="atk">こうげき<small>${m===2?'こうかばつぐん':m===.5?'いまひとつ':'ふつう'}${B.power?'・2倍':''}</small></button>
+      <div class="acts mvs">${mvh}</div><div class="acts one">
       ${B.qd&&B.qd.mode==="boss"?`<button class="btn alt" id="ball" disabled>フラスコ<small>マスターでなかまになる</small></button>`:`<button class="btn alt" id="ball" ${save.balls?'':'disabled'}>フラスコ<small>${save.balls?'のこり '+save.balls+'こ':'もっていない'}</small></button>`}</div>`;
-    document.getElementById("atk").onclick=doAttack;
+    app.querySelectorAll("[data-mv]").forEach(b=>b.onclick=()=>doAttack(b.dataset.mv));
     document.getElementById("ball").onclick=doBall;
-    setLog(`<b>${esc(nameOf(B.lead))}</b>がやる気になった！ どうする？`);
+    setLog(`<b>${esc(nameOf(B.lead))}</b>がやる気になった！ どのわざをつかう？`);
   }else{
-    B.combo=0; B.hearts--; B.mistakes++;
+    B.combo=0; B.mistakes++;
+    let hurt="", down=false;
+    if(useHP()){ const r=hurtLead(); down=hpOf(B.lead)<=0;
+      hurt=`やせいの <b>${esc(nameOf(B.wild.id,B.wild.lv))}</b>のこうげき！ ${r.mm===2?'こうかはばつぐんだ！ ':r.mm===.5?'こうかはいまひとつ。 ':''}${r.guarded?'まもりでダメージが半分！ ':''}<b>${esc(nameOf(B.lead))}</b>に ${r.d}ダメージ！`+(down?` <b>${esc(nameOf(B.lead))}</b>はたおれてしまった…`:'');
+      B.lastHurt=r.d; }
+    else { B.hearts--; hurt=`やせいの <b>${esc(nameOf(B.wild.id,B.wild.lv))}</b>のこうげき！ ハートが1つへった。`; }
+    const lost = useHP() ? !aliveIds().length : B.hearts<=0;
     item.missed=true;
     if(!B.qd){ save.wrong[item.key]=(save.wrong[item.key]||0)+1; (save.wrongEver=save.wrongEver||{})[item.key]=1; }
     item.hidden=[]; item.seq=[]; item.pairs={}; item.selL=null; item.selP=null; item.input="";
     if(B.tower){ B.queue.shift(); B.queue.push(towerNext()); } else B.queue.push(B.queue.shift());
     persist();
     const wm=document.getElementById("wildMon"), mm=document.getElementById("meMon");
-    wm.classList.add("lunge2"); setTimeout(()=>mm.classList.add("hit"),200);
-    const hs=app.querySelectorAll(".hearts svg path"); if(hs[B.hearts]) hs[B.hearts].setAttribute("fill","#dfe6ee");
-    setLog(`やせいの <b>${esc(nameOf(B.wild.id,B.wild.lv))}</b>のこうげき！ ハートが1つへった。`);
-    fb.innerHTML = `<div class="fb ng">${ansText.length>18?`<h3>ざんねん…</h3><p><b>正解：${esc(ansText)}</b></p>`:`<h3>ざんねん… 正解は「${esc(ansText)}」</h3>`}${q.e?`<p>${esc(q.e)}</p>`:""}${qm}<p class="mini">${B.tower?'ハートが0になると塔からおりるよ。':'この問題は、あとでもう一度出てくるよ。'}</p></div><button class="btn" id="next" style="margin-top:12px">${B.hearts<=0?'…':'つぎへ'}</button>`;
-    document.getElementById("next").onclick=()=>{ B.busy=false; if(B.hearts<=0) return finish(false); renderBattle(); };
+    wm.classList.add("lunge2"); setTimeout(()=>{ mm.classList.add("hit");
+      if(useHP()){ const t=document.createElement("div"); t.className="dmg me"; t.textContent=B.lastHurt; const fd=document.getElementById("field"); if(fd) fd.appendChild(t); updMyHP(); if(down) setTimeout(()=>mm.classList.add("faint"),350);
+        const pt=app.querySelector(".ptm"); if(pt) pt.outerHTML=hpMiniHTML(); } },200);
+    if(!useHP()){ const hs=app.querySelectorAll(".hearts svg path"); if(hs[B.hearts]) hs[B.hearts].setAttribute("fill","#dfe6ee"); }
+    setLog(hurt);
+    fb.innerHTML = `<div class="fb ng">${ansText.length>18?`<h3>ざんねん…</h3><p><b>正解：${esc(ansText)}</b></p>`:`<h3>ざんねん… 正解は「${esc(ansText)}」</h3>`}${q.e?`<p>${esc(q.e)}</p>`:""}${qm}<p class="mini">${B.tower?'ハートが0になると塔からおりるよ。':lost?'なかまが全員たおれてしまった…':down?'つぎのなかまにこうたいするよ。この問題は、あとでもう一度出てくるよ。':'この問題は、あとでもう一度出てくるよ。'}</p></div><button class="btn" id="next" style="margin-top:12px">${lost?'…':down?'つぎのなかまを出す':'つぎへ'}</button>`;
+    document.getElementById("next").onclick=()=>{ B.busy=false; if(lost) return finish(false);
+      if(useHP() && hpOf(B.lead)<=0){ B.lead=aliveIds()[0]; B.swapOpen=false; const m2=mult(SP[B.lead].type,SP[B.wild.id].type); logMsg=`いけっ！ <b>${esc(nameOf(B.lead))}</b>！`+(m2===2?' あいしょうはばつぐん！':m2===.5?' あいしょうが悪いかも…':''); }
+      renderBattle(); };
   }
   fb.scrollIntoView({behavior:"smooth",block:"nearest"});
 }
+function newMovesHTML(){ const a=B.newMoves||[]; return a.length?`<p class="line">${a.map(([id,k])=>`<b>${esc(nameOf(id))}</b>は「${esc(MOVES[k].n)}」をおぼえた！`).join("<br>")}</p>`:''; }
 function lockActs(){ app.querySelectorAll(".acts button").forEach(b=>b.disabled=true); document.getElementById("field").scrollIntoView({behavior:"smooth",block:"start"}); }
-function doAttack(){
+function doAttack(k){
+  if(typeof k!=="string") k=movesOf(B.lead)[0];
   lockActs();
-  const {m,d}=dmgOf(); B.power=false;
+  const M=MOVES[k], {m,d}=dmgOf(k), weekUp = M.eff==="week" && SP[B.lead].day===new Date().getDay(); B.power=false;
   const w=B.wild, wm=document.getElementById("wildMon"), mm=document.getElementById("meMon");
   mm.classList.add("lunge");
   setTimeout(()=>{
@@ -3070,7 +3348,10 @@ function doAttack(){
     const t=document.createElement("div"); t.className="dmg"+(m===2?" big":""); t.textContent=d; document.getElementById("field").appendChild(t);
     w.hp=Math.max(0,w.hp-d); const r=w.hp/w.max, bar=document.getElementById("whp");
     bar.className="bar hpbar "+hpClass(r); bar.firstElementChild.style.width=(r*100)+"%";
-    let msg=`<b>${esc(nameOf(B.lead))}</b>のこうげき！ `+(m===2?'こうかはばつぐんだ！':m===.5?'こうかはいまひとつ…':'')+` ${d}ダメージ！`;
+    let msg=`<b>${esc(nameOf(B.lead))}</b>の <b>${esc(M.n)}</b>！ `+(weekUp?'曜日のパワーで2倍！ ':'')+(m===2?'こうかはばつぐんだ！':m===.5?'こうかはいまひとつ…':'')+` ${d}ダメージ！`;
+    if(M.eff==="heal" && useHP()){ const g=healLead(.25); if(g){ msg+=` HPが${g}回復した！`; updMyHP(); } }
+    if(M.eff==="guard"){ B.guard=true; msg+=' 次にうけるダメージが半分になる！'; }
+    if(M.eff==="catch" && w.hp>0){ B.lure=true; msg+=' フラスコが入りやすくなった！'; }
     if(w.hp<=0){ msg+=` <b>${esc(nameOf(w.id,w.lv))}</b>をたおした！`; B.defeated++; addExp(B.lead,12); save.party.forEach(id=>{ if(id!==B.lead) addExp(id,6); }); setTimeout(()=>wm.classList.add("faint"),350); }
     else if(r<=.3) msg+=` よわっている！ フラスコのチャンス！`;
     setLog(msg);
@@ -3081,8 +3362,8 @@ function doBall(){
   lockActs();
   const w=B.wild, boss=B.sid==="boss";
   save.balls--; persist();
-  const p = Math.min(.95, (boss?.08:.3) + (1-w.hp/w.max)*(boss?.55:.55) + Math.min(B.combo,5)*.04 + (B.luck?.3:0));
-  B.luck=false;
+  const p = Math.min(.95, (boss?.08:.3) + (1-w.hp/w.max)*(boss?.55:.55) + Math.min(B.combo,5)*.04 + (B.luck?.3:0) + (B.lure?.2:0));
+  B.luck=false; B.lure=false;
   const got = Math.random()<p, shakes = got?3:Math.floor(Math.random()*3);
   const f=document.getElementById("field"), fl=document.createElement("div");
   fl.className="flask fly"; fl.innerHTML=flaskSVG; f.appendChild(fl);
@@ -3094,7 +3375,7 @@ function doBall(){
       if(got){
         const nm=nameOf(w.id,w.lv), had=!!save.owned[w.id];
         if(had){ addExp(w.id,25); setLog(`やった！ <b>${esc(nm)}</b>をつかまえた！ もうなかまにいるので、なかまの${esc(nameOf(w.id))}がパワーアップ（EXP+25）！`); }
-        else{ save.owned[w.id]={lv:w.lv,exp:0,form:formIdx(w.id,w.lv)}; if(save.party.length<3) save.party.push(w.id); persist(); setLog(`やった！ <b>${esc(nm)}</b>をつかまえた！ なかまになった！`); }
+        else{ save.owned[w.id]={lv:w.lv,exp:0,form:formIdx(w.id,w.lv),sz:w.sz||1}; if(save.party.length<3) save.party.push(w.id); persist(); setLog(`やった！ <b>${esc(nm)}</b>をつかまえた！ なかまになった！`); }
         B.caught.push({id:w.id, lv:w.lv, dup:had});
         w.hp=0; w.caught=true; setTimeout(after,1500);
       }else{
@@ -3125,9 +3406,10 @@ function finish(win){
     addExp(B.lead, stars*5);
   }
   persist();
-  const rares = grantRares(), megas = grantMegas(), urs = grantUR();
+  const rares = grantRares(), megas = grantMegas(), urs = grantUR(), umegas = grantUMegas();
   const lvAfter = prefLevels(), newCol = Object.keys(lvAfter).filter(p=>lvAfter[p]>(B.colBefore[p]||0));
   const gets = [
+    ...umegas.map(umegaCard),
     ...urs.map(urCard),
     ...(B.fracUp?[`<div class="card get"><div class="mon">${art("ur_frac",1,{sil:true})}</div><div><b>分数カードに★が ${B.fracUp}こ ついた！</b><span>分数カード ${fracDone()} / ${FRAC_UNIT().cards.length} が★3</span></div></div>`]:[]),
     ...megas.map(megaCard),
@@ -3141,6 +3423,7 @@ function finish(win){
     <h2>${win?(B.sid==="review"?'ニガテの森クリア！':'ルートクリア！'):'目の前がまっくらになった…'}</h2>
     ${win?`<div class="big">${starStr(stars)}</div><p class="line">まちがい ${B.mistakes}回・さいだい ${B.maxCombo}コンボ・たおした ${B.defeated}ひき</p><p class="line">フラスコ +${3+B.ballsGot}</p>`:`<p class="line">まちがえた問題は「ニガテの森」で練習できるよ</p>`}
     ${ups?`<p class="line">レベルアップ：${ups}</p>`:''}
+    ${newMovesHTML()}
     <div class="gets">${gets}</div>
     ${B.evoReady.length?`<button class="btn go" id="toEvo">しんかさせにいく！</button>`:''}
     <button class="btn ${B.evoReady.length?'':'go'}" id="again">${win?'もう一度ぼうけん':'リベンジする'}</button>
@@ -3152,7 +3435,7 @@ function finish(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261101122746";
+const APP_VER="20261102123308";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
