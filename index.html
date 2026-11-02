@@ -185,6 +185,31 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 @keyframes rlk{to{width:100%}}
 .hasty{color:var(--bad)}
 .plog summary{font-weight:800;cursor:pointer}
+.shophead{display:flex;gap:10px;align-items:center;padding:8px 12px;flex-wrap:wrap}
+.shopmsg{font-weight:800;color:var(--good);margin:10px 0 0}
+.shopcat{font-size:16px;margin:14px 0 8px}
+.shopgrid{display:flex;flex-direction:column;gap:8px}
+.shopgrid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sitem2{display:grid;grid-template-columns:32px 1fr;gap:4px 6px;align-items:center;padding:6px 8px;border-width:2px;box-shadow:0 3px 0 var(--ink)}
+.sitem2 .sic svg{width:30px;height:30px}.sitem2 .sin b{font-size:13px}.sitem2 .sbuy{grid-column:1/-1;justify-content:center;width:100%;padding:4px}
+.sitem{display:grid;grid-template-columns:44px 1fr auto;gap:8px;align-items:center;padding:8px 10px;border-width:2px;box-shadow:0 3px 0 var(--ink)}
+.sic svg{width:40px;height:40px;display:block}
+.sin b{display:block;font-size:14px;line-height:1.3}.sin .mini{display:block;font-weight:700;line-height:1.35}
+.sbuy{width:auto;font-size:15px;padding:6px 10px;display:flex;align-items:center;gap:3px;white-space:nowrap}
+.sbuy svg{width:14px;height:17px}
+.btcard{padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.btteam{display:flex;gap:6px}.btteam .mon{width:64px;height:64px}
+.btcard b{display:block}
+.badge{gap:0}.badge .mon{width:48px;height:48px}.badge .mini{font-size:10.5px;line-height:1.3}
+.badge:not(.on){opacity:.7}
+.ddrow{display:flex;justify-content:space-between;gap:8px;font-size:13px;padding:3px 0;border-bottom:1px dashed #d5dee8}.ddrow:last-child{border:none}
+.ddrow b{white-space:nowrap}
+.bag{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.bag button{flex:1;min-width:120px;border:2px solid var(--ink);border-radius:10px;background:var(--soft);padding:4px 8px;font-size:12px;font-weight:800;display:flex;align-items:center;gap:6px;text-align:left}
+.bag button svg{width:28px;height:28px;flex:none}
+.bag button:disabled{opacity:.4}
+.itembtns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.itembtns .btn{width:auto;flex:1;min-width:140px;font-size:13px;padding:7px 8px}
 .plog table{border-collapse:collapse;width:100%;font-size:12px;margin-top:8px;font-variant-numeric:tabular-nums}
 .plog th,.plog td{border:1.5px solid #c9d6e6;padding:2px 4px;text-align:center}
 .plog th{background:var(--soft)}
@@ -1834,10 +1859,10 @@ function saveStatusHTML(){
   return `<div class="savest ${ok?'':'ng'}">開き方：${IS_APP?'ホーム画面アプリ':'ブラウザ（Safariなど）'}　保存：${ok?'できる':'できない'+(saveErr?'（'+esc(saveErr)+'）':'')}　さいごの保存：${ts}</div>`;
 }
 
-function formIdx(id, lv){ const f=SP[id].forms; let k=0; f.forEach((x,i)=>{ if(i && lv>=x.lv) k=i; }); return k; }
+function formIdx(id, lv){ const f=SP[id].forms; let k=0; f.forEach((x,i)=>{ if(i && lv>=x.lv && !x.item) k=i; }); return k; }
 const curF = id => { const o=save.owned[id]; return o.form ?? formIdx(id,o.lv); };
-function canEvo(id){ const o=save.owned[id]; if(!o) return false; const nx=SP[id].forms[curF(id)+1]; return !!nx && o.lv>=nx.lv; }
-const artMine = (id,opt={}) => art(id, 1, Object.assign({}, opt, {f: SP[id].legend?2:curF(id), sz:(save.owned[id]||{}).sz}));
+function canEvo(id){ const o=save.owned[id]; if(!o) return false; const nx=SP[id].forms[curF(id)+1]; return !!nx && o.lv>=nx.lv && (!nx.item || ((save.items||{})[nx.item]||0)>0); }
+const artMine = (id,opt={}) => art(id, 1, Object.assign({}, opt, {f: SP[id].legend?2:curF(id), sz:(save.owned[id]||{}).sz, shiny:(save.owned[id]||{}).shiny}));
 const nameOf = (id, lv) => SP[id].forms[lv==null && save.owned[id] ? curF(id) : formIdx(id, lv ?? 1)].n;
 const typeChip = t => `<span class="chip t-${t}">${TYPES[t]}</span>`;
 const typesChip = x => typeChip(SP[x].type) + (SP[x].type2 ? " "+typeChip(SP[x].type2) : "");
@@ -2211,6 +2236,7 @@ function art(id, lv=1, opt={}){
     for(let i=0;i<8;i++){ const a0=(-90+i*45+4)*Math.PI/180, a1=(-90+i*45+41)*Math.PI/180, r=57; ring+=`<path d="M${(60+r*Math.cos(a0)).toFixed(1)} ${(62+r*Math.sin(a0)).toFixed(1)} A${r} ${r} 0 0 1 ${(60+r*Math.cos(a1)).toFixed(1)} ${(62+r*Math.sin(a1)).toFixed(1)}" fill="none" stroke="${RB[i]}" stroke-width="4" stroke-linecap="round" opacity=".85"/>`; }
     g = `<defs><radialGradient id="${gid}"><stop offset="0" stop-color="#fff6a8" stop-opacity="0"/><stop offset=".6" stop-color="#ffd23f" stop-opacity=".18"/><stop offset=".85" stop-color="#ffb800" stop-opacity=".5"/><stop offset="1" stop-color="#ffb800" stop-opacity="0"/></radialGradient></defs><circle cx="60" cy="62" r="58" fill="url(#${gid})"/>${ring}` + g + `<g transform="translate(100 18)"><circle r="11" fill="#24324a"/><circle r="8.5" fill="none" stroke="#ffd23f" stroke-width="2.5"/><path d="M-4 -4 V1 Q-4 4.5 0 4.5 Q4 4.5 4 1 V-4" fill="none" stroke="#fff6a8" stroke-width="2.2" stroke-linecap="round"/></g>`; }
   if(sil) g = g.replace(/fill="#[0-9a-f]{3,6}"/gi,`fill="${K}"`).replace(/stroke="#[0-9a-f]{3,6}"/gi,`stroke="${K}"`);
+  if(opt.shiny && !sil){ let sp=""; for(const [x,y,r] of [[16,24,5],[106,40,5],[98,92,4]]) sp+=`<path transform="translate(${x} ${y}) scale(${r/5})" d="M0 -5 L1.3 -1.3 L5 0 L1.3 1.3 L0 5 L-1.3 1.3 L-5 0 L-1.3 -1.3Z" fill="#fff" stroke="#24324a" stroke-width="1"/>`; g = `<g style="filter:hue-rotate(150deg) saturate(1.25)">${g}</g>${sp}`; }
   const sc = Math.min(1.18, Math.max(.5, [0.84, 0.92, 0.97][f] * spSize(id, f) * (opt.sz||1)));
   return `<svg viewBox="0 0 120 120" aria-hidden="true"><ellipse cx="60" cy="108" rx="${34*sc}" ry="5" fill="${K}" opacity=".12"/><g transform="translate(60 108) scale(${sc}) translate(-60 -108)">${g}</g></svg>`;
 }
@@ -2330,13 +2356,14 @@ const ICONS = {
   party:`<svg viewBox="0 0 24 24"><circle cx="8" cy="13" r="6" fill="currentColor"/><circle cx="17" cy="11" r="5" fill="currentColor" opacity=".6"/></svg>`,
   map:`<svg viewBox="0 0 24 24"><path d="M3 6 L9 3 L15 6 L21 3 V18 L15 21 L9 18 L3 21Z" fill="currentColor"/><path d="M9 3 V18 M15 6 V21" stroke="#fff" stroke-width="1.5"/></svg>`,
   dun:`<svg viewBox="0 0 24 24"><path d="M3 21 V10 Q12 1 21 10 V21Z" fill="currentColor"/><path d="M9 21 V14 Q12 11 15 14 V21Z" fill="#fff"/></svg>`,
-  dex:`<svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="3" fill="currentColor"/><rect x="7" y="6" width="10" height="6" rx="1.5" fill="#fff"/></svg>`
+  dex:`<svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="3" fill="currentColor"/><rect x="7" y="6" width="10" height="6" rx="1.5" fill="#fff"/></svg>`,
+  plaza:`<svg viewBox="0 0 24 24"><path d="M3 9 L5 3 H19 L21 9Z" fill="currentColor"/><rect x="4" y="10" width="16" height="11" rx="1.5" fill="currentColor" opacity=".6"/><rect x="10" y="14" width="4" height="7" fill="#fff"/></svg>`
 };
 let tab = "adv";
 function showTabs(on){
   const t = document.getElementById("tabs");
   t.hidden = !on; if(!on) return;
-  t.innerHTML = [["adv","ぼうけん"],["dun","ダンジョン"],["party","なかま"],["dex","ずかん"],["map","ちず"]].map(([k,n])=>`<button class="${tab===k?'on':''}" data-t="${k}">${ICONS[k]}${n}</button>`).join("");
+  t.innerHTML = [["adv","ぼうけん"],["dun","ダンジョン"],["party","なかま"],["dex","ずかん"],["map","ちず"],["plaza","ひろば"]].map(([k,n])=>`<button class="${tab===k?'on':''}" data-t="${k}">${ICONS[k]}${n}</button>`).join("");
   t.querySelectorAll("button").forEach(b=>b.onclick=()=>{ tab=b.dataset.t; home(); });
 }
 const app = document.getElementById("app");
@@ -2348,6 +2375,7 @@ function home(){
   if(tab==="dex") return showDex();
   if(tab==="map") return showJMap();
   if(tab==="dun") return showQD();
+  if(tab==="plaza") return showPlaza();
   showMap();
 }
 
@@ -2377,6 +2405,7 @@ function showMap(){
   if(!STORE_OK || saveErr) h += `<div class="card bkcard warn"><b>この開き方では記録を保存できません</b><span>Safariの「プライベート」や、Cookieをすべてブロックする設定だと保存できないことがあります。バックアップコードで記録を守ってください。</span></div>`;
   h += '<!--BKTOP-->';
   const rg = grantRares(), mg = grantMegas(), ug = grantUR(), umg = grantUMegas(); if(rg.length||mg.length||ug.length||umg.length) h += `<div class="gets">${umg.map(umegaCard).join("")}${ug.map(urCard).join("")}${mg.map(megaCard).join("")}${rg.map(rareCard).join("")}</div>`;
+  { const rc=rewardCards(); if(rc) h += `<div class="gets">${rc}</div>`; }
   h += weekNote();
   const evoId = [...DEX_ORDER,...RARE_ORDER,...QD_ORDER,...MEGA_ORDER,...UR_ORDER].find(id=>canEvo(id));
   if(evoId) h += `<button class="card prof gift" id="evoNote"><div class="mon" style="width:52px;height:52px;flex:none">${artMine(evoId)}</div><div style="text-align:left"><p>しんかできるなかまがいるよ！</p><p style="font-weight:500">${esc(nameOf(evoId))}をしんかさせよう。タップで「なかま」へ。</p></div></button>`;
@@ -2451,7 +2480,7 @@ function showEvolve(id){
   const es=document.getElementById("es");
   requestAnimationFrame(()=>es.classList.add("run"));
   setTimeout(()=>{
-    save.owned[id].form=f1; persist();
+    save.owned[id].form=f1; { const it=SP[id].forms[f1].item; if(it) bag()[it]=Math.max(0,(bag()[it]||0)-1); } persist();
     es.classList.remove("run"); es.classList.add("done");
     document.getElementById("em").innerHTML = `おめでとう！ ${esc(from)}は <b>${esc(to)}</b> にしんかした！`;
     const more = canEvo(id);
@@ -2513,17 +2542,27 @@ function showParty(){
   const d = partySel, dO = save.owned[d], inP = save.party.includes(d);
   app.innerHTML = `<h2 class="sec-h">なかま</h2>
   <div class="card leadcard"><div class="mon">${artMine(lead)}</div><div style="min-width:0"><span class="mini">せんとう</span><h3>${esc(nameOf(lead))}</h3><div>${typesChip(lead)} <span class="mini">Lv.${o.lv}</span></div>
-    <div class="bar expbar" style="margin-top:6px"><i style="width:${o.exp/need(o.lv)*100}%"></i></div><div class="mini" style="margin-top:4px">${SKILLS[s.skill].n}：${SKILLS[s.skill].d}</div>${canEvo(lead)?`<div class="mini" style="color:var(--accent)">しんかできる！</div>`:nf?`<div class="mini">Lv.${nf.lv}でしんかできる</div>`:''}</div></div>
+    <div class="bar expbar" style="margin-top:6px"><i style="width:${o.exp/need(o.lv)*100}%"></i></div><div class="mini" style="margin-top:4px">${SKILLS[s.skill].n}：${SKILLS[s.skill].d}</div>${canEvo(lead)?`<div class="mini" style="color:var(--accent)">しんかできる！</div>`:nf?`<div class="mini">${evoNeedText(nf)}でしんかできる</div>`:''}</div></div>
   <p class="mini" style="margin:16px 0 8px">パーティ（3ひきまで）は黄色。タップしてえらぼう。</p>
   <div class="grid3">${ids.map(id=>`<button class="card mcard ${save.party.includes(id)?'inparty':''}" data-id="${id}"><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b><span class="mini">Lv.${save.owned[id].lv}</span>${canEvo(id)?'<span class="evotag">しんかOK</span>':''}</button>`).join("")}</div>
   <div class="card detail"><div class="row"><div class="mon">${artMine(d)}</div><div style="min-width:0"><h3>${esc(nameOf(d))}</h3><div>${typesChip(d)} <span class="mini">Lv.${dO.lv}</span></div><p class="mini">${SKILLS[SP[d].skill].n}：${SKILLS[SP[d].skill].d}</p><p class="mini">さいだいHP ${maxHPOf(d)}・${sizeText(d)}</p></div></div>
     <div class="mvlist">${movesOf(d).map(k=>`<span class="mvchip mt-${moveType(d,k)||'none'}"><b>${esc(MOVES[k].n)}</b><small>${moveInfo(d,k)}</small></span>`).join("")}</div>${nextMoveText(d)}
-    ${canEvo(d)?`<button class="btn go evobtn" id="evo">${esc(nameOf(d))}をしんかさせる！</button>`:(SP[d].forms[curF(d)+1]?`<p class="mini">Lv.${SP[d].forms[curF(d)+1].lv}になると、しんかできる</p>`:'')}
+    ${canEvo(d)?`<button class="btn go evobtn" id="evo">${esc(nameOf(d))}をしんかさせる！</button>`:(SP[d].forms[curF(d)+1]?`<p class="mini">${evoNeedText(SP[d].forms[curF(d)+1])}で、しんかできる${SP[d].forms[curF(d)+1].item?'（石はひろばのショップで買える）':''}</p>`:'')}
+    ${(()=>{ const bb=bag(), o=dO, ts=[SP[d].type,SP[d].type2].filter(Boolean); let x="";
+      if((bb.ame||0)>0 && o.lv<30) x+=`<button class="btn alt" data-use="ame">ふしぎなアメ（${bb.ame}）<br><small>Lv.${o.lv}→${o.lv+1}</small></button>`;
+      if((bb.ink||0)>0 && !o.shiny) x+=`<button class="btn alt" data-use="ink">ひかるインク（${bb.ink}）<br><small>色ちがいにする</small></button>`;
+      for(const t of ts) if((bb["tm_"+t]||0)>0 && o.tm!=="sp_"+t) x+=`<button class="btn alt" data-use="tm_${t}">「${SPNAMES[t]}」をおぼえる<br><small>わざマシン（${bb["tm_"+t]}）${o.tm?'・今のスペシャルわざとこうかん':''}</small></button>`;
+      return x?`<div class="itembtns">${x}</div>`:''; })()}
     <div class="btns">${save.party[0]!==d?`<button class="btn go" id="mklead">せんとうにする</button>`:''}${inP?(save.party.length>1?`<button class="btn alt" id="rm">パーティからはずす</button>`:''):`<button class="btn alt" id="add" ${save.party.length>=3?'disabled':''}>${save.party.length>=3?'パーティがいっぱい':'パーティに入れる'}</button>`}</div></div>
   <div class="card" style="padding:12px 14px;margin-top:14px"><b>タイプのあいしょう</b><p class="mini" style="margin:2px 0 8px">左のタイプのわざは、右のタイプに「こうかばつぐん」（2倍）。ぎゃくむきだと半分になるよ。わざのタイプで決まるので、あいてに合わせてわざをえらぼう。タイプを2つもつモンスターは、2つのあいしょうをかけ合わせる（いちばん大きくて2倍、小さくて半分）。</p>${typeChartHTML()}</div>`;
   app.querySelectorAll(".mcard").forEach(b=>b.onclick=()=>{ partySel=b.dataset.id; showParty(); });
   const g=id=>document.getElementById(id);
   if(g("evo")) g("evo").onclick=()=>showEvolve(d);
+  app.querySelectorAll("[data-use]").forEach(b=>b.onclick=()=>{ const k=b.dataset.use, bb=bag(), o=save.owned[d]; if(!(bb[k]>0)) return;
+    if(k==="ame"){ if(o.lv>=30) return; o.lv++; o.exp=0; }
+    else if(k==="ink"){ o.shiny=true; }
+    else if(k.startsWith("tm_")){ o.tm="sp_"+k.slice(3); }
+    bb[k]--; persist(); showParty(); });
   if(g("mklead")) g("mklead").onclick=()=>{ save.party=[d,...save.party.filter(x=>x!==d)].slice(0,3); persist(); showParty(); };
   if(g("rm")) g("rm").onclick=()=>{ save.party=save.party.filter(x=>x!==d); persist(); showParty(); };
   if(g("add")) g("add").onclick=()=>{ if(save.party.length<3){ save.party.push(d); persist(); showParty(); } };
@@ -2813,15 +2852,16 @@ function finishQD(win){
     const bonus=Math.floor(fl/5); save.balls+=bonus;
     head=`<p class="line">無限の塔</p><h2>${fl}階まで のぼった！</h2><p class="line">${rec?'<b>さいこう記録こうしん！</b>':`さいこう記録 ${s.tower.best}階`}　フラスコ +${bonus}</p>`;
   }else{
-    if(win){ stars=B.mistakes===0?3:B.mistakes<=2?2:1; save.balls+=3; addExp(B.lead, stars*5); if(m==="boss") s.boss[f.id]=Math.max(s.boss[f.id]||0,stars); }
-    head = win ? `<h2>${m==="boss"?'ボスをたおした！':'クリア！'}</h2><div class="big">${starStr(stars)}</div><p class="line">まちがい ${B.mistakes}回・さいだい ${B.maxCombo}コンボ・フラスコ +${3+B.ballsGot}</p>`
+    if(win){ stars=B.mistakes===0?3:B.mistakes<=2?2:1; save.balls+=3+B.mastered; addExp(B.lead, stars*5); if(m==="boss") s.boss[f.id]=Math.max(s.boss[f.id]||0,stars); }
+    head = win ? `<h2>${m==="boss"?'ボスをたおした！':'クリア！'}</h2><div class="big">${starStr(stars)}</div><p class="line">まちがい ${B.mistakes}回・さいだい ${B.maxCombo}コンボ・フラスコ +${3+B.ballsGot+B.mastered}${B.mastered?`（マスター ボーナス +${B.mastered}）`:''}</p>`
                : `<h2>目の前がまっくらになった…</h2><p class="line">ここまでの「おぼえ度」は記録されているよ</p>`;
   }
   persist();
   const st=f?qdStats(f):null;
   const dg=grantDragons(), rares=grantRares(), megas=grantMegas();
   const lvAfter=prefLevels(), newCol=Object.keys(lvAfter).filter(p=>lvAfter[p]>(B.colBefore[p]||0));
-  const gets=[...megas.map(megaCard), ...dg.map(dragonCard), ...rares.map(rareCard),
+  stat().maxCombo=Math.max(stat().maxCombo||0,B.maxCombo);
+  const gets=[rewardCards(), ...megas.map(megaCard), ...dg.map(dragonCard), ...rares.map(rareCard),
     ...(newCol.length?[`<div class="card get evo"><div class="mon" style="width:64px;height:64px">${mapSVG({view:newCol, fill:Object.fromEntries(newCol.map(p=>[p,MAPLV[lvAfter[p]]]))})}</div><div><b>地図の ${newCol.map(p=>MAPD[p][0]).join("・")} の色がこくなった！</b><span>「ちず」で見てみよう</span></div></div>`]:[]),
     ...(B.eggWarm?[`<div class="card get"><div class="mon">${eggSVG(s.egg.w)}</div><div><b>今日のたんけんクリア！</b><span>たまごがあたたまった（${s.egg.w}/${EGG_NEED}）・フラスコ +2</span></div></div>`]:[]),
     ...B.evoReady.map(id=>`<div class="card get evo"><div class="mon">${artMine(id)}</div><div><b>${esc(nameOf(id))} Lv.${save.owned[id].lv}</b><span>しんかできるようになった！</span></div></div>`),
@@ -3063,7 +3103,8 @@ function learnable(id){ return learnSet(id).map(x=>x[0]); }
 function learnLv(id,k){ const e=learnSet(id).find(x=>x[0]===k); return e?e[1]:(MOVES[k].lv||0); }
 function movesOf(id){
   const lv=(save.owned[id]||{}).lv||1, sig=sigOf(id), learn=learnable(id).filter(k=>learnLv(id,k)<=lv);
-  return sig ? [sig, ...learn.slice(-3)] : learn.slice(-4);
+  const tm=(save.owned[id]||{}).tm, top=[sig, tm&&MOVES[tm]?tm:null].filter(Boolean);
+  return [...top, ...learn.slice(-(4-top.length))];
 }
 function moveType(id,k){ const M=MOVES[k]; return M.t || (M.sig ? SP[id].type : null); }
 function moveInfo(id,k){ const M=MOVES[k], t=moveType(id,k); return `${t?TYPES[t]:'ふつう'}・いりょく${Math.round(M.pow*10)}${M.combo?`・${M.combo}コンボ`:''}${M.eff?'・'+EFF[M.eff]:''}`; }
@@ -3124,6 +3165,160 @@ function parentLogHTML(){
     ${ks.length?`<table><tr><th>日付</th><th>回答</th><th>まちがい</th><th>すぐ答えた</th><th>うち まちがい</th></tr>${rows}</table>`:'<p class="mini">まだきろくがありません。</p>'}</details>`;
 }
 
+/* ============================================================
+   ショップ・どうぐ・バッジ・バトルタワー・ずかんコンプリート（v34）
+   ユーザーの要望「ショップはフラスコで買える。道具で、特別なモンスターはその道具がないとレベルが達しても進化できない。スペシャルな技も買える」
+   選択: フラスコのもらえる量を少し増やす／新しい「3つ目の姿」（石でしんか）／石・スペシャルわざ・バトルの道具・そだてる道具／バッジ・バトルタワー・ずかんコンプリート
+   保存: save.items={itemId:こ数}、save.owned[id].tm（スペシャルわざ）、save.owned[id].shiny（色ちがい）、save.badges={id:日付}、save.btower={best}、save.dexDone={unitId:1}、save.stat={maxCombo,bought}
+   ============================================================ */
+const bag = () => save.items || (save.items = {});
+const stat = () => save.stat || (save.stat = {});
+const SPNAMES = {mizu:"タイダルウェーブ", hono:"フレアバースト", kusa:"フォレストストーム", iwa:"メテオロック", denki:"サンダーボルテージ", koori:"ダイヤモンドダスト", kaze:"スカイハリケーン", hikari:"シャイニングノヴァ"};
+for(const [t,n] of Object.entries(SPNAMES)) MOVES["sp_"+t] = {n, t, pow:2.4, combo:2, sp:true};
+const ITEMS = {};
+for(const t of Object.keys(TYPES)) ITEMS["stone_"+t] = {n:`${TYPES[t]}の石`, cat:"stone", t, price:12, d:`${TYPES[t]}タイプの一部のモンスターを、Lv15 でさいごのすがたにしんかさせる（1回で1こ使う）`};
+for(const t of Object.keys(TYPES)) ITEMS["tm_"+t] = {n:`わざマシン「${SPNAMES[t]}」`, cat:"tm", t, price:20, d:`${TYPES[t]}タイプ（2つ目のタイプもふくむ）のなかま1ぴきに、スペシャルわざ（いりょく24・2コンボ）をおぼえさせる`};
+Object.assign(ITEMS, {
+  kizu:{n:"きずぐすり", cat:"battle", price:3, d:"バトル中に使う。せんとうのなかまのHPを半分回復"},
+  superflask:{n:"スーパーフラスコ", cat:"battle", price:4, d:"正解したあとに使う。ふつうのフラスコより、とてもつかまえやすい"},
+  mitsu:{n:"あまいミツ", cat:"battle", price:4, d:"バトル中に使う。つぎに出てくるモンスターが、まだなかまにいないモンスターになりやすい"},
+  ame:{n:"ふしぎなアメ", cat:"grow", price:8, d:"なかま1ぴきのLvが1上がる（Lv30まで）。「なかま」画面で使う"},
+  ink:{n:"ひかるインク", cat:"grow", price:25, d:"なかま1ぴきを色ちがいにする（見た目だけ）。「なかま」画面で使う"}
+});
+const SHOP_CATS = [["stone","しんかの石"],["tm","スペシャルわざ"],["battle","バトルのどうぐ"],["grow","そだてるどうぐ"]];
+function itemSVG(k){
+  const it=ITEMS[k], K="#24324a", c=it.t?TCOL[it.t]:"#ffcf3a";
+  if(it.cat==="stone") return `<svg viewBox="0 0 40 40"><polygon points="20,3 33,13 29,35 11,35 7,13" fill="${c}" stroke="${K}" stroke-width="2.5" stroke-linejoin="round"/><polygon points="20,3 24,13 20,35 16,13" fill="#fff" opacity=".45"/></svg>`;
+  if(it.cat==="tm") return `<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="16" fill="${c}" stroke="${K}" stroke-width="2.5"/><circle cx="20" cy="20" r="5" fill="#fff" stroke="${K}" stroke-width="2"/><path d="M9 14 A12 12 0 0 1 16 8" stroke="#fff" stroke-width="2.5" fill="none" opacity=".7"/></svg>`;
+  if(k==="kizu") return `<svg viewBox="0 0 40 40"><rect x="13" y="4" width="14" height="6" rx="2" fill="${K}"/><path d="M12 10 H28 V33 Q28 36 25 36 H15 Q12 36 12 33Z" fill="#b8f0d0" stroke="${K}" stroke-width="2.5"/><path d="M20 17 V29 M14 23 H26" stroke="#e8475a" stroke-width="4"/></svg>`;
+  if(k==="superflask") return flaskSVG.replace('fill="#ff7a2f"','fill="#ffcf3a"').replace('viewBox="0 0 30 36"','viewBox="-5 -2 40 40"');
+  if(k==="mitsu") return `<svg viewBox="0 0 40 40"><path d="M9 14 Q8 36 20 36 Q32 36 31 14Z" fill="#ffb84d" stroke="${K}" stroke-width="2.5"/><rect x="8" y="9" width="24" height="6" rx="2" fill="#c07a3a" stroke="${K}" stroke-width="2"/><path d="M14 20 Q20 24 26 20" stroke="#fff" stroke-width="2" fill="none" opacity=".7"/></svg>`;
+  if(k==="ame") return `<svg viewBox="0 0 40 40"><path d="M4 14 L11 20 L4 26Z M36 14 L29 20 L36 26Z" fill="#8f6bff" stroke="${K}" stroke-width="2"/><circle cx="20" cy="20" r="10" fill="#ff8fc8" stroke="${K}" stroke-width="2.5"/><path d="M14 17 Q20 12 26 17" stroke="#fff" stroke-width="2.5" fill="none"/></svg>`;
+  return `<svg viewBox="0 0 40 40"><path d="M20 4 C30 18 32 24 32 27 A12 12 0 0 1 8 27 C8 24 10 18 20 4Z" fill="url(#inkg)" stroke="${K}" stroke-width="2.5"/><defs><linearGradient id="inkg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5a6e"/><stop offset=".5" stop-color="#ffd23f"/><stop offset="1" stop-color="#3d8bff"/></linearGradient></defs></svg>`;
+}
+function buyItem(k){ const it=ITEMS[k]; if(save.balls<it.price) return false; save.balls-=it.price; bag()[k]=(bag()[k]||0)+1; stat().bought=(stat().bought||0)+1; persist(); return true; }
+
+/* ---------- 3つ目の姿（しんかの石が必要）。今までのしんかはそのまま ---------- */
+const STONE_EVO = [
+  ["tokenokori","ゼッタイレイスライム"],["shuwacchi","ソーダボルト"],["hierin","ヒョウガリヴァイア"],["yugefuwa","クラウドキング"],
+  ["inabika","ライジンオロチ"],["kazeminori","ゴクラクフウチョウ"],["marupika","マンゲツオウ"],["kururin","トルネードエン"],
+  ["hitoriboshi","プライムスター"],["warenain","ヒョウザンキング"],["nibaichi","ギガバイデン"],["hyakupika","マンピカリ"],
+  ["mugikazen","ムギカゼオウ"],["hieimo","ダンシャクヒョウ"],["handenki","フルチャージン"],["hyopen","アイスピザロード"],
+  ["shiroyukin","フブキュウビ"],["takanekaze","アルプスゲイル"],["biwapika","ビワミツボシ"],["neonbat","ナニワボルト"],
+  ["shinborun","エンブレムキング"],["setokaze","セトナイカイオー"],["hinyarin","ヨレイマスター"],["kogenkaze","コウゲンフウジン"],
+  ["salty","シオコロッサス"],["steamdra","スチームエンペラー"],["shinano","シナノタイリュウ"],["hikario","コシヒカリオー"],
+  ["gasshoun","ガッショウダイオー"],["kingyon","キンギョオウ"],["retasun","レタスキング"],["coldon","フリーズキャリアー"]
+];
+for(const [id,n] of STONE_EVO){ const s=SP[id]; if(s && s.forms.length===2) s.forms.push({n, lv:15, item:"stone_"+s.type}); }
+const evoNeedText = nx => `Lv.${nx.lv}${nx.item?`と「${ITEMS[nx.item].n}」`:''}`;
+
+/* ---------- バッジ ---------- */
+function streakDays(){ const L=save.alog||{}; let n=0; const d=new Date(); for(;;){ const k=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); if(L[k]&&L[k].a>0){ n++; d.setDate(d.getDate()-1); } else if(n===0 && k===today()){ d.setDate(d.getDate()-1); } else break; } return n; }
+const totalOk = () => Object.values(save.alog||{}).reduce((a,r)=>a+r.a-r.ng,0);
+const ownCount = () => Object.keys(save.owned).length;
+const BADGES = [
+  ["first","はじめの一歩","ルートをはじめてクリア",3,()=>Object.keys(save.cleared).length>=1],
+  ["perfect","パーフェクト","まちがい0でルートをクリア（★3）",5,()=>Object.values(save.cleared).some(v=>v>=3)],
+  ["combo10","10コンボ","1回のバトルで10コンボ",5,()=>(stat().maxCombo||0)>=10],
+  ["calm","おちついて答えた","1日に20問以上答えて「すぐ答えてまちがい」0",5,()=>Object.values(save.alog||{}).some(r=>r.a>=20&&r.fng===0)],
+  ["days3","3日れんぞく","3日つづけて勉強",5,()=>streakDays()>=3],
+  ["days7","7日れんぞく","7日つづけて勉強",10,()=>streakDays()>=7],
+  ["q100","100問正解","正解の合計が100問（v33 から数える）",5,()=>totalOk()>=100],
+  ["q500","500問正解","正解の合計が500問",15,()=>totalOk()>=500],
+  ["mon10","なかま10ぴき","なかまが10ぴき",3,()=>ownCount()>=10],
+  ["mon30","なかま30ぴき","なかまが30ぴき",8,()=>ownCount()>=30],
+  ["mon60","なかま60ぴき","なかまが60ぴき",15,()=>ownCount()>=60],
+  ["unit","単元マスター","1つの単元のルートとでんせつを全部クリア",8,()=>UNITS.some(u=>u.stages.every(s=>save.cleared[u.id+"|"+s.id])&&save.cleared[u.id+"|boss"])],
+  ["nigate","ニガテこくふく","メガかウルトラメガのモンスターをなかまにする",8,()=>[...MEGA_ORDER,...UMEGA_ORDER].some(id=>save.owned[id])],
+  ["stone","石のちから","しんかの石でしんかさせる",5,()=>Object.entries(save.owned).some(([id,o])=>SP[id]&&o.form!=null&&SP[id].forms[o.form]&&SP[id].forms[o.form].item)],
+  ["week7","曜日コンプリート","曜日のモンスターを7ひき全部なかまに",15,()=>WEEK_ORDER.every(id=>save.owned[id])],
+  ["dex1","ずかんコンプリート","1つの単元のモンスターを全部なかまに",8,()=>Object.keys(save.dexDone||{}).length>=1],
+  ["tower3","タワー3勝","バトルタワーで3人目のトレーナーに勝つ",8,()=>((save.btower||{}).best||0)>=3],
+  ["tower9","タワーチャンピオン","バトルタワーで9人目（チャンピオン）に勝つ",20,()=>((save.btower||{}).best||0)>=9],
+  ["shop","はじめてのおかいもの","ショップで買いものをする",2,()=>(stat().bought||0)>=1]
+];
+function grantBadges(){ const b=save.badges||(save.badges={}), got=[];
+  for(const [id,n,d,r,f] of BADGES){ if(b[id]) continue; let ok=false; try{ ok=f(); }catch(e){} if(ok){ b[id]=today(); save.balls+=r; got.push(id); } }
+  if(got.length) persist(); return got; }
+const badgeSVG = (on) => `<svg viewBox="0 0 40 40"><path d="M12 24 L8 38 L14 35 L17 39 L20 27Z M28 24 L32 38 L26 35 L23 39 L20 27Z" fill="${on?'#e8475a':'#c9d3e0'}" stroke="#24324a" stroke-width="2" stroke-linejoin="round"/><circle cx="20" cy="17" r="13" fill="${on?'#ffcf3a':'#dfe6ee'}" stroke="#24324a" stroke-width="2.5"/><path d="M20 9 L22.4 14.5 L28 15 L23.8 18.8 L25 24.5 L20 21.6 L15 24.5 L16.2 18.8 L12 15 L17.6 14.5Z" fill="${on?'#fff6c9':'#fff'}" stroke="#24324a" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
+const badgeCard = id => { const B0=BADGES.find(x=>x[0]===id); return `<div class="card get"><div class="mon">${badgeSVG(true)}</div><div><b>バッジ「${esc(B0[1])}」</b><span>${esc(B0[2])}・フラスコ +${B0[3]}</span></div></div>`; };
+
+/* ---------- ずかんコンプリート：単元のモンスター（でんせつ・追加モンスターふくむ）を全部なかまにすると、ふしぎなアメ3こ＋フラスコ10 ---------- */
+function grantDexDone(){ const d=save.dexDone||(save.dexDone={}), got=[];
+  for(const u of UNITS){ if(d[u.id]) continue; const ids=Object.keys(u.monsters); if(ids.length && ids.every(id=>save.owned[id])){ d[u.id]=today(); bag().ame=(bag().ame||0)+3; save.balls+=10; got.push(u.id); } }
+  if(got.length) persist(); return got; }
+const dexDoneCard = uid => { const u=UNITS.find(x=>x.id===uid); return `<div class="card get evo"><div class="mon">${itemSVG("ame")}</div><div><b>ずかんコンプリート！</b><span>${esc(unitLabel(u))}「${esc(u.title)}」のモンスターを全部なかまにした。ふしぎなアメ×3・フラスコ +10</span></div></div>`; };
+function rewardCards(){ return [...grantDexDone().map(dexDoneCard), ...grantBadges().map(badgeCard)].join(""); }
+
+/* ---------- バトルタワー（トレーナー戦）：クリアしたルートの問題から出題。トレーナーのモンスター3びきをたおすと勝ち ---------- */
+const TRAINERS = ["たんけんたいのソラ","りかクラブのミナ","ちずはかせのケン","けいさんマスターのユイ","かがくしゃのハル","れきしずきのゲン","ほしよみのルナ","いきものはかせのモリ","チャンピオンのアオイ"];
+function seededRand(n){ let a=n*9973+7; return ()=>{ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function trainerOf(r){
+  const R=seededRand(r), nm = r<=TRAINERS.length ? TRAINERS[r-1] : `チャンピオンのアオイ（${r-TRAINERS.length+1}回目）`;
+  const pool=DEX_ORDER.filter(id=>!SP[id].legend), legends=UNITS.map(u=>u.legend).filter(Boolean), team=[];
+  while(team.length<3){ const id=pool[Math.floor(R()*pool.length)]; if(!team.includes(id)) team.push(id); }
+  if(r>=5) team[2]=legends[Math.floor(R()*legends.length)];
+  return {r, nm, team, lv:Math.min(40, 4+r*3), idx:0};
+}
+function trainerQs(){ const all=[]; for(const u of UNITS) u.stages.forEach(s=>{ if(save.cleared[u.id+"|"+s.id]) s.qs.forEach((q,i)=>all.push({q,key:qKey(u.id,s.id,i)})); }); return shuffle(all); }
+function startTrainer(r){
+  const qs=trainerQs(); if(qs.length<10) return;
+  showTabs(false);
+  const t=trainerOf(r);
+  B = {colBefore:prefLevels(), u:{id:"tower"}, sid:"trainer", trainer:t, name:`バトルタワー ${r}人目`, queue:qs, total:qs.length, pool:t.team, lvBase:t.lv, hearts:MAX_HP, lead:save.party[0],
+       wild:null, combo:0, maxCombo:0, mistakes:0, n:0, used:{}, power:false, luck:false,
+       caught:[], defeated:0, evoReady:[], lvups:{}, ballsGot:0, busy:false, swapOpen:false, hp:{}, guard:false, lure:false, newMoves:[]};
+  spawn(); renderBattle(true);
+}
+function finishTrainer(win){
+  window.scrollTo(0,0);
+  const t=B.trainer, bt=save.btower||(save.btower={best:0}); let reward=0;
+  if(win){ reward=3+t.r; save.balls+=reward; if(t.r>(bt.best||0)) bt.best=t.r; addExp(B.lead,15); }
+  stat().maxCombo=Math.max(stat().maxCombo||0,B.maxCombo);
+  persist();
+  const gets=[...grantUMegas().map(umegaCard), rewardCards(), ...B.evoReady.map(id=>`<div class="card get evo"><div class="mon">${artMine(id)}</div><div><b>${esc(nameOf(id))} Lv.${save.owned[id].lv}</b><span>しんかできるようになった！</span></div></div>`)].join("");
+  const ups=Object.entries(B.lvups).map(([id,lv])=>`${esc(nameOf(id))} Lv.${lv}`).join("・");
+  app.innerHTML=`<div class="result"><p class="line">バトルタワー ${t.r}人目</p><h2>${win?`${esc(t.nm)}に勝った！`:'目の前がまっくらになった…'}</h2>
+    <p class="line">${win?`フラスコ +${reward}・`:''}まちがい ${B.mistakes}回・さいだい ${B.maxCombo}コンボ</p>${ups?`<p class="line">レベルアップ：${ups}</p>`:''}${newMovesHTML()}
+    <div class="gets">${gets}</div>
+    ${win?`<button class="btn go" id="nx">つぎのトレーナー（${t.r+1}人目）へ</button>`:`<button class="btn go" id="rt">もう一度いどむ</button>`}
+    <button class="btn alt" id="bk">ひろばにもどる</button></div>`;
+  const r=t.r;
+  const g=id=>document.getElementById(id);
+  if(g("nx")) g("nx").onclick=()=>{ B=null; startTrainer(r+1); };
+  if(g("rt")) g("rt").onclick=()=>{ B=null; startTrainer(r); };
+  g("bk").onclick=()=>{ B=null; tab="plaza"; home(); };
+}
+
+/* ---------- ひろば（ショップ・バトルタワー・バッジ・ずかんコンプリート） ---------- */
+let shopMsg="";
+function showPlaza(){
+  const gets=rewardCards();
+  const bt=save.btower||{best:0}, nx=(bt.best||0)+1, t=trainerOf(nx), qn=trainerQs().length;
+  let h=`<h2 class="sec-h">ひろば</h2><div class="card shophead"><span class="pill">${flaskSVG} フラスコ ×${save.balls}</span><span class="mini">フラスコで道具を買えるよ。つかまえる分ものこしておこう</span></div>`;
+  if(gets) h+=`<div class="gets">${gets}</div>`;
+  if(shopMsg) h+=`<p class="shopmsg">${shopMsg}</p>`;
+  h+=`<h2 class="sec-h" style="margin-top:18px">ショップ</h2>`;
+  const CATD={stone:"そのタイプの一部のモンスターを、Lv15 でさいごのすがたにしんかさせる（1回で1こ使う）。「なかま」画面でしんか",
+    tm:"そのタイプ（2つ目のタイプもふくむ）のなかま1ぴきに、スペシャルわざ（いりょく24・2コンボ）をおぼえさせる。「なかま」画面で使う"};
+  for(const [c,cn] of SHOP_CATS){
+    if(CATD[c]){ h+=`<h3 class="shopcat">${cn}</h3><p class="mini" style="margin:-4px 0 8px">${CATD[c]}</p><div class="shopgrid2">${Object.entries(ITEMS).filter(([,it])=>it.cat===c).map(([k,it])=>`<div class="card sitem2"><div class="sic">${itemSVG(k)}</div><div class="sin"><b>${esc(c==="tm"?SPNAMES[it.t]:it.n)}</b><span class="mini">${c==="tm"?TYPES[it.t]+'・':''}もっている ${bag()[k]||0}</span></div><button class="btn sbuy" data-buy="${k}" ${save.balls<it.price?'disabled':''}>${flaskSVG}${it.price}</button></div>`).join("")}</div>`; continue; }
+    h+=`<h3 class="shopcat">${cn}</h3><div class="shopgrid">${Object.entries(ITEMS).filter(([,it])=>it.cat===c).map(([k,it])=>`<div class="card sitem"><div class="sic">${itemSVG(k)}</div><div class="sin"><b>${esc(it.n)}</b><span class="mini">${esc(it.d)}</span><span class="mini">もっている ${bag()[k]||0}こ</span></div><button class="btn sbuy" data-buy="${k}" ${save.balls<it.price?'disabled':''}>${flaskSVG}${it.price}</button></div>`).join("")}</div>`;
+  }
+  h+=`<h2 class="sec-h" style="margin-top:22px">バトルタワー</h2><div class="card btcard"><div class="btteam">${t.team.map(id=>`<div class="mon">${art(id,t.lv,{sil:!save.seen[id]})}</div>`).join("")}</div>
+    <div><b>${nx}人目：${esc(t.nm)}</b><span class="mini">モンスター3びき・Lv.${t.lv}　さいこう記録 ${bt.best||0}人。クリアしたルートの問題（全教科）から出る。勝つとフラスコ +${3+nx}</span></div>
+    <button class="btn go" id="btgo" ${qn>=10?'':'disabled'}>${qn>=10?'いどむ！':'ルートをクリアすると開く'}</button>${bt.best?`<button class="btn alt" id="btre" style="margin-top:8px">${bt.best}人目にもう一度いどむ</button>`:''}</div>`;
+  const bg=save.badges||{};
+  h+=`<h2 class="sec-h" style="margin-top:22px">バッジ</h2><p class="dexcount">あつめた ${Object.keys(bg).length} / ${BADGES.length}　（手に入れるとフラスコがもらえる）</p><div class="grid3">${BADGES.map(([id,n,d,r])=>`<div class="card mcard badge ${bg[id]?'on':''}"><div class="mon">${badgeSVG(!!bg[id])}</div><b>${esc(n)}</b><span class="mini">${esc(d)}</span><span class="mini">フラスコ +${r}</span></div>`).join("")}</div>`;
+  const dd=save.dexDone||{};
+  h+=`<h2 class="sec-h" style="margin-top:22px">ずかんコンプリート</h2><p class="dexcount">単元のモンスターを全部なかまにすると、ふしぎなアメ×3・フラスコ +10</p><div class="card" style="padding:8px 12px">${UNITS.map(u=>{ const ids=Object.keys(u.monsters), own=ids.filter(id=>save.owned[id]).length; return `<div class="ddrow"><span>${esc(unitLabel(u))}「${esc(u.title)}」</span><b>${dd[u.id]?'コンプリート！':`${own} / ${ids.length}`}</b></div>`; }).join("")}</div>`;
+  app.innerHTML=h; shopMsg="";
+  app.querySelectorAll("[data-buy]").forEach(b=>b.onclick=()=>{ const k=b.dataset.buy; if(buyItem(k)) shopMsg=`「${esc(ITEMS[k].n)}」を買った！`; const y=window.scrollY; showPlaza(); window.scrollTo(0,y); });
+  const g=id=>document.getElementById(id);
+  if(qn>=10) g("btgo").onclick=()=>startTrainer(nx);
+  if(g("btre")) g("btre").onclick=()=>startTrainer(bt.best);
+}
+
 /* ---------- battle ---------- */
 let B = null;
 function startBattle(uid, sid){
@@ -3149,7 +3344,9 @@ function startBattle(uid, sid){
 function spawn(){
   const boss = B.sid==="boss";
   let id = pick(B.pool);
-  if(!boss && Math.random()<WEEK_RATE) id = weekToday();
+  if(!boss && !B.trainer && Math.random()<WEEK_RATE) id = weekToday();
+  if(B.mitsu && !boss && !B.trainer){ const un=B.pool.filter(x=>!save.owned[x]); if(un.length) id=pick(un); B.mitsu=false; }
+  if(B.trainer){ const t=B.trainer, lv2=t.lv, mx=Math.round(30+lv2*4); id=t.team[t.idx]; B.wild={id, lv:lv2, hp:mx, max:mx, sz:1}; save.seen[id]=1; persist(); return; }
   const lv = boss ? B.lvBase : B.lvBase + Math.floor(Math.random()*2);
   const r = Math.random(), sz = boss ? 1 : r<.07 ? 1.22 : r<.14 ? .78 : Math.round((0.92+Math.random()*.16)*100)/100;
   const max = boss ? 150 : Math.round((28 + lv*3)*sz);
@@ -3189,20 +3386,22 @@ function renderBattle(enter){
   item.hidden = item.hidden || [];
   if(item.num==null) item.num = !!(q.n && !B.qd && save.okOnce && save.okOnce[item.key]);
   const isNum = item.num; if(isNum) item.input = item.input || "";
-  if(enter) logMsg = (SP[B.wild.id].week?`きょうは${WDAY[SP[B.wild.id].day]}曜日！ 曜日のモンスター `:sizeLabel(B.wild.sz||1)==='でかい！'?'でかい！ ':sizeLabel(B.wild.sz||1)?'ちびっこの ':'') + `やせいの <b>${esc(nameOf(B.wild.id,B.wild.lv))}</b> があらわれた！` + (bestMult(B.lead,B.wild.id)===2?' あいしょうはばつぐん！':bestMult(B.lead,B.wild.id)===.5?' あいしょうが悪いかも…':'');
+  if(enter && B.trainer) logMsg = `<b>${esc(B.trainer.nm)}</b>は <b>${esc(nameOf(B.wild.id,B.wild.lv))}</b> をくりだした！`;
+  else if(enter) logMsg = (SP[B.wild.id].week?`きょうは${WDAY[SP[B.wild.id].day]}曜日！ 曜日のモンスター `:sizeLabel(B.wild.sz||1)==='でかい！'?'でかい！ ':sizeLabel(B.wild.sz||1)?'ちびっこの ':'') + `やせいの <b>${esc(nameOf(B.wild.id,B.wild.lv))}</b> があらわれた！` + (bestMult(B.lead,B.wild.id)===2?' あいしょうはばつぐん！':bestMult(B.lead,B.wild.id)===.5?' あいしょうが悪いかも…':'');
   const me=B.lead, sk=SKILLS[SP[me].skill];
   app.innerHTML = `
   <div class="btop"><button class="back" id="back">← にげる</button><span class="pill">${flaskSVG} ×${save.balls}</span>${useHP()?hpMiniHTML():`<div class="hearts">${Array.from({length:B.maxHearts||MAX_HP},(_,i)=>heart(i<B.hearts)).join("")}</div>`}</div>
   ${fieldHTML(enter)}
   <div class="log" id="log">${logMsg}</div>
   <div class="card qpanel">
-    <div class="qmeta"><span>${esc(B.name)}</span><span>${B.tower?`${B.tower.floor}階・さいこう ${qdS().tower.best}階`:`のこり ${B.queue.length}問`}</span></div>
+    <div class="qmeta"><span>${esc(B.name)}</span><span>${B.tower?`${B.tower.floor}階・さいこう ${qdS().tower.best}階`:B.trainer?`あいて ${B.trainer.idx+1} / ${B.trainer.team.length}ひき目`:`のこり ${B.queue.length}問`}</span></div>
     ${q.note||q.table||q.graph||q.bars||q.map?`<div class="qnote"><span class="qnote-h">ほそく</span>${q.note?`<p>${esc(q.note)}</p>`:''}${q.table?`<div class="qtbl"><table>${q.table.map((r,ri)=>`<tr>${r.map((c,ci)=>ri===0||ci===0?`<th>${esc(c)}</th>`:`<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</table></div>`:''}${q.graph?`<div class="qgraph">${graphSVG(q.graph)}</div>`:''}${q.bars?barsHTML(q.bars):''}${q.map?`<div class="qmap">${mapSVG({view:q.map.view, pts:q.map.pts})}${MAPCREDIT}</div>`:''}</div>`:''}
     ${q.img&&MARKS[q.img]?`<div class="qimg"><img src="${MARKS[q.img]}" alt="都道府県のマーク" width="180" height="180"></div>`:''}<p class="qtext">${esc(q.q)}</p>${isAll?'<div class="hint">あてはまるものを全部えらんで「けってい」</div>':multi?'<div class="hint">2つえらんで「けってい」</div>':''}${isNum?'<div class="hint">なれてきた問題！ 数字キーで答えよう</div>':''}${isOrd?'<div class="hint">はじめのものから順にタップしよう</div>':''}${isMat?'<div class="hint">左をタップしてから、右をタップしてつなごう</div>':''}${isPref?'<div class="hint">地図をタップしてえらび、「けってい」</div>':''}${isTile?`<div class="hint">文字をタップして答えをつくろう（${[...q.ans].length}文字）</div>`:''}
     ${isNum?`<div class="cans" id="nans">${item.input?esc(item.input):'&nbsp;'}</div><div class="keypad">${["7","8","9","4","5","6","1","2","3",".","0","⌫"].map(k=>`<button class="key" data-k="${k}">${k}</button>`).join("")}</div><button class="btn" id="dec" style="margin-top:10px" ${item.input?'':'disabled'}>けってい</button>`:isTile?tileHTML(item,q)+`<div class="ordrow"><button class="btn alt" id="redo">1文字もどす</button><button class="btn" id="dec" ${item.seq.length===[...q.ans].length-q.pre?'':'disabled'}>けってい</button></div>`:isPref?`<div class="qmap big">${mapSVG({view:q.view, sel:item.selP, tap:true})}${MAPCREDIT}</div><button class="btn" id="dec" style="margin-top:10px" ${item.selP?'':'disabled'}>けってい</button>`:isOrd?orderHTML(item,q):isMat?matchHTML(item,q):`<div class="choices${isAll?' allgrid':''}">${item.order.filter(ci=>!item.hidden.includes(ci)).map((ci,k)=>`<button class="choice" data-i="${ci}">${isAll||q.c[ci]===KANA[k]?'':`<span class="k">${KANA[k]}</span>`}<span>${esc(q.c[ci])}</span></button>`).join("")}</div>`}
     ${multi?'<button class="btn" id="dec" style="margin-top:12px" disabled>けってい</button>':''}
     ${isOrd||isMat?`<div class="ordrow"><button class="btn alt" id="redo">やりなおし</button><button class="btn" id="dec" ${(isOrd?item.seq.length===q.c.length:Object.keys(item.pairs).length===q.pairs.length)?'':'disabled'}>けってい</button></div>`:''}
-    <div id="sub"><div class="subrow"><button id="skill" ${B.used[me]?'disabled':''}>${sk.n}${B.used[me]?'（使った）':''}<small>${sk.d}</small></button><button id="swapBtn" ${save.party.length<2?'disabled':''}>こうたい<small>${save.party.length<2?'なかまをふやそう':'なかまを入れかえる'}</small></button></div>
+    <div id="sub"><div class="subrow"><button id="skill" ${B.used[me]?'disabled':''}>${sk.n}${B.used[me]?'（使った）':''}<small>${sk.d}</small></button><button id="swapBtn" ${save.party.length<2?'disabled':''}>こうたい<small>${save.party.length<2?'なかまをふやそう':'なかまを入れかえる'}</small></button>${bagCount()?`<button id="bagBtn">どうぐ<small>${bagCount()}こ</small></button>`:''}</div>
+    ${B.bagOpen?bagHTML():''}
     ${B.swapOpen?`<div class="swap">${save.party.map(id=>`<button class="${id===me?'cur':''}" data-id="${id}" ${useHP()&&hpOf(id)<=0?'disabled':''}><div class="mon">${artMine(id)}</div>${esc(nameOf(id))}${useHP()?`<small>HP ${hpOf(id)}/${maxHPOf(id)}</small>`:''}</button>`).join("")}</div>`:''}</div>
     <div id="fb"></div>
   </div>`;
@@ -3248,7 +3447,12 @@ function renderBattle(enter){
     document.getElementById("dec").onclick=()=>judge(q.pairs.map((_,i)=>item.pairs[i]));
   }
   document.getElementById("skill").onclick=useSkill;
-  document.getElementById("swapBtn").onclick=()=>{ B.swapOpen=!B.swapOpen; renderBattle(); };
+  document.getElementById("swapBtn").onclick=()=>{ B.swapOpen=!B.swapOpen; B.bagOpen=false; renderBattle(); };
+  if(document.getElementById("bagBtn")) document.getElementById("bagBtn").onclick=()=>{ B.bagOpen=!B.bagOpen; B.swapOpen=false; renderBattle(); };
+  app.querySelectorAll("[data-bag]").forEach(b=>b.onclick=()=>{ if(B.busy) return; const k=b.dataset.bag, bb=bag(); if(!(bb[k]>0)) return;
+    if(k==="kizu"){ const g=healLead(.5); logMsg=`きずぐすりを使った！ <b>${esc(nameOf(B.lead))}</b>のHPが${g}回復した！`; }
+    if(k==="mitsu"){ B.mitsu=true; logMsg="あまいミツをまいた！ つぎは、まだなかまにいないモンスターが出てきやすい。"; }
+    bb[k]--; B.bagOpen=false; persist(); renderBattle(); });
   app.querySelectorAll(".swap button").forEach(b=>b.onclick=()=>{
     B.lead=b.dataset.id; B.swapOpen=false;
     const m=bestMult(B.lead,B.wild.id);
@@ -3337,7 +3541,7 @@ function judge(picked){
   }
   const rr=document.getElementById("redo"); if(rr) rr.parentNode.hidden=true;
   const dec=document.getElementById("dec"); if(dec) dec.hidden=true;
-  document.getElementById("sub").hidden=true;
+  document.getElementById("sub").hidden=true; app.querySelectorAll(".rlock").forEach(x=>x.remove());
   const fb=document.getElementById("fb"); B.n++;
   const fast = !!item.readUntil && (Date.now()-item.readUntil) < FAST_MS;
   logAnswer(ok, fast);
@@ -3371,10 +3575,11 @@ function judge(picked){
       const ida = (!lock&&firstMv) ? (firstMv=false, ' id="atk"') : '';
       return `<button class="btn mv mt-${t||'none'}" data-mv="${k}"${ida} ${lock?'disabled':''}>${esc(M.n)}<small>${lock?`${M.combo}コンボで使える（いま${B.combo}）`:(m===2?'こうかばつぐん':m===.5?'いまひとつ':t?TYPES[t]:'ふつう')+(M.eff?'・'+EFF[M.eff]:'')+(B.power?'・2倍':'')}</small></button>`; }).join("");
     fb.innerHTML = `<div class="fb ok"><h3>せいかい！</h3>${q.e?`<p>${esc(q.e)}</p>`:""}${qm}${bonus}</div>
-      <div class="acts mvs">${mvh}</div><div class="acts one">
-      ${B.qd&&B.qd.mode==="boss"?`<button class="btn alt" id="ball" disabled>フラスコ<small>マスターでなかまになる</small></button>`:`<button class="btn alt" id="ball" ${save.balls?'':'disabled'}>フラスコ<small>${save.balls?'のこり '+save.balls+'こ':'もっていない'}</small></button>`}</div>`;
+      <div class="acts mvs">${mvh}</div><div class="acts ${(bag().superflask||0)>0&&!B.trainer&&!(B.qd&&B.qd.mode==="boss")?'':'one'}">
+      ${B.trainer?`<button class="btn alt" id="ball" disabled>フラスコ<small>トレーナーのモンスターはつかまえられない</small></button>`:B.qd&&B.qd.mode==="boss"?`<button class="btn alt" id="ball" disabled>フラスコ<small>マスターでなかまになる</small></button>`:`<button class="btn alt" id="ball" ${save.balls?'':'disabled'}>フラスコ<small>${save.balls?'のこり '+save.balls+'こ':'もっていない'}</small></button>`}</div>`;
+    if((bag().superflask||0)>0 && !B.trainer && !(B.qd&&B.qd.mode==="boss")){ const ac=app.querySelector(".acts:not(.mvs)"); if(ac){ ac.insertAdjacentHTML("beforeend",`<button class="btn" id="sball">スーパーフラスコ<small>のこり ${bag().superflask}こ・とてもつかまえやすい</small></button>`); document.getElementById("sball").onclick=()=>doBall(true); } }
     app.querySelectorAll("[data-mv]").forEach(b=>b.onclick=()=>doAttack(b.dataset.mv));
-    document.getElementById("ball").onclick=doBall;
+    document.getElementById("ball").onclick=()=>doBall(false);
     setLog(`<b>${esc(nameOf(B.lead))}</b>がやる気になった！ どのわざをつかう？`);
   }else{
     B.combo=0; B.mistakes++;
@@ -3407,6 +3612,9 @@ function judge(picked){
   fb.scrollIntoView({behavior:"smooth",block:"nearest"});
 }
 function newMovesHTML(){ const a=B.newMoves||[]; return a.length?`<p class="line">${a.map(([id,k])=>`<b>${esc(nameOf(id))}</b>は「${esc(MOVES[k].n)}」をおぼえた！`).join("<br>")}</p>`:''; }
+function bagCount(){ const bb=bag(); return (bb.kizu||0)+(bb.mitsu||0); }
+function bagHTML(){ const bb=bag(), canK=useHP()&&hpOf(B.lead)<maxHPOf(B.lead), canM=B.sid!=="boss"&&!B.trainer&&!B.mitsu;
+  return `<div class="bag">${(bb.kizu||0)>0?`<button data-bag="kizu" ${canK?'':'disabled'}>${itemSVG("kizu")}<span>きずぐすり ×${bb.kizu}<br><small>${canK?'HPを半分回復':useHP()?'HPはまんたん':'ここでは使えない'}</small></span></button>`:''}${(bb.mitsu||0)>0?`<button data-bag="mitsu" ${canM?'':'disabled'}>${itemSVG("mitsu")}<span>あまいミツ ×${bb.mitsu}<br><small>${canM?'まだいないモンスターを呼ぶ':'ここでは使えない'}</small></span></button>`:''}</div>`; }
 function lockActs(){ app.querySelectorAll(".acts button").forEach(b=>b.disabled=true); document.getElementById("field").scrollIntoView({behavior:"smooth",block:"start"}); }
 function doAttack(k){
   if(typeof k!=="string") k=movesOf(B.lead)[0];
@@ -3429,11 +3637,11 @@ function doAttack(k){
     setTimeout(after, w.hp<=0?1300:1000);
   },250);
 }
-function doBall(){
+function doBall(sup){
   lockActs();
   const w=B.wild, boss=B.sid==="boss";
-  save.balls--; persist();
-  const p = Math.min(.95, (boss?.08:.3) + (1-w.hp/w.max)*(boss?.55:.55) + Math.min(B.combo,5)*.04 + (B.luck?.3:0) + (B.lure?.2:0));
+  if(sup===true) bag().superflask=Math.max(0,(bag().superflask||0)-1); else save.balls--; persist();
+  const p = Math.min(.97, (boss?.08:.3) + (1-w.hp/w.max)*(boss?.55:.55) + Math.min(B.combo,5)*.04 + (B.luck?.3:0) + (B.lure?.2:0) + (sup===true?(boss?.3:.35):0));
   B.luck=false; B.lure=false;
   const got = Math.random()<p, shakes = got?3:Math.floor(Math.random()*3);
   const f=document.getElementById("field"), fl=document.createElement("div");
@@ -3461,6 +3669,8 @@ function doBall(){
 function after(){
   B.busy=false;
   const gone = B.wild.hp<=0;
+  if(B.trainer){ if(!B.queue.length) B.queue=trainerQs();
+    if(gone){ B.trainer.idx++; if(B.trainer.idx>=B.trainer.team.length) return finish(true); spawn(); renderBattle(true); } else renderBattle(); return; }
   if(!B.queue.length) return finish(true);
   if(gone){ spawn(); renderBattle(true); } else renderBattle();
 }
@@ -3468,12 +3678,15 @@ function after(){
 /* ---------- result ---------- */
 function finish(win){
   if(B.qd) return finishQD(win);
+  if(B.trainer) return finishTrainer(win);
+  stat().maxCombo=Math.max(stat().maxCombo||0,B.maxCombo); B.extraBalls=0;
   window.scrollTo(0,0);
   let stars=0;
   if(win){
     stars = B.mistakes===0?3:B.mistakes<=2?2:1;
     save.balls += 3;
-    if(B.sid!=="review"){ const k=B.u.id+"|"+B.sid; save.cleared[k]=Math.max(save.cleared[k]||0,stars); }
+    if(B.sid!=="review"){ const k=B.u.id+"|"+B.sid, prev=save.cleared[k]||0; if(!prev) B.extraBalls+=2; if(stars===3 && prev<3) B.extraBalls+=3; save.cleared[k]=Math.max(prev,stars); }
+    save.balls += B.extraBalls;
     addExp(B.lead, stars*5);
   }
   persist();
@@ -3481,6 +3694,7 @@ function finish(win){
   const lvAfter = prefLevels(), newCol = Object.keys(lvAfter).filter(p=>lvAfter[p]>(B.colBefore[p]||0));
   const gets = [
     ...umegas.map(umegaCard),
+    rewardCards(),
     ...urs.map(urCard),
     ...(B.fracUp?[`<div class="card get"><div class="mon">${art("ur_frac",1,{sil:true})}</div><div><b>分数カードに★が ${B.fracUp}こ ついた！</b><span>分数カード ${fracDone()} / ${FRAC_UNIT().cards.length} が★3</span></div></div>`]:[]),
     ...megas.map(megaCard),
@@ -3492,7 +3706,7 @@ function finish(win){
   const ups = Object.entries(B.lvups).filter(([id])=>!B.evoReady.includes(id)).map(([id,lv])=>`${esc(nameOf(id))} Lv.${lv}`).join("・");
   app.innerHTML = `<div class="result">
     <h2>${win?(B.sid==="review"?'ニガテの森クリア！':'ルートクリア！'):'目の前がまっくらになった…'}</h2>
-    ${win?`<div class="big">${starStr(stars)}</div><p class="line">まちがい ${B.mistakes}回・さいだい ${B.maxCombo}コンボ・たおした ${B.defeated}ひき</p><p class="line">フラスコ +${3+B.ballsGot}</p>`:`<p class="line">まちがえた問題は「ニガテの森」で練習できるよ</p>`}
+    ${win?`<div class="big">${starStr(stars)}</div><p class="line">まちがい ${B.mistakes}回・さいだい ${B.maxCombo}コンボ・たおした ${B.defeated}ひき</p><p class="line">フラスコ +${3+B.ballsGot+B.extraBalls}${B.extraBalls?`（はじめてのクリア・はじめての★3 ボーナス +${B.extraBalls}）`:''}</p>`:`<p class="line">まちがえた問題は「ニガテの森」で練習できるよ</p>`}
     ${ups?`<p class="line">レベルアップ：${ups}</p>`:''}
     ${newMovesHTML()}
     <div class="gets">${gets}</div>
@@ -3506,7 +3720,7 @@ function finish(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261102125247";
+const APP_VER="20261102130549";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
