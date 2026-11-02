@@ -184,6 +184,7 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .rlock i b{display:block;height:100%;width:0;background:var(--accent);animation:rlk linear forwards}
 @keyframes rlk{to{width:100%}}
 .hasty{color:var(--bad)}
+.sztag.shinytag{background:linear-gradient(90deg,#ff5a6e,#ffb84d,#3d8bff)}
 .plog summary{font-weight:800;cursor:pointer}
 .shophead{display:flex;gap:10px;align-items:center;padding:8px 12px;flex-wrap:wrap}
 .shopmsg{font-weight:800;color:var(--good);margin:10px 0 0}
@@ -1835,7 +1836,14 @@ const esc = s => String(s).replace(/[&<>"]/g, m=>({"&":"&amp;","<":"&lt;",">":"&
 const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; };
 const pick = a => a[Math.floor(Math.random()*a.length)];
 const qKey = (u,s,i) => `${u}|${s}|${i}`;
-const need = lv => lv*12;
+/* レベルは100まで（v35）。Lv30までは今までどおり lv×12、それより上は 360＋(lv−30)×6 */
+const MAX_LV = 100;
+const need = lv => lv<=30 ? lv*12 : 360+(lv-30)*6;
+/* 相手の強さをなかまに合わせる（v35）: パーティの平均Lv（partyRef）を基準に、野生・でんせつ・トレーナーのLvを上げる。ルートの元のLvより下にはしない */
+function partyRef(){ const ls=save.party.filter(id=>save.owned[id]).map(id=>save.owned[id].lv); return ls.length?Math.round(ls.reduce((a,b)=>a+b,0)/ls.length):1; }
+function wildLv(base, boss){ const ref=partyRef(); return Math.min(MAX_LV, boss ? Math.max(base, ref+2) : Math.max(base, Math.round(ref*0.9)-1) + Math.floor(Math.random()*3)); }
+/* 強い相手ほど EXP が多い */
+const xp = n => Math.round(n*(1+((B&&B.wild)?B.wild.lv:1)/15));
 
 let save = load();
 function load(){
@@ -2545,11 +2553,11 @@ function showParty(){
     <div class="bar expbar" style="margin-top:6px"><i style="width:${o.exp/need(o.lv)*100}%"></i></div><div class="mini" style="margin-top:4px">${SKILLS[s.skill].n}：${SKILLS[s.skill].d}</div>${canEvo(lead)?`<div class="mini" style="color:var(--accent)">しんかできる！</div>`:nf?`<div class="mini">${evoNeedText(nf)}でしんかできる</div>`:''}</div></div>
   <p class="mini" style="margin:16px 0 8px">パーティ（3ひきまで）は黄色。タップしてえらぼう。</p>
   <div class="grid3">${ids.map(id=>`<button class="card mcard ${save.party.includes(id)?'inparty':''}" data-id="${id}"><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b><span class="mini">Lv.${save.owned[id].lv}</span>${canEvo(id)?'<span class="evotag">しんかOK</span>':''}</button>`).join("")}</div>
-  <div class="card detail"><div class="row"><div class="mon">${artMine(d)}</div><div style="min-width:0"><h3>${esc(nameOf(d))}</h3><div>${typesChip(d)} <span class="mini">Lv.${dO.lv}</span></div><p class="mini">${SKILLS[SP[d].skill].n}：${SKILLS[SP[d].skill].d}</p><p class="mini">さいだいHP ${maxHPOf(d)}・${sizeText(d)}</p></div></div>
+  <div class="card detail"><div class="row"><div class="mon">${artMine(d)}</div><div style="min-width:0"><h3>${esc(nameOf(d))}</h3><div>${typesChip(d)} <span class="mini">Lv.${dO.lv}</span></div><p class="mini">${SKILLS[SP[d].skill].n}：${SKILLS[SP[d].skill].d}</p><p class="mini">${dO.shinyWild?'<b>本物の色ちがい</b>（こうげき・HP 1.2倍）・':dO.shiny?'色ちがい（インク）・':''}さいだいHP ${maxHPOf(d)}・${sizeText(d)}</p></div></div>
     <div class="mvlist">${movesOf(d).map(k=>`<span class="mvchip mt-${moveType(d,k)||'none'}"><b>${esc(MOVES[k].n)}</b><small>${moveInfo(d,k)}</small></span>`).join("")}</div>${nextMoveText(d)}
     ${canEvo(d)?`<button class="btn go evobtn" id="evo">${esc(nameOf(d))}をしんかさせる！</button>`:(SP[d].forms[curF(d)+1]?`<p class="mini">${evoNeedText(SP[d].forms[curF(d)+1])}で、しんかできる${SP[d].forms[curF(d)+1].item?'（石はひろばのショップで買える）':''}</p>`:'')}
     ${(()=>{ const bb=bag(), o=dO, ts=[SP[d].type,SP[d].type2].filter(Boolean); let x="";
-      if((bb.ame||0)>0 && o.lv<30) x+=`<button class="btn alt" data-use="ame">ふしぎなアメ（${bb.ame}）<br><small>Lv.${o.lv}→${o.lv+1}</small></button>`;
+      if((bb.ame||0)>0 && o.lv<MAX_LV) x+=`<button class="btn alt" data-use="ame">ふしぎなアメ（${bb.ame}）<br><small>Lv.${o.lv}→${o.lv+1}</small></button>`;
       if((bb.ink||0)>0 && !o.shiny) x+=`<button class="btn alt" data-use="ink">ひかるインク（${bb.ink}）<br><small>色ちがいにする</small></button>`;
       for(const t of ts) if((bb["tm_"+t]||0)>0 && o.tm!=="sp_"+t) x+=`<button class="btn alt" data-use="tm_${t}">「${SPNAMES[t]}」をおぼえる<br><small>わざマシン（${bb["tm_"+t]}）${o.tm?'・今のスペシャルわざとこうかん':''}</small></button>`;
       return x?`<div class="itembtns">${x}</div>`:''; })()}
@@ -2559,7 +2567,7 @@ function showParty(){
   const g=id=>document.getElementById(id);
   if(g("evo")) g("evo").onclick=()=>showEvolve(d);
   app.querySelectorAll("[data-use]").forEach(b=>b.onclick=()=>{ const k=b.dataset.use, bb=bag(), o=save.owned[d]; if(!(bb[k]>0)) return;
-    if(k==="ame"){ if(o.lv>=30) return; o.lv++; o.exp=0; }
+    if(k==="ame"){ if(o.lv>=MAX_LV) return; o.lv++; o.exp=0; }
     else if(k==="ink"){ o.shiny=true; }
     else if(k.startsWith("tm_")){ o.tm="sp_"+k.slice(3); }
     bb[k]--; persist(); showParty(); });
@@ -3108,7 +3116,11 @@ function movesOf(id){
 }
 function moveType(id,k){ const M=MOVES[k]; return M.t || (M.sig ? SP[id].type : null); }
 function moveInfo(id,k){ const M=MOVES[k], t=moveType(id,k); return `${t?TYPES[t]:'ふつう'}・いりょく${Math.round(M.pow*10)}${M.combo?`・${M.combo}コンボ`:''}${M.eff?'・'+EFF[M.eff]:''}`; }
-const maxHPOf = id => 24 + ((save.owned[id]||{}).lv||1)*4;
+/* 色ちがい（v36）: 野生でまれに出る（SHINY_RATE）。Lv+5・HP1.5倍・たおすとEXP2倍。でんせつ戦・トレーナー戦では出ない
+   つかまえると owned.shiny と owned.shinyWild。本物の色ちがい（shinyWild）は こうげき・最大HP 1.2倍（ひかるインクの色ちがいは見た目だけ） */
+const SHINY_RATE = 1/30;
+const shinyPow = id => (save.owned[id]||{}).shinyWild ? 1.2 : 1;
+const maxHPOf = id => Math.round((24 + ((save.owned[id]||{}).lv||1)*4) * shinyPow(id));
 const useHP = () => !!B && !B.tower;
 function hpOf(id){ B.hp=B.hp||{}; if(B.hp[id]==null) B.hp[id]=maxHPOf(id); return Math.min(B.hp[id], maxHPOf(id)); }
 function aliveIds(){ return save.party.filter(id=>save.owned[id] && hpOf(id)>0); }
@@ -3182,7 +3194,7 @@ Object.assign(ITEMS, {
   kizu:{n:"きずぐすり", cat:"battle", price:3, d:"バトル中に使う。せんとうのなかまのHPを半分回復"},
   superflask:{n:"スーパーフラスコ", cat:"battle", price:4, d:"正解したあとに使う。ふつうのフラスコより、とてもつかまえやすい"},
   mitsu:{n:"あまいミツ", cat:"battle", price:4, d:"バトル中に使う。つぎに出てくるモンスターが、まだなかまにいないモンスターになりやすい"},
-  ame:{n:"ふしぎなアメ", cat:"grow", price:8, d:"なかま1ぴきのLvが1上がる（Lv30まで）。「なかま」画面で使う"},
+  ame:{n:"ふしぎなアメ", cat:"grow", price:8, d:"なかま1ぴきのLvが1上がる（Lv100まで）。「なかま」画面で使う"},
   ink:{n:"ひかるインク", cat:"grow", price:25, d:"なかま1ぴきを色ちがいにする（見た目だけ）。「なかま」画面で使う"}
 });
 const SHOP_CATS = [["stone","しんかの石"],["tm","スペシャルわざ"],["battle","バトルのどうぐ"],["grow","そだてるどうぐ"]];
@@ -3235,7 +3247,8 @@ const BADGES = [
   ["dex1","ずかんコンプリート","1つの単元のモンスターを全部なかまに",8,()=>Object.keys(save.dexDone||{}).length>=1],
   ["tower3","タワー3勝","バトルタワーで3人目のトレーナーに勝つ",8,()=>((save.btower||{}).best||0)>=3],
   ["tower9","タワーチャンピオン","バトルタワーで9人目（チャンピオン）に勝つ",20,()=>((save.btower||{}).best||0)>=9],
-  ["shop","はじめてのおかいもの","ショップで買いものをする",2,()=>(stat().bought||0)>=1]
+  ["shop","はじめてのおかいもの","ショップで買いものをする",2,()=>(stat().bought||0)>=1],
+  ["shiny","色ちがいハンター","野生の色ちがいをつかまえる",10,()=>Object.values(save.owned).some(o=>o.shinyWild)]
 ];
 function grantBadges(){ const b=save.badges||(save.badges={}), got=[];
   for(const [id,n,d,r,f] of BADGES){ if(b[id]) continue; let ok=false; try{ ok=f(); }catch(e){} if(ok){ b[id]=today(); save.balls+=r; got.push(id); } }
@@ -3258,7 +3271,7 @@ function trainerOf(r){
   const pool=DEX_ORDER.filter(id=>!SP[id].legend), legends=UNITS.map(u=>u.legend).filter(Boolean), team=[];
   while(team.length<3){ const id=pool[Math.floor(R()*pool.length)]; if(!team.includes(id)) team.push(id); }
   if(r>=5) team[2]=legends[Math.floor(R()*legends.length)];
-  return {r, nm, team, lv:Math.min(40, 4+r*3), idx:0};
+  return {r, nm, team, lv:Math.min(MAX_LV, Math.max(4+r*3, partyRef()+Math.floor(r/2))), idx:0};
 }
 function trainerQs(){ const all=[]; for(const u of UNITS) u.stages.forEach(s=>{ if(save.cleared[u.id+"|"+s.id]) s.qs.forEach((q,i)=>all.push({q,key:qKey(u.id,s.id,i)})); }); return shuffle(all); }
 function startTrainer(r){
@@ -3347,17 +3360,18 @@ function spawn(){
   if(!boss && !B.trainer && Math.random()<WEEK_RATE) id = weekToday();
   if(B.mitsu && !boss && !B.trainer){ const un=B.pool.filter(x=>!save.owned[x]); if(un.length) id=pick(un); B.mitsu=false; }
   if(B.trainer){ const t=B.trainer, lv2=t.lv, mx=Math.round(30+lv2*4); id=t.team[t.idx]; B.wild={id, lv:lv2, hp:mx, max:mx, sz:1}; save.seen[id]=1; persist(); return; }
-  const lv = boss ? B.lvBase : B.lvBase + Math.floor(Math.random()*2);
+  const lv = wildLv(boss ? B.lvBase : B.lvBase + Math.floor(Math.random()*2), boss);
   const r = Math.random(), sz = boss ? 1 : r<.07 ? 1.22 : r<.14 ? .78 : Math.round((0.92+Math.random()*.16)*100)/100;
-  const max = boss ? 150 : Math.round((28 + lv*3)*sz);
-  B.wild = {id, lv, hp:max, max, sz};
+  const max = boss ? 150 + Math.max(0, lv-14)*6 : Math.round((28 + lv*3)*sz);
+  const shiny = !boss && !B.trainer && Math.random()<SHINY_RATE;
+  B.wild = shiny ? {id, lv:Math.min(MAX_LV, lv+5), hp:Math.round(max*1.5), max:Math.round(max*1.5), sz, shiny:true} : {id, lv, hp:max, max, sz};
   save.seen[id]=1; persist();
 }
 function addExp(id, n){
   const o = save.owned[id]; if(!o) return;
   const could = canEvo(id), lv0 = o.lv;
   o.exp += n;
-  while(o.lv<30 && o.exp>=need(o.lv)){ o.exp-=need(o.lv); o.lv++; }
+  while(o.lv<MAX_LV && o.exp>=need(o.lv)){ o.exp-=need(o.lv); o.lv++; }
   if(B && o.lv>lv0){ B.lvups[id]=o.lv; for(const k of learnable(id)) if(learnLv(id,k)>lv0 && learnLv(id,k)<=o.lv) (B.newMoves=B.newMoves||[]).push([id,k]); }
   if(B && !could && canEvo(id) && !B.evoReady.includes(id)) B.evoReady.push(id);
   persist();
@@ -3365,13 +3379,13 @@ function addExp(id, n){
 function dmgOf(k){
   const me = B.lead, lv = save.owned[me].lv, M = MOVES[k||"tackle"], t = moveType(me, k||"tackle"), m = t ? defMult(t, B.wild.id) : 1;
   let pow = M.pow; if(M.eff==="week" && SP[me].day===new Date().getDay()) pow *= 2;
-  return {m, d: Math.max(2, Math.round(8*m*pow*(1+lv*0.1)*(B.power?2:1)))};
+  return {m, d: Math.max(2, Math.round(8*m*pow*(1+lv*0.1)*(B.power?2:1)*shinyPow(me)))};
 }
 function fieldHTML(enter){
   const w=B.wild, me=B.lead, o=save.owned[me], r=w.hp/w.max, ws=SP[w.id];
   return `<div class="field" id="field"><div class="plat w"></div><div class="plat m"></div>
-    <div class="info w"><div class="nm"><span class="nmt">${esc(nameOf(w.id,w.lv))}</span> ${typesChip(w.id)}${sizeLabel(w.sz||1)?`<span class="sztag">${sizeLabel(w.sz)}</span>`:''}<span class="lv">Lv.${w.lv}</span></div><div class="bar hpbar ${hpClass(r)}" id="whp"><i style="width:${r*100}%"></i></div></div>
-    <div class="mon ${enter?'enter':''}" id="wildMon">${art(w.id,w.lv,{sz:w.sz})}</div>
+    <div class="info w"><div class="nm"><span class="nmt">${esc(nameOf(w.id,w.lv))}</span> ${typesChip(w.id)}${w.shiny?'<span class="sztag shinytag">色ちがい</span>':''}${sizeLabel(w.sz||1)?`<span class="sztag">${sizeLabel(w.sz)}</span>`:''}<span class="lv">Lv.${w.lv}</span></div><div class="bar hpbar ${hpClass(r)}" id="whp"><i style="width:${r*100}%"></i></div></div>
+    <div class="mon ${enter?'enter':''}" id="wildMon">${art(w.id,w.lv,{sz:w.sz,shiny:w.shiny})}</div>
     <div class="mon" id="meMon">${artMine(me)}</div>
     <div class="info m"><div class="nm"><span class="nmt">${esc(nameOf(me))}</span> ${typesChip(me)}<span class="lv">Lv.${o.lv}</span></div>${useHP()?(()=>{ const h=hpOf(me), mx=maxHPOf(me), r2=h/mx; return `<div class="bar hpbar ${hpClass(r2)}" id="mhp"><i style="width:${r2*100}%"></i></div><div class="hpn" id="mhpn">HP ${h}/${mx}</div>`; })():''}<div class="bar expbar${useHP()?' thin':''}"><i style="width:${o.exp/need(o.lv)*100}%"></i></div></div>
   </div>`;
@@ -3387,6 +3401,7 @@ function renderBattle(enter){
   if(item.num==null) item.num = !!(q.n && !B.qd && save.okOnce && save.okOnce[item.key]);
   const isNum = item.num; if(isNum) item.input = item.input || "";
   if(enter && B.trainer) logMsg = `<b>${esc(B.trainer.nm)}</b>は <b>${esc(nameOf(B.wild.id,B.wild.lv))}</b> をくりだした！`;
+  else if(enter && B.wild.shiny) logMsg = `<b class="hasty">きらきら…！</b> 色ちがいの <b>${esc(nameOf(B.wild.id,B.wild.lv))}</b> があらわれた！ とても強いぞ！`;
   else if(enter) logMsg = (SP[B.wild.id].week?`きょうは${WDAY[SP[B.wild.id].day]}曜日！ 曜日のモンスター `:sizeLabel(B.wild.sz||1)==='でかい！'?'でかい！ ':sizeLabel(B.wild.sz||1)?'ちびっこの ':'') + `やせいの <b>${esc(nameOf(B.wild.id,B.wild.lv))}</b> があらわれた！` + (bestMult(B.lead,B.wild.id)===2?' あいしょうはばつぐん！':bestMult(B.lead,B.wild.id)===.5?' あいしょうが悪いかも…':'');
   const me=B.lead, sk=SKILLS[SP[me].skill];
   app.innerHTML = `
@@ -3550,7 +3565,7 @@ function judge(picked){
   const qm = qmsg?`<p class="mini"><b>${esc(qmsg)}</b></p>`:"";
   if(ok && B.tower){
     B.combo++; B.maxCombo=Math.max(B.maxCombo,B.combo);
-    B.queue.shift(); B.tower.floor++; addExp(B.lead,4);
+    B.queue.shift(); B.tower.floor++; addExp(B.lead,xp(4));
     let bonus=""; if((B.tower.floor-1)%5===0){ save.balls++; B.ballsGot++; bonus=`<p><b>${B.tower.floor-1}階とうたつ！ フラスコを1つひろった！</b></p>`; }
     persist();
     const wm=document.getElementById("wildMon"), mm=document.getElementById("meMon"); mm.classList.add("lunge"); setTimeout(()=>{ wm.classList.add("hit"); setTimeout(()=>wm.classList.add("faint"),300); },250);
@@ -3569,7 +3584,7 @@ function judge(picked){
     if(!B.qd) (save.okOnce=save.okOnce||{})[item.key]=1;
     if(!B.qd && q.f && !item.missed && fracMark(q.f)) B.fracUp=(B.fracUp||0)+1;
     B.queue.shift(); persist();
-    addExp(B.lead, first?6:3); save.party.forEach(id=>{ if(id!==B.lead) addExp(id, first?3:1); });
+    addExp(B.lead, xp(first?6:3)); save.party.forEach(id=>{ if(id!==B.lead) addExp(id, xp(first?3:1)); });
     let firstMv=true;
     const mvh = movesOf(B.lead).map(k=>{ const M=MOVES[k], lock=!!M.combo&&B.combo<M.combo, {m}=dmgOf(k), t=moveType(B.lead,k);
       const ida = (!lock&&firstMv) ? (firstMv=false, ' id="atk"') : '';
@@ -3631,7 +3646,7 @@ function doAttack(k){
     if(M.eff==="heal" && useHP()){ const g=healLead(.25); if(g){ msg+=` HPが${g}回復した！`; updMyHP(); } }
     if(M.eff==="guard"){ B.guard=true; msg+=' 次にうけるダメージが半分になる！'; }
     if(M.eff==="catch" && w.hp>0){ B.lure=true; msg+=' フラスコが入りやすくなった！'; }
-    if(w.hp<=0){ msg+=` <b>${esc(nameOf(w.id,w.lv))}</b>をたおした！`; B.defeated++; addExp(B.lead,12); save.party.forEach(id=>{ if(id!==B.lead) addExp(id,6); }); setTimeout(()=>wm.classList.add("faint"),350); }
+    if(w.hp<=0){ msg+=` <b>${esc(nameOf(w.id,w.lv))}</b>をたおした！`; B.defeated++; { const k2=w.shiny?2:1; addExp(B.lead,xp(12)*k2); save.party.forEach(id=>{ if(id!==B.lead) addExp(id,xp(6)*k2); }); } setTimeout(()=>wm.classList.add("faint"),350); }
     else if(r<=.3) msg+=` よわっている！ フラスコのチャンス！`;
     setLog(msg);
     setTimeout(after, w.hp<=0?1300:1000);
@@ -3653,9 +3668,10 @@ function doBall(sup){
       if(k<shakes){ k++; fl.className="flask rest"; void fl.offsetWidth; fl.className="flask wob"; setLog("…".repeat(k)); setTimeout(step,700); return; }
       if(got){
         const nm=nameOf(w.id,w.lv), had=!!save.owned[w.id];
-        if(had){ addExp(w.id,25); setLog(`やった！ <b>${esc(nm)}</b>をつかまえた！ もうなかまにいるので、なかまの${esc(nameOf(w.id))}がパワーアップ（EXP+25）！`); }
-        else{ save.owned[w.id]={lv:w.lv,exp:0,form:formIdx(w.id,w.lv),sz:w.sz||1}; if(save.party.length<3) save.party.push(w.id); persist(); setLog(`やった！ <b>${esc(nm)}</b>をつかまえた！ なかまになった！`); }
-        B.caught.push({id:w.id, lv:w.lv, dup:had});
+        if(had && w.shiny && !save.owned[w.id].shinyWild){ Object.assign(save.owned[w.id],{shiny:true,shinyWild:true}); addExp(w.id,25); persist(); setLog(`やった！ 色ちがいの <b>${esc(nm)}</b>をつかまえた！ なかまの${esc(nameOf(w.id))}が色ちがいになって、強くなった！`); }
+        else if(had){ addExp(w.id,25); setLog(`やった！ <b>${esc(nm)}</b>をつかまえた！ もうなかまにいるので、なかまの${esc(nameOf(w.id))}がパワーアップ（EXP+25）！`); }
+        else{ save.owned[w.id]={lv:w.lv,exp:0,form:formIdx(w.id,w.lv),sz:w.sz||1}; if(w.shiny) Object.assign(save.owned[w.id],{shiny:true,shinyWild:true}); if(save.party.length<3) save.party.push(w.id); persist(); setLog(`やった！ <b>${esc(nm)}</b>をつかまえた！ なかまになった！`); }
+        B.caught.push({id:w.id, lv:w.lv, dup:had, shiny:!!w.shiny});
         w.hp=0; w.caught=true; setTimeout(after,1500);
       }else{
         fl.remove(); wm.classList.remove("suck");
@@ -3701,7 +3717,7 @@ function finish(win){
     ...rares.map(rareCard),
     ...(newCol.length?[`<div class="card get evo"><div class="mon" style="width:64px;height:64px">${mapSVG({view:newCol, fill:Object.fromEntries(newCol.map(p=>[p,MAPLV[lvAfter[p]]]))})}</div><div><b>地図の ${newCol.map(p=>MAPD[p][0]).join("・")} の色がこくなった！</b><span>色の段階 ${[...new Set(newCol.map(p=>lvAfter[p]))].join("・")}／4　「ちず」で見てみよう</span></div></div>`]:[]),
     ...B.evoReady.map(id=>`<div class="card get evo"><div class="mon">${artMine(id)}</div><div><b>${esc(nameOf(id))} Lv.${save.owned[id].lv}</b><span>しんかできるようになった！ 「なかま」でしんかさせよう</span></div></div>`),
-    ...B.caught.map(c=>`<div class="card get"><div class="mon">${art(c.id,c.lv)}</div><div><b>${esc(nameOf(c.id,c.lv))}</b><span>${c.dup?'もういたのでパワーアップ':'あたらしいなかま！ずかんに登録'}</span></div></div>`)
+    ...B.caught.map(c=>`<div class="card get ${c.shiny?'urcard':''}"><div class="mon">${art(c.id,c.lv,{shiny:c.shiny})}</div><div><b>${c.shiny?'色ちがいの ':''}${esc(nameOf(c.id,c.lv))}</b><span>${c.shiny?'こうげき・HP 1.2倍の色ちがい！':c.dup?'もういたのでパワーアップ':'あたらしいなかま！ずかんに登録'}</span></div></div>`)
   ].join("");
   const ups = Object.entries(B.lvups).filter(([id])=>!B.evoReady.includes(id)).map(([id,lv])=>`${esc(nameOf(id))} Lv.${lv}`).join("・");
   app.innerHTML = `<div class="result">
@@ -3720,7 +3736,7 @@ function finish(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261102130549";
+const APP_VER="20261102224147";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
