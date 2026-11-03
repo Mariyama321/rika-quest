@@ -1879,6 +1879,19 @@ const defMult = (a, id) => Math.min(2, Math.max(.5, mult(a, SP[id].type) * (SP[i
 const bestMult = (me, id) => Math.max(defMult(SP[me].type, id), SP[me].type2 ? defMult(SP[me].type2, id) : 0);
 
 /* ---------- monster art (procedural SVG) ---------- */
+/* 色ちがいの色（v37）: 絵の中の色を直接かえる（iPad の Safari は SVG の中の CSS filter が効かないため）。
+   色相を150度まわし、うすい灰色っぽい色にも色をつける。線の色（#24324a）・白・黒はそのまま */
+function shinyHex(hex){
+  let h=hex.slice(1); if(h.length===3) h=h.split("").map(c=>c+c).join("");
+  const low=h.toLowerCase(); if(low==="24324a"||low==="ffffff"||low==="000000") return hex;
+  let r=parseInt(h.slice(0,2),16)/255, g=parseInt(h.slice(2,4),16)/255, b=parseInt(h.slice(4,6),16)/255;
+  const mx=Math.max(r,g,b), mn=Math.min(r,g,b), d=mx-mn; let l=(mx+mn)/2, H=0, S=0;
+  if(d){ S=l>.5?d/(2-mx-mn):d/(mx+mn); H=mx===r?((g-b)/d+(g<b?6:0)):mx===g?((b-r)/d+2):((r-g)/d+4); H*=60; }
+  if(d<.12){ H=290; S=.5; if(l>.82) l=.76; } H=(H+150)%360; S=Math.min(1,S*1.15);
+  const q=l<.5?l*(1+S):l+S-l*S, p=2*l-q, t=x=>{ x=(x+360)%360/360; return x<1/6?p+(q-p)*6*x:x<.5?q:x<2/3?p+(q-p)*(2/3-x)*6:p; };
+  return "#"+[t(H+120),t(H),t(H-120)].map(v=>Math.round(v*255).toString(16).padStart(2,"0")).join("");
+}
+const shinyColors = g => g.replace(/(fill|stroke|stop-color)="(#[0-9a-fA-F]{3,6})"/g, (m,a,c)=>`${a}="${shinyHex(c)}"`);
 function shade(hex,a){
   const n=parseInt(hex.slice(1),16), c=[n>>16,(n>>8)&255,n&255];
   return "#"+c.map(v=>Math.round(a<0?v*(1+a):v+(255-v)*a)).map(v=>Math.max(0,Math.min(255,v)).toString(16).padStart(2,"0")).join("");
@@ -2228,7 +2241,8 @@ function art(id, lv=1, opt={}){
   if(SP[id] && SP[id].custom==="frac") return urFracSVG(!!opt.sil);
   const s = SP[id], f = opt.f!=null ? opt.f : s.legend ? 2 : formIdx(id, lv), sil = !!opt.sil, K = "#24324a";
   const arch = Array.isArray(s.arch) ? s.arch[f] : (s.arch || "beast");
-  const C = sil?K:s.color, A = sil?K:s.accent;
+  const wf = c => (opt.shiny && /^#fff(fff)?$/i.test(c)) ? "#fefefe" : c; /* 色ちがいでは白い体にも色をつける */
+  const C = sil?K:wf(s.color), A = sil?K:wf(s.accent);
   const o = {C, A, K, f, t:s.type, body:s.body, beak:s.beak, legend:s.legend,
     D: sil?K:shade(s.color,-.22), L: sil?K:shade(s.color,.45),
     st:`stroke="${K}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"`};
@@ -2244,7 +2258,7 @@ function art(id, lv=1, opt={}){
     for(let i=0;i<8;i++){ const a0=(-90+i*45+4)*Math.PI/180, a1=(-90+i*45+41)*Math.PI/180, r=57; ring+=`<path d="M${(60+r*Math.cos(a0)).toFixed(1)} ${(62+r*Math.sin(a0)).toFixed(1)} A${r} ${r} 0 0 1 ${(60+r*Math.cos(a1)).toFixed(1)} ${(62+r*Math.sin(a1)).toFixed(1)}" fill="none" stroke="${RB[i]}" stroke-width="4" stroke-linecap="round" opacity=".85"/>`; }
     g = `<defs><radialGradient id="${gid}"><stop offset="0" stop-color="#fff6a8" stop-opacity="0"/><stop offset=".6" stop-color="#ffd23f" stop-opacity=".18"/><stop offset=".85" stop-color="#ffb800" stop-opacity=".5"/><stop offset="1" stop-color="#ffb800" stop-opacity="0"/></radialGradient></defs><circle cx="60" cy="62" r="58" fill="url(#${gid})"/>${ring}` + g + `<g transform="translate(100 18)"><circle r="11" fill="#24324a"/><circle r="8.5" fill="none" stroke="#ffd23f" stroke-width="2.5"/><path d="M-4 -4 V1 Q-4 4.5 0 4.5 Q4 4.5 4 1 V-4" fill="none" stroke="#fff6a8" stroke-width="2.2" stroke-linecap="round"/></g>`; }
   if(sil) g = g.replace(/fill="#[0-9a-f]{3,6}"/gi,`fill="${K}"`).replace(/stroke="#[0-9a-f]{3,6}"/gi,`stroke="${K}"`);
-  if(opt.shiny && !sil){ let sp=""; for(const [x,y,r] of [[16,24,5],[106,40,5],[98,92,4]]) sp+=`<path transform="translate(${x} ${y}) scale(${r/5})" d="M0 -5 L1.3 -1.3 L5 0 L1.3 1.3 L0 5 L-1.3 1.3 L-5 0 L-1.3 -1.3Z" fill="#fff" stroke="#24324a" stroke-width="1"/>`; g = `<g style="filter:hue-rotate(150deg) saturate(1.25)">${g}</g>${sp}`; }
+  if(opt.shiny && !sil){ let sp=""; for(const [x,y,r] of [[16,24,5],[106,40,5],[98,92,4]]) sp+=`<path transform="translate(${x} ${y}) scale(${r/5})" d="M0 -5 L1.3 -1.3 L5 0 L1.3 1.3 L0 5 L-1.3 1.3 L-5 0 L-1.3 -1.3Z" fill="#fff" stroke="#24324a" stroke-width="1"/>`; g = shinyColors(g) + sp; }
   const sc = Math.min(1.18, Math.max(.5, [0.84, 0.92, 0.97][f] * spSize(id, f) * (opt.sz||1)));
   return `<svg viewBox="0 0 120 120" aria-hidden="true"><ellipse cx="60" cy="108" rx="${34*sc}" ry="5" fill="${K}" opacity=".12"/><g transform="translate(60 108) scale(${sc}) translate(-60 -108)">${g}</g></svg>`;
 }
@@ -3668,8 +3682,12 @@ function doBall(sup){
       if(k<shakes){ k++; fl.className="flask rest"; void fl.offsetWidth; fl.className="flask wob"; setLog("…".repeat(k)); setTimeout(step,700); return; }
       if(got){
         const nm=nameOf(w.id,w.lv), had=!!save.owned[w.id];
-        if(had && w.shiny && !save.owned[w.id].shinyWild){ Object.assign(save.owned[w.id],{shiny:true,shinyWild:true}); addExp(w.id,25); persist(); setLog(`やった！ 色ちがいの <b>${esc(nm)}</b>をつかまえた！ なかまの${esc(nameOf(w.id))}が色ちがいになって、強くなった！`); }
-        else if(had){ addExp(w.id,25); setLog(`やった！ <b>${esc(nm)}</b>をつかまえた！ もうなかまにいるので、なかまの${esc(nameOf(w.id))}がパワーアップ（EXP+25）！`); }
+        if(had){ /* もういるモンスター（v37）: つかまえた子のLvが高ければそのLvに、色ちがいならそのまま色ちがいに（下がることはない） */
+          const o=save.owned[w.id], up=w.lv>o.lv, sh=!!w.shiny && !o.shinyWild;
+          if(up){ o.lv=w.lv; o.exp=0; const fw=formIdx(w.id,w.lv); if(fw>(o.form??0)) o.form=fw; }
+          if(sh) Object.assign(o,{shiny:true,shinyWild:true});
+          if(up||sh){ persist(); setLog(`やった！ ${w.shiny?'色ちがいの ':''}<b>${esc(nm)}</b>をつかまえた！ なかまの${esc(nameOf(w.id))}が${up?`Lv.${w.lv}`:''}${up&&sh?'の':''}${sh?'色ちがい':''}になった！`); }
+          else { addExp(w.id,25); setLog(`やった！ <b>${esc(nm)}</b>をつかまえた！ もうなかまにいるので、なかまの${esc(nameOf(w.id))}がパワーアップ（EXP+25）！`); } }
         else{ save.owned[w.id]={lv:w.lv,exp:0,form:formIdx(w.id,w.lv),sz:w.sz||1}; if(w.shiny) Object.assign(save.owned[w.id],{shiny:true,shinyWild:true}); if(save.party.length<3) save.party.push(w.id); persist(); setLog(`やった！ <b>${esc(nm)}</b>をつかまえた！ なかまになった！`); }
         B.caught.push({id:w.id, lv:w.lv, dup:had, shiny:!!w.shiny});
         w.hp=0; w.caught=true; setTimeout(after,1500);
@@ -3736,7 +3754,7 @@ function finish(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261102224147";
+const APP_VER="20261103113041";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
