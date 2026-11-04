@@ -202,6 +202,11 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .smpick{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:6px}
 .smpick button{border:2px solid var(--ink);border-radius:999px;background:var(--soft);font-size:12px;font-weight:800;padding:2px 10px}
 .smpick button.on{background:var(--sun)}
+.pgcard{padding:10px 12px;margin-top:4px}.pgtitle{font-family:var(--display);font-weight:400;font-size:17px;display:block}
+.pgbox{margin:10px auto;width:200px;height:200px;max-width:70%;background:#eef6ff;border:3px solid var(--ink);border-radius:16px;padding:10px}
+.pgshape{display:block;width:100%;height:100%}
+.pgmiss{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}.pgmiss>div{display:flex;gap:6px;align-items:center;font-size:13px;font-weight:800;width:46%}
+.pgmini{width:44px;height:44px;flex:none}.pgmini svg{width:100%;height:100%}
 .shophead{display:flex;gap:10px;align-items:center;padding:8px 12px;flex-wrap:wrap}
 .shopmsg{font-weight:800;color:var(--good);margin:10px 0 0}
 .shopcat{font-size:16px;margin:14px 0 8px}
@@ -2394,12 +2399,13 @@ function showJMap(){
   if(mapSel){ const r=sc[mapSel], l=lv[mapSel]||0;
     const rid="rare_"+mapSel, rown=save.owned[rid];
     info=`<div class="row" style="display:flex;gap:10px;align-items:center"><div class="mon" style="width:64px;height:64px;flex:none">${rown?artMine(rid):art(rid,1,{sil:true})}</div><div><b>${MAPD[mapSel][0]}</b>　色の段階：${l}／4（${MAPLVN[l]}）<br><span class="mini">レアモンスター：${rown?esc(nameOf(rid))+"（なかま）":"？？？（かんぜんにすると手に入る）"}</span></div></div>`+(r?`<br><span class="mini">${[...r.us.map(([u,d,t])=>`${esc(u.subject)}「${esc(u.title)}」${d}/${t}クリア`), ...(r.qd||[]).map(([lb,m,t])=>`クイズダンジョン${lb} ${m}/${t}問マスター`)].join("、")}</span>`:`<br><span class="mini">この都道府県が出てくる単元をクリアすると色がつくよ。</span>`); }
-  app.innerHTML=`<h2 class="sec-h">日本地図</h2><p class="dexcount">色がついた都道府県 ${n} / 47・かんぜん ${full}</p>
+  app.innerHTML=`<h2 class="sec-h">日本地図</h2>${pgEntryHTML()}<p class="dexcount" style="margin-top:14px">色がついた都道府県 ${n} / 47・かんぜん ${full}</p>
     <div class="card mapcard">${mapSVG({fill, tap:true})}${MAPCREDIT}</div>
     <div class="maplegend">${MAPLV.map((c,i)=>`<span><i style="background:${c}"></i>${i}</span>`).join("")}<span class="mini">← 色の段階</span></div>
     <div class="card detail" style="margin-top:10px"><p style="margin:0">${info}</p></div>
     <p class="mini" style="margin-top:12px">社会のルートをクリアすると、その単元に出てくる都道府県の色が少しずつこくなるよ。1つの単元だけでは「すこし」まで。同じ都道府県が出てくる地方の単元などもクリアすると、「かんぜん」になるよ。クイズダンジョンの社会の問題をマスターしても色がこくなるよ。</p>`;
   app.querySelectorAll("path.tp").forEach(p=>p.onclick=()=>{ mapSel=p.dataset.p; showJMap(); });
+  bindPgEntry();
 }
 const flaskSVG = `<svg viewBox="0 0 30 36"><path d="M11 2 H19 V12 L28 30 Q29 34 25 34 H5 Q1 34 2 30 L11 12Z" fill="#e9f7ff" stroke="#24324a" stroke-width="2.5" stroke-linejoin="round"/><path d="M6 24 H24 L27 30 Q28 33 25 33 H5 Q2 33 3 30Z" fill="#ff7a2f"/><rect x="9" y="1" width="12" height="4" rx="1.5" fill="#24324a"/></svg>`;
 const heart = on => `<svg viewBox="0 0 16 16"><path d="M8 14 L2 8 Q0 5 2 3 Q5 1 8 4 Q11 1 14 3 Q16 5 14 8 Z" fill="${on?'#e8475a':'#dfe6ee'}" stroke="#24324a" stroke-width="1.5"/></svg>`;
@@ -3319,7 +3325,10 @@ const BADGES = [
   ["tower3","タワー3勝","バトルタワーで3人目のトレーナーに勝つ",8,()=>((save.btower||{}).best||0)>=3],
   ["tower9","タワーチャンピオン","バトルタワーで9人目（チャンピオン）に勝つ",20,()=>((save.btower||{}).best||0)>=9],
   ["shop","はじめてのおかいもの","ショップで買いものをする",2,()=>(stat().bought||0)>=1],
-  ["shiny","色ちがいハンター","野生の色ちがいをつかまえる",10,()=>Object.values(save.owned).some(o=>o.shinyWild)]
+  ["shiny","色ちがいハンター","野生の色ちがいをつかまえる",10,()=>Object.values(save.owned).some(o=>o.shinyWild)],
+  ["pgshape","かたちはかせ","都道府県あて「形から名前」全国で全問正解",8,()=>!!((save.pg||{}).perfect||{}).shape],
+  ["pgtap","ちずはかせ","都道府県あて「名前から地図」全国で全問正解",8,()=>!!((save.pg||{}).perfect||{}).tap],
+  ["pgcap","けんちょうはかせ","都道府県あて「県庁所在地」全国で全問正解",8,()=>!!((save.pg||{}).perfect||{}).cap]
 ];
 function grantBadges(){ const b=save.badges||(save.badges={}), got=[];
   for(const [id,n,d,r,f] of BADGES){ if(b[id]) continue; let ok=false; try{ ok=f(); }catch(e){} if(ok){ b[id]=today(); save.balls+=r; got.push(id); } }
@@ -3356,7 +3365,7 @@ const smCard = k => `<div class="card get urcard"><div class="mon">${itemSVG("tm
 
 /* 毎日のミッション: その日の3つ（日付で決まる）。1つクリアでフラスコ+3、3つ全部でスタンプ1こ（5・10・20・30こでとくべつわざ） */
 const DAILY = [["ok10","1回目で10問正解する","ok",10],["ok20","1回目で20問正解する","ok",20],["combo5","5コンボする","combo",5],["combo10","10コンボする","combo",10],
-  ["route","ルートを1つクリアする","route",1],["review","ニガテの森で3問正解する","review",3],["qd","ダンジョンで5問正解する","qd",5],["catch","モンスターを1ぴきつかまえる","catch",1],["tower","バトルタワーで1回勝つ","tower",1]];
+  ["route","ルートを1つクリアする","route",1],["review","ニガテの森で3問正解する","review",3],["qd","ダンジョンで5問正解する","qd",5],["catch","モンスターを1ぴきつかまえる","catch",1],["tower","バトルタワーで1回勝つ","tower",1],["pg","都道府県あてゲームで8問正解する","pg",8]];
 function misS(){
   const t=today(); let m=save.mis;
   if(!m || m.d!==t){ const R=seededRand(+t.replace(/-/g,"")), pool=DAILY.filter(x=>x[0]!=="tower" || trainerQs().length>=10), ids=[], used=new Set();
@@ -3465,6 +3474,82 @@ function showPlaza(){
   const g=id=>document.getElementById(id);
   if(qn>=10) g("btgo").onclick=()=>startTrainer(nx);
   if(g("btre")) g("btre").onclick=()=>startTrainer(bt.best);
+}
+
+/* ============================================================
+   都道府県あてゲーム（v41、「ちず」タブのミニゲーム）
+   ユーザーの要望「地図と都道府県の形を当てるゲームも追加して欲しい」
+   選択: 形から名前・名前から地図・県庁所在地／「ちず」タブにミニゲーム（10問・タイム）／地方をえらべる＋全国
+   - 1回10問（地方は7〜9県なので全部）。正解2問ごとにフラスコ+1、全問正解でさらに+3。地図の色（prefScores）には関係しない
+   - 記録 save.pg = {best:{"mode|area":{ok,t}}, perfect:{mode:1}}（全国で全問正解）
+   ============================================================ */
+const PREF_ORDER = RARE_ORDER.map(id=>id.slice(5));
+const CAPITAL = {hokkaido:"札幌市",aomori:"青森市",iwate:"盛岡市",miyagi:"仙台市",akita:"秋田市",yamagata:"山形市",fukushima:"福島市",ibaraki:"水戸市",tochigi:"宇都宮市",gunma:"前橋市",saitama:"さいたま市",chiba:"千葉市",tokyo:"東京（新宿区）",kanagawa:"横浜市",
+  niigata:"新潟市",toyama:"富山市",ishikawa:"金沢市",fukui:"福井市",yamanashi:"甲府市",nagano:"長野市",gifu:"岐阜市",shizuoka:"静岡市",aichi:"名古屋市",mie:"津市",shiga:"大津市",kyoto:"京都市",osaka:"大阪市",hyogo:"神戸市",nara:"奈良市",wakayama:"和歌山市",
+  tottori:"鳥取市",shimane:"松江市",okayama:"岡山市",hiroshima:"広島市",yamaguchi:"山口市",tokushima:"徳島市",kagawa:"高松市",ehime:"松山市",kochi:"高知市",fukuoka:"福岡市",saga:"佐賀市",nagasaki:"長崎市",kumamoto:"熊本市",oita:"大分市",miyazaki:"宮崎市",kagoshima:"鹿児島市",okinawa:"那覇市"};
+const PG_MODES = [["shape","形から名前","都道府県の形を見て、名前をえらぶ"],["tap","名前から地図","都道府県の場所を地図でタップ"],["cap","県庁所在地","光っている都道府県の県庁所在地をえらぶ"]];
+const PG_AREAS = [...RARE_AREAS.map(([n,a,b])=>[n,PREF_ORDER.slice(a,b)]), ["全国",PREF_ORDER]];
+const pgS = () => save.pg || (save.pg = {best:{}, perfect:{}});
+let PG = null, pgMode = "shape", pgArea = 6;
+function prefShapeSVG(id){ const [x,y,w,h]=MAPB[id], p=Math.max(w,h)*.08, sw=(Math.max(w,h)/120).toFixed(2);
+  return `<svg class="pgshape" viewBox="${(x-p).toFixed(1)} ${(y-p).toFixed(1)} ${(w+2*p).toFixed(1)} ${(h+2*p).toFixed(1)}" role="img" aria-label="都道府県の形"><path d="${MAPD[id][1]}" fill="#7ec8a0" stroke="#24324a" stroke-width="${sw}" stroke-linejoin="round"/></svg>`; }
+function pgEntryHTML(){
+  const s=pgS(), b=s.best[pgMode+"|"+pgArea];
+  return `<div class="card pgcard"><b class="pgtitle">都道府県あてゲーム</b>
+    <div class="dexcats" style="margin:6px 0 4px">${PG_MODES.map(([k,n])=>`<button class="${pgMode===k?'on':''}" data-pgm="${k}">${n}</button>`).join("")}</div>
+    <div class="dexgrps">${PG_AREAS.map(([n],i)=>`<button class="${pgArea===i?'on':''}" data-pga="${i}">${n}</button>`).join("")}</div>
+    <p class="mini" style="margin:2px 0 8px">${PG_MODES.find(m=>m[0]===pgMode)[2]}。${pgArea===6?'47都道府県から10問':`${PG_AREAS[pgArea][0]}の${PG_AREAS[pgArea][1].length}問`}・正解2問ごとにフラスコ+1${b?`<br>さいこう記録：${b.ok}問正解・${(b.t/1000).toFixed(1)}秒`:''}</p>
+    <button class="btn go" id="pgstart">スタート！</button></div>`; }
+function bindPgEntry(){ app.querySelectorAll("[data-pgm]").forEach(b=>b.onclick=()=>{ pgMode=b.dataset.pgm; showJMap(); });
+  app.querySelectorAll("[data-pga]").forEach(b=>b.onclick=()=>{ pgArea=+b.dataset.pga; showJMap(); });
+  const st=document.getElementById("pgstart"); if(st) st.onclick=()=>startPG(pgMode, pgArea); }
+function startPG(mode, area){
+  const pool=PG_AREAS[area][1], qs=shuffle(pool).slice(0,10);
+  PG={mode, area, qs, i:0, ok:0, t0:Date.now(), miss:[]}; showTabs(false); renderPG(); }
+function pgChoices(id, f){ const area=PG_AREAS[PG.area][1], near=shuffle((area.length>=4?area:PREF_ORDER).filter(x=>x!==id)).slice(0,3); return shuffle([id,...near]).map(x=>({id:x, t:f(x)})); }
+function renderPG(){
+  window.scrollTo(0,0);
+  const id=PG.qs[PG.i], n=PG.qs.length, m=PG.mode, area=PG_AREAS[PG.area][1];
+  let body="";
+  if(m==="shape"){ PG.ch=pgChoices(id, x=>MAPD[x][0]); body=`<p class="qtext">この形の都道府県はどこ？</p><div class="pgbox">${prefShapeSVG(id)}</div><div class="choices">${PG.ch.map((c,j)=>`<button class="choice" data-j="${j}"><span class="k">${KANA[j]}</span>${esc(c.t)}</button>`).join("")}</div>`; }
+  if(m==="cap"){ PG.ch=pgChoices(id, x=>CAPITAL[x]); body=`<p class="qtext">光っている都道府県の県庁所在地は？</p><div class="qmap">${mapSVG({view:PG_AREAS.slice(0,6).find(a=>a[1].includes(id))[1], fill:{[id]:"#ffcf3a"}})}${MAPCREDIT}</div><div class="choices">${PG.ch.map((c,j)=>`<button class="choice" data-j="${j}"><span class="k">${KANA[j]}</span>${esc(c.t)}</button>`).join("")}</div>`; }
+  if(m==="tap"){ body=`<p class="qtext"><b>${MAPD[id][0]}</b>はどこ？ 地図をタップしよう</p><div class="qmap big">${mapSVG({view:PG.area===6?null:area, tap:true})}${MAPCREDIT}</div>`; }
+  app.innerHTML=`<div class="btop"><button class="back" id="pgback">← やめる</button><span class="pill">${PG.i+1} / ${n}問</span><span class="pill">正解 ${PG.ok}</span><span class="pill" id="pgtime">0.0秒</span></div>
+    <div class="card qpanel"><div class="qmeta"><span>都道府県あて・${PG_MODES.find(x=>x[0]===m)[1]}</span><span>${PG_AREAS[PG.area][0]}</span></div>${body}<div id="pgfb"></div></div>`;
+  document.getElementById("pgback").onclick=()=>{ PG=null; clearInterval(pgTimer); tab="map"; home(); };
+  clearInterval(pgTimer); pgTimer=setInterval(()=>{ const e=document.getElementById("pgtime"); if(!e||!PG){ clearInterval(pgTimer); return; } e.textContent=((Date.now()-PG.t0)/1000).toFixed(1)+"秒"; },100);
+  app.querySelectorAll(".choice").forEach(b=>b.onclick=()=>pgJudge(PG.ch[+b.dataset.j].id, b));
+  app.querySelectorAll(".qmap path.tp").forEach(p=>p.onclick=()=>pgJudge(p.dataset.p, p));
+}
+let pgTimer=null;
+function pgJudge(ans, el){
+  if(PG.lock) return; PG.lock=true;
+  const id=PG.qs[PG.i], ok=ans===id;
+  if(ok) PG.ok++; else PG.miss.push(id);
+  logAnswer(ok, false);
+  app.querySelectorAll(".choice").forEach(b=>{ b.disabled=true; const c=PG.ch[+b.dataset.j]; if(c.id===id) b.classList.add("ok"); else if(c.id===ans) b.classList.add("ng"); });
+  if(PG.mode==="tap"){ const pa=app.querySelector(`.qmap path[data-p="${id}"]`); if(pa) pa.setAttribute("fill","#7ed9a6"); if(!ok){ const pw=app.querySelector(`.qmap path[data-p="${ans}"]`); if(pw) pw.setAttribute("fill","#ff9aa8"); } }
+  const last=PG.i+1>=PG.qs.length;
+  document.getElementById("pgfb").innerHTML=`<div class="fb ${ok?'ok':'ng'}"><h3>${ok?'せいかい！':'ざんねん…'}</h3><p>${PG.mode==="tap"&&!ok?`タップしたのは ${MAPD[ans]?MAPD[ans][0]:''}。`:''}<b>${MAPD[id][0]}</b>（県庁所在地：${CAPITAL[id]}）</p></div><button class="btn ${ok?'go':''}" id="pgnext" style="margin-top:12px">${last?'けっかを見る':'つぎへ'}</button>`;
+  document.getElementById("pgnext").onclick=()=>{ PG.lock=false; PG.i++; if(last) return finishPG(); renderPG(); };
+  document.getElementById("pgfb").scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+function finishPG(){
+  clearInterval(pgTimer); window.scrollTo(0,0);
+  const t=Date.now()-PG.t0, n=PG.qs.length, all=PG.ok===n, s=pgS(), key=PG.mode+"|"+PG.area, b=s.best[key];
+  const rec = !b || PG.ok>b.ok || (PG.ok===b.ok && t<b.t); if(rec) s.best[key]={ok:PG.ok, t};
+  if(all && PG.area===6) s.perfect[PG.mode]=1;
+  const fl=Math.floor(PG.ok/2)+(all?3:0); save.balls+=fl; misAdd("pg", PG.ok); persist();
+  const gets=rewardCards();
+  const mode=PG.mode, area=PG.area;
+  app.innerHTML=`<div class="result"><p class="line">都道府県あて・${PG_MODES.find(x=>x[0]===mode)[1]}（${PG_AREAS[area][0]}）</p><h2>${all?'全問正解！':`${PG.ok} / ${n}問 正解`}</h2>
+    <p class="line">タイム ${(t/1000).toFixed(1)}秒${rec?'・<b>さいこう記録！</b>':''}・フラスコ +${fl}</p>
+    ${PG.miss.length?`<div class="card" style="padding:8px 12px;margin:10px 0;text-align:left"><b>まちがえた都道府県</b><div class="pgmiss">${PG.miss.map(id=>`<div><div class="pgmini">${prefShapeSVG(id)}</div><span>${MAPD[id][0]}<br><small>${CAPITAL[id]}</small></span></div>`).join("")}</div></div>`:''}
+    <div class="gets">${gets}</div>
+    <button class="btn go" id="pgagain">もう一度</button><button class="btn alt" id="pgmap">ちずにもどる</button></div>`;
+  PG=null;
+  document.getElementById("pgagain").onclick=()=>startPG(mode, area);
+  document.getElementById("pgmap").onclick=()=>{ tab="map"; home(); };
 }
 
 /* ---------- battle ---------- */
@@ -3879,7 +3964,7 @@ function finish(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261104095011";
+const APP_VER="20261104123023";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
