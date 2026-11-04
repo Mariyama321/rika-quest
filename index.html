@@ -187,6 +187,21 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .sztag.strongtag{background:var(--bad)}
 .sztag.shinytag{background:linear-gradient(90deg,#ff5a6e,#ffb84d,#3d8bff)}
 .plog summary{font-weight:800;cursor:pointer}
+.mispanel{padding:10px 12px}
+.mispanel summary{cursor:pointer}
+.misrow{display:grid;grid-template-columns:26px 1fr auto;gap:8px;align-items:center;padding:4px 0}
+.misrow b{font-size:14px;display:block}.misrow .bar{margin-top:3px}
+.misck{width:24px;height:24px;border:2px solid var(--ink);border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff}
+.misrow.done .misck{background:var(--good)}.misrow.done b{color:var(--muted)}
+.umrow{display:flex;justify-content:space-between;gap:6px;font-size:12px;padding:4px 0;border-bottom:1px dashed #d5dee8}
+.umrow i{font-style:normal;font-size:10px;font-weight:800;border:1.5px solid #c9d3e0;border-radius:6px;padding:0 4px;margin-left:3px;color:var(--muted);white-space:nowrap}
+.umrow i.on{background:var(--sun);border-color:var(--ink);color:var(--ink)}
+.smlist{display:flex;flex-direction:column;gap:4px;margin-top:6px}
+.smrow{padding:4px 6px;border-radius:8px;background:var(--soft)}.smrow b{display:block;font-size:13px}.smrow.on{background:#fff4d6}
+.mvup{display:block;margin-top:3px;border:1.5px solid var(--ink);border-radius:6px;background:#ffe9d6;font-size:10.5px;font-weight:800;padding:1px 4px}
+.smpick{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:6px}
+.smpick button{border:2px solid var(--ink);border-radius:999px;background:var(--soft);font-size:12px;font-weight:800;padding:2px 10px}
+.smpick button.on{background:var(--sun)}
 .shophead{display:flex;gap:10px;align-items:center;padding:8px 12px;flex-wrap:wrap}
 .shopmsg{font-weight:800;color:var(--good);margin:10px 0 0}
 .shopcat{font-size:16px;margin:14px 0 8px}
@@ -2587,7 +2602,8 @@ function showParty(){
   <p class="mini" style="margin:16px 0 8px">パーティ（3ひきまで）は黄色。タップしてえらぼう。</p>
   <div class="grid3">${ids.map(id=>`<button class="card mcard ${save.party.includes(id)?'inparty':''}" data-id="${id}"><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b><span class="mini">Lv.${save.owned[id].lv}</span>${canEvo(id)?'<span class="evotag">しんかOK</span>':''}</button>`).join("")}</div>
   <div class="card detail"><div class="row"><div class="mon">${artMine(d)}</div><div style="min-width:0"><h3>${esc(nameOf(d))}</h3><div>${typesChip(d)} <span class="mini">Lv.${dO.lv}</span></div><p class="mini">${SKILLS[SP[d].skill].n}：${SKILLS[SP[d].skill].d}</p><p class="mini">${dO.shinyWild?'<b>本物の色ちがい</b>（こうげき・HP 1.2倍）・':dO.shiny?'色ちがい（インク）・':''}さいだいHP ${maxHPOf(d)}・${sizeText(d)}</p></div></div>
-    <div class="mvlist">${movesOf(d).map(k=>`<span class="mvchip mt-${moveType(d,k)||'none'}"><b>${esc(MOVES[k].n)}</b><small>${moveInfo(d,k)}</small></span>`).join("")}</div>${nextMoveText(d)}
+    <div class="mvlist">${movesOf(d).map(k=>{ const up=((dO.mvUp||{})[k]||0); return `<span class="mvchip mt-${moveType(d,k)||'none'}"><b>${esc(MOVES[k].n)}</b><small>${moveInfo(d,k)}</small>${(bag().mvpow||0)>0&&up<5?`<button class="mvup" data-mvup="${k}">＋いりょく（${bag().mvpow}）</button>`:''}</span>`; }).join("")}</div>
+    ${Object.keys(smS()).some(k=>SMV[k])?`<div class="smpick"><span class="mini">とくべつわざ：</span>${Object.keys(smS()).filter(k=>SMV[k]).map(k=>`<button class="${dO.sm==="sm_"+k?'on':''}" data-sm="${k}">${esc(SMV[k].n)}</button>`).join("")}${dO.sm?'<button data-sm="">はずす</button>':''}</div>`:''}${nextMoveText(d)}
     ${canEvo(d)?`<button class="btn go evobtn" id="evo">${esc(nameOf(d))}をしんかさせる！</button>`:(SP[d].forms[curF(d)+1]?`<p class="mini">${evoNeedText(SP[d].forms[curF(d)+1])}で、しんかできる${SP[d].forms[curF(d)+1].item?'（石はひろばのショップで買える）':''}</p>`:'')}
     ${(()=>{ const bb=bag(), o=dO, ts=[SP[d].type,SP[d].type2].filter(Boolean); let x="";
       if((bb.ame||0)>0 && o.lv<MAX_LV) x+=`<button class="btn alt" data-use="ame">ふしぎなアメ（${bb.ame}）<br><small>Lv.${o.lv}→${o.lv+1}</small></button>`;
@@ -2599,6 +2615,8 @@ function showParty(){
   app.querySelectorAll(".mcard").forEach(b=>b.onclick=()=>{ partySel=b.dataset.id; showParty(); });
   const g=id=>document.getElementById(id);
   if(g("evo")) g("evo").onclick=()=>showEvolve(d);
+  app.querySelectorAll("[data-mvup]").forEach(b=>b.onclick=()=>{ const k=b.dataset.mvup, o=save.owned[d], bb=bag(); if(!(bb.mvpow>0)) return; o.mvUp=o.mvUp||{}; if((o.mvUp[k]||0)>=5) return; o.mvUp[k]=(o.mvUp[k]||0)+1; bb.mvpow--; persist(); const y=window.scrollY; showParty(); window.scrollTo(0,y); });
+  app.querySelectorAll("[data-sm]").forEach(b=>b.onclick=()=>{ const k=b.dataset.sm, o=save.owned[d]; if(k) o.sm="sm_"+k; else delete o.sm; persist(); const y=window.scrollY; showParty(); window.scrollTo(0,y); });
   app.querySelectorAll("[data-use]").forEach(b=>b.onclick=()=>{ const k=b.dataset.use, bb=bag(), o=save.owned[d]; if(!(bb[k]>0)) return;
     if(k==="ame"){ if(o.lv>=MAX_LV) return; o.lv++; o.exp=0; }
     else if(k==="ink"){ o.shiny=true; }
@@ -2916,7 +2934,7 @@ function finishQD(win){
   const st=f?qdStats(f):null;
   const dg=grantDragons(), rares=grantRares(), megas=grantMegas();
   const lvAfter=prefLevels(), newCol=Object.keys(lvAfter).filter(p=>lvAfter[p]>(B.colBefore[p]||0));
-  stat().maxCombo=Math.max(stat().maxCombo||0,B.maxCombo);
+  stat().maxCombo=Math.max(stat().maxCombo||0,B.maxCombo); misMax("combo",B.maxCombo);
   const gets=[rewardCards(), ...megas.map(megaCard), ...dg.map(dragonCard), ...rares.map(rareCard),
     ...(newCol.length?[`<div class="card get evo"><div class="mon" style="width:64px;height:64px">${mapSVG({view:newCol, fill:Object.fromEntries(newCol.map(p=>[p,MAPLV[lvAfter[p]]]))})}</div><div><b>地図の ${newCol.map(p=>MAPD[p][0]).join("・")} の色がこくなった！</b><span>「ちず」で見てみよう</span></div></div>`]:[]),
     ...(B.eggWarm?[`<div class="card get"><div class="mon">${eggSVG(s.egg.w)}</div><div><b>今日のたんけんクリア！</b><span>たまごがあたたまった（${s.egg.w}/${EGG_NEED}）・フラスコ +2</span></div></div>`]:[]),
@@ -3159,11 +3177,11 @@ function learnable(id){ return learnSet(id).map(x=>x[0]); }
 function learnLv(id,k){ const e=learnSet(id).find(x=>x[0]===k); return e?e[1]:(MOVES[k].lv||0); }
 function movesOf(id){
   const lv=(save.owned[id]||{}).lv||1, sig=sigOf(id), learn=learnable(id).filter(k=>learnLv(id,k)<=lv);
-  const tm=(save.owned[id]||{}).tm, top=[sig, tm&&MOVES[tm]?tm:null].filter(Boolean);
+  const o=save.owned[id]||{}, tm=o.tm, sm=o.sm, top=[sig, tm&&MOVES[tm]?tm:null, sm&&MOVES[sm]&&smS()[sm.slice(3)]?sm:null].filter(Boolean);
   return [...top, ...learn.slice(-(4-top.length))];
 }
 function moveType(id,k){ const M=MOVES[k]; return M.t || (M.sig ? SP[id].type : null); }
-function moveInfo(id,k){ const M=MOVES[k], t=moveType(id,k); return `${t?TYPES[t]:'ふつう'}・いりょく${Math.round(M.pow*10)}${M.combo?`・${M.combo}コンボ`:''}${M.eff?'・'+EFF[M.eff]:''}`; }
+function moveInfo(id,k){ const M=MOVES[k], t=moveType(id,k), up=((save.owned[id]||{}).mvUp||{})[k]||0; return `${M.special?'とくべつ・':''}${t?TYPES[t]:'ふつう'}・いりょく${Math.round(M.pow*10*(1+up*.1))}${up?`（+${up}）`:''}${M.combo?`・${M.combo}コンボ`:''}${M.eff?'・'+EFF[M.eff]:''}`; }
 /* 色ちがい（v36）: 野生でまれに出る（SHINY_RATE）。Lv+5・HP1.5倍・たおすとEXP2倍。でんせつ戦・トレーナー戦では出ない
    つかまえると owned.shiny と owned.shinyWild。本物の色ちがい（shinyWild）は こうげき・最大HP 1.2倍（ひかるインクの色ちがいは見た目だけ） */
 const SHINY_RATE = 1/30;
@@ -3245,6 +3263,7 @@ Object.assign(ITEMS, {
   kizu:{n:"きずぐすり", cat:"battle", price:3, d:"バトル中に使う。せんとうのなかまのHPを半分回復"},
   superflask:{n:"スーパーフラスコ", cat:"battle", price:4, d:"正解したあとに使う。ふつうのフラスコより、とてもつかまえやすい"},
   mitsu:{n:"あまいミツ", cat:"battle", price:4, d:"バトル中に使う。つぎに出てくるモンスターが、まだなかまにいないモンスターになりやすい"},
+  mvpow:{n:"わざのちからアップ", cat:"grow", price:10, d:"なかまのわざ1つの いりょくを10%上げる（1つのわざに5回まで）。「なかま」画面で使う"},
   ame:{n:"ふしぎなアメ", cat:"grow", price:8, d:"なかま1ぴきのLvが1上がる（Lv100まで）。「なかま」画面で使う"},
   ink:{n:"ひかるインク", cat:"grow", price:25, d:"なかま1ぴきを色ちがいにする（見た目だけ）。「なかま」画面で使う"}
 });
@@ -3256,6 +3275,7 @@ function itemSVG(k){
   if(k==="kizu") return `<svg viewBox="0 0 40 40"><rect x="13" y="4" width="14" height="6" rx="2" fill="${K}"/><path d="M12 10 H28 V33 Q28 36 25 36 H15 Q12 36 12 33Z" fill="#b8f0d0" stroke="${K}" stroke-width="2.5"/><path d="M20 17 V29 M14 23 H26" stroke="#e8475a" stroke-width="4"/></svg>`;
   if(k==="superflask") return flaskSVG.replace('fill="#ff7a2f"','fill="#ffcf3a"').replace('viewBox="0 0 30 36"','viewBox="-5 -2 40 40"');
   if(k==="mitsu") return `<svg viewBox="0 0 40 40"><path d="M9 14 Q8 36 20 36 Q32 36 31 14Z" fill="#ffb84d" stroke="${K}" stroke-width="2.5"/><rect x="8" y="9" width="24" height="6" rx="2" fill="#c07a3a" stroke="${K}" stroke-width="2"/><path d="M14 20 Q20 24 26 20" stroke="#fff" stroke-width="2" fill="none" opacity=".7"/></svg>`;
+  if(k==="mvpow") return `<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="16" fill="#ff7a2f" stroke="${K}" stroke-width="2.5"/><path d="M20 9 V31 M12 17 L20 9 L28 17" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   if(k==="ame") return `<svg viewBox="0 0 40 40"><path d="M4 14 L11 20 L4 26Z M36 14 L29 20 L36 26Z" fill="#8f6bff" stroke="${K}" stroke-width="2"/><circle cx="20" cy="20" r="10" fill="#ff8fc8" stroke="${K}" stroke-width="2.5"/><path d="M14 17 Q20 12 26 17" stroke="#fff" stroke-width="2.5" fill="none"/></svg>`;
   return `<svg viewBox="0 0 40 40"><path d="M20 4 C30 18 32 24 32 27 A12 12 0 0 1 8 27 C8 24 10 18 20 4Z" fill="url(#inkg)" stroke="${K}" stroke-width="2.5"/><defs><linearGradient id="inkg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5a6e"/><stop offset=".5" stop-color="#ffd23f"/><stop offset="1" stop-color="#3d8bff"/></linearGradient></defs></svg>`;
 }
@@ -3312,7 +3332,69 @@ function grantDexDone(){ const d=save.dexDone||(save.dexDone={}), got=[];
   for(const u of UNITS){ if(d[u.id]) continue; const ids=Object.keys(u.monsters); if(ids.length && ids.every(id=>save.owned[id])){ d[u.id]=today(); bag().ame=(bag().ame||0)+3; save.balls+=10; got.push(u.id); } }
   if(got.length) persist(); return got; }
 const dexDoneCard = uid => { const u=UNITS.find(x=>x.id===uid); return `<div class="card get evo"><div class="mon">${itemSVG("ame")}</div><div><b>ずかんコンプリート！</b><span>${esc(unitLabel(u))}「${esc(u.title)}」のモンスターを全部なかまにした。ふしぎなアメ×3・フラスコ +10</span></div></div>`; };
-function rewardCards(){ return [...grantDexDone().map(dexDoneCard), ...grantBadges().map(badgeCard)].join(""); }
+/* ============================================================
+   ミッション・とくべつわざ・わざのちからアップ（v40）
+   ユーザーの要望「技の威力もショップで買えるようにして欲しい。ミッションクリアや場面クリアでもらえる特別な技も」
+   選択: わざごとに強くする／毎日のミッション・単元のミッション・バッジにもわざ／単元を全部クリアでわざ／とくべつわざはどのなかまでも
+   保存: save.mis={d, ids, prog, done, all}（その日の分）、save.stamps（全部クリアした日数）、save.smoves={key:日付}、save.umis={"unit|mid":日付}、
+         owned[id].sm（とくべつわざ）、owned[id].mvUp={moveKey:0〜5}
+   ============================================================ */
+/* とくべつわざ（いりょく26・2コンボ。どのなかまでもおぼえられる。タイプはわざごとに決まっている） */
+const SMV = {};
+const UNIT_SM = {"rika-11":["とけかたスプラッシュ","mizu"],"rika-12":["けっしょうレイン","koori"],"shakai-11":["いなほスラッシュ","kusa"],"sansu-1":["パイサークル","hikari"],
+  "sansu-2":["プライムアロー","iwa"],"sansu-3":["バイバイボム","denki"],"shakai-12":["かんしょパワー","hono"],"sansu-4":["ぶんすうカッター","kaze"],
+  "shakai-6":["アルプスおろし","kaze"],"shakai-7":["みやこのいかずち","denki"],"shakai-mark":["マークシュート","iwa"],"shakai-13":["ベジタブルストーム","kusa"]};
+for(const u of UNITS){ const [n,t] = UNIT_SM[u.id] || [`${u.title}のちから`, (SP[u.legend]||{}).type||"hikari"]; SMV["u_"+u.id] = {n, t, src:`${unitLabel(u)}「${u.title}」のルートとでんせつを全部クリア`}; }
+const STAMP_SM = [[5,"ミッションスター","hikari"],[10,"がんばりストライク","hono"],[20,"まいにちメテオ","iwa"],[30,"レジェンドウィング","kaze"]];
+for(const [n,nm,t] of STAMP_SM) SMV["st_"+n] = {n:nm, t, src:`毎日のミッションを全部クリアした日が ${n}日`};
+const BADGE_SM = {perfect:["パーフェクトショット","hikari"], combo10:["コンボラッシュ","kaze"], calm:["おちつきのいぶき","kusa"], days7:["まいにちパワー","hono"], q500:["ごひゃくもんキャノン","mizu"], tower9:["チャンピオンブレイク","iwa"], shiny:["きらきらスター","hikari"]};
+for(const [b,[n,t]] of Object.entries(BADGE_SM)) SMV["b_"+b] = {n, t, src:`バッジ「${(BADGES.find(x=>x[0]===b)||[0,b])[1]}」`};
+for(const [k,v] of Object.entries(SMV)) MOVES["sm_"+k] = {n:v.n, t:v.t, pow:2.6, combo:2, sp:true, special:true};
+const smS = () => save.smoves || (save.smoves = {});
+function grantSM(k){ if(!SMV[k] || smS()[k]) return null; smS()[k]=today(); return k; }
+const smCard = k => `<div class="card get urcard"><div class="mon">${itemSVG("tm_"+SMV[k].t)}</div><div style="text-align:left"><b>とくべつわざ「${esc(SMV[k].n)}」をてにいれた！</b><span>${esc(SMV[k].src)}。「なかま」画面で、どのなかまにもおぼえさせられるよ</span></div></div>`;
+
+/* 毎日のミッション: その日の3つ（日付で決まる）。1つクリアでフラスコ+3、3つ全部でスタンプ1こ（5・10・20・30こでとくべつわざ） */
+const DAILY = [["ok10","1回目で10問正解する","ok",10],["ok20","1回目で20問正解する","ok",20],["combo5","5コンボする","combo",5],["combo10","10コンボする","combo",10],
+  ["route","ルートを1つクリアする","route",1],["review","ニガテの森で3問正解する","review",3],["qd","ダンジョンで5問正解する","qd",5],["catch","モンスターを1ぴきつかまえる","catch",1],["tower","バトルタワーで1回勝つ","tower",1]];
+function misS(){
+  const t=today(); let m=save.mis;
+  if(!m || m.d!==t){ const R=seededRand(+t.replace(/-/g,"")), pool=DAILY.filter(x=>x[0]!=="tower" || trainerQs().length>=10), ids=[], used=new Set();
+    while(ids.length<3 && used.size<pool.length){ const x=pool[Math.floor(R()*pool.length)]; if(!ids.includes(x[0]) && !ids.some(i=>DAILY.find(y=>y[0]===i)[2]===x[2])) ids.push(x[0]); used.add(x[0]); }
+    m=save.mis={d:t, ids, prog:{}, done:{}, all:false}; }
+  return m; }
+function misAdd(key, n=1){ const m=misS(); m.prog[key]=(m.prog[key]||0)+n; }
+function misMax(key, v){ const m=misS(); m.prog[key]=Math.max(m.prog[key]||0, v); }
+function misGrant(){
+  const m=misS(), cards=[];
+  for(const id of m.ids){ const x=DAILY.find(y=>y[0]===id); if(!x || m.done[id]) continue; if((m.prog[x[2]]||0)>=x[3]){ m.done[id]=1; save.balls+=3; cards.push(`<div class="card get"><div class="mon">${badgeSVG(true)}</div><div><b>ミッションクリア！</b><span>${esc(x[1])}・フラスコ +3</span></div></div>`); } }
+  if(!m.all && m.ids.length && m.ids.every(id=>m.done[id])){ m.all=true; save.stamps=(save.stamps||0)+1;
+    cards.push(`<div class="card get evo"><div class="mon">${badgeSVG(true)}</div><div><b>きょうのミッション全部クリア！</b><span>スタンプ +1（${save.stamps}こ）</span></div></div>`); }
+  for(const [n] of STAMP_SM) if((save.stamps||0)>=n){ const k=grantSM("st_"+n); if(k) cards.push(smCard(k)); }
+  return cards; }
+/* 単元のミッション: 1つクリアでフラスコ+5・わざのちからアップ1こ */
+const UNIT_MIS = [["star3","ルートを全部★3でクリア",u=>u.stages.every(s=>(save.cleared[u.id+"|"+s.id]||0)>=3)],
+  ["boss3","でんせつを まちがい0（★3）でたおす",u=>(save.cleared[u.id+"|boss"]||0)>=3],
+  ["dex","この単元のモンスターを全部なかまにする",u=>Object.keys(u.monsters).every(id=>save.owned[id])]];
+function umisGrant(){ const d=save.umis||(save.umis={}), cards=[];
+  for(const u of UNITS){
+    for(const [mid,txt,f] of UNIT_MIS){ const key=u.id+"|"+mid; if(d[key]) continue; let ok=false; try{ ok=f(u); }catch(e){}
+      if(ok){ d[key]=today(); save.balls+=5; bag().mvpow=(bag().mvpow||0)+1; cards.push(`<div class="card get"><div class="mon">${itemSVG("mvpow")}</div><div><b>単元ミッションクリア！</b><span>${esc(unitLabel(u))}：${esc(txt)}・フラスコ +5・わざのちからアップ +1</span></div></div>`); } }
+    if(u.stages.every(s=>save.cleared[u.id+"|"+s.id]) && save.cleared[u.id+"|boss"]){ const k=grantSM("u_"+u.id); if(k) cards.push(smCard(k)); } }
+  for(const b of Object.keys(BADGE_SM)) if((save.badges||{})[b]){ const k=grantSM("b_"+b); if(k) cards.push(smCard(k)); }
+  return cards; }
+function rewardCards(){ const c=[...grantDexDone().map(dexDoneCard), ...grantBadges().map(badgeCard), ...misGrant(), ...umisGrant()]; persist(); return c.join(""); }
+function missionHTML(){
+  const m=misS(), st=save.stamps||0, nx=STAMP_SM.find(x=>x[0]>st);
+  let h=`<h2 class="sec-h" style="margin-top:18px">きょうのミッション</h2><div class="card mispanel">${m.ids.map(id=>{ const x=DAILY.find(y=>y[0]===id), p=Math.min(x[3], m.prog[x[2]]||0), dn=!!m.done[id];
+    return `<div class="misrow ${dn?'done':''}"><span class="misck">${dn?'✓':''}</span><div><b>${esc(x[1])}</b><div class="bar hpbar"><i style="width:${p/x[3]*100}%"></i></div></div><span class="mini">${p}/${x[3]}</span></div>`; }).join("")}
+    <p class="mini" style="margin:6px 0 0">1つクリアでフラスコ+3、3つ全部でスタンプ1こ。スタンプ ${st}こ${nx?`（あと${nx[0]-st}こでとくべつわざ「${esc(nx[1])}」）`:''}</p></div>`;
+  const d=save.umis||{};
+  h+=`<details class="card mispanel" style="margin-top:10px"><summary><b>単元のミッション</b> <span class="mini">${Object.keys(d).length} / ${UNITS.length*UNIT_MIS.length}（1つでフラスコ+5・わざのちからアップ+1）</span></summary>${UNITS.map(u=>`<div class="umrow"><span>${esc(unitLabel(u))}「${esc(u.title)}」</span><span>${UNIT_MIS.map(([mid,txt])=>`<i class="${d[u.id+"|"+mid]?'on':''}" title="${esc(txt)}">${mid==="star3"?'★3':mid==="boss3"?'でんせつ':'ずかん'}</i>`).join("")}</span></div>`).join("")}</details>`;
+  const sm=smS(), keys=Object.keys(SMV);
+  h+=`<details class="card mispanel" style="margin-top:10px"><summary><b>とくべつわざ</b> <span class="mini">${Object.keys(sm).filter(k=>SMV[k]).length} / ${keys.length}</span></summary><div class="smlist">${keys.map(k=>`<div class="smrow ${sm[k]?'on':''}"><b>${sm[k]?esc(SMV[k].n):'？？？'}</b><span class="mini">${typeChip(SMV[k].t)} ${esc(SMV[k].src)}</span></div>`).join("")}</div></details>`;
+  return h; }
+
 
 /* ---------- バトルタワー（トレーナー戦）：クリアしたルートの問題から出題。トレーナーのモンスター3びきをたおすと勝ち ---------- */
 const TRAINERS = ["たんけんたいのソラ","りかクラブのミナ","ちずはかせのケン","けいさんマスターのユイ","かがくしゃのハル","れきしずきのゲン","ほしよみのルナ","いきものはかせのモリ","チャンピオンのアオイ"];
@@ -3337,6 +3419,7 @@ function startTrainer(r){
 function finishTrainer(win){
   window.scrollTo(0,0);
   const t=B.trainer, bt=save.btower||(save.btower={best:0}); let reward=0;
+  misMax("combo",B.maxCombo); if(win) misAdd("tower");
   if(win){ reward=3+t.r; save.balls+=reward; if(t.r>(bt.best||0)) bt.best=t.r; addExp(B.lead,15); }
   stat().maxCombo=Math.max(stat().maxCombo||0,B.maxCombo);
   persist();
@@ -3362,7 +3445,8 @@ function showPlaza(){
   let h=`<h2 class="sec-h">ひろば</h2><div class="card shophead"><span class="pill">${flaskSVG} フラスコ ×${save.balls}</span><span class="mini">フラスコで道具を買えるよ。つかまえる分ものこしておこう</span></div>`;
   if(gets) h+=`<div class="gets">${gets}</div>`;
   if(shopMsg) h+=`<p class="shopmsg">${shopMsg}</p>`;
-  h+=`<h2 class="sec-h" style="margin-top:18px">ショップ</h2>`;
+  h+=missionHTML();
+  h+=`<h2 class="sec-h" style="margin-top:22px">ショップ</h2>`;
   const CATD={stone:"そのタイプの一部のモンスターを、Lv15 でさいごのすがたにしんかさせる（1回で1こ使う）。「なかま」画面でしんか",
     tm:"そのタイプ（2つ目のタイプもふくむ）のなかま1ぴきに、スペシャルわざ（いりょく24・2コンボ）をおぼえさせる。「なかま」画面で使う"};
   for(const [c,cn] of SHOP_CATS){
@@ -3430,7 +3514,7 @@ function addExp(id, n){
 }
 function dmgOf(k){
   const me = B.lead, lv = save.owned[me].lv, M = MOVES[k||"tackle"], t = moveType(me, k||"tackle"), m = t ? defMult(t, B.wild.id) : 1;
-  let pow = M.pow; if(M.eff==="week" && SP[me].day===new Date().getDay()) pow *= 2;
+  let pow = M.pow * (1 + 0.1*(((save.owned[me]||{}).mvUp||{})[k||"tackle"]||0)); if(M.eff==="week" && SP[me].day===new Date().getDay()) pow *= 2;
   return {m, d: Math.max(2, Math.round(8*m*pow*(1+lv*0.1)*(B.power?2:1)*shinyPow(me)))};
 }
 function fieldHTML(enter){
@@ -3618,6 +3702,7 @@ function judge(picked){
   const qm = qmsg?`<p class="mini"><b>${esc(qmsg)}</b></p>`:"";
   if(ok && B.tower){
     B.combo++; B.maxCombo=Math.max(B.maxCombo,B.combo);
+    misAdd("ok"); misAdd("qd"); misMax("combo",B.combo);
     B.queue.shift(); B.tower.floor++; addExp(B.lead,xp(4));
     let bonus=""; if((B.tower.floor-1)%5===0){ save.balls++; B.ballsGot++; bonus=`<p><b>${B.tower.floor-1}階とうたつ！ フラスコを1つひろった！</b></p>`; }
     persist();
@@ -3630,6 +3715,7 @@ function judge(picked){
   }
   if(ok){
     const first = !item.missed;
+    if(first) misAdd("ok"); if(B.qd) misAdd("qd"); if(B.sid==="review") misAdd("review");
     if(first){ B.combo++; B.maxCombo=Math.max(B.maxCombo,B.combo); }
     let bonus = first ? "" : `<p class="mini">まちがえたあとの正解なので、ごほうびは少なめ（EXP半分・コンボはふえない）。1回で正解するとたくさんもらえるよ。</p>`;
     if(first && B.combo%3===0){ save.balls++; B.ballsGot++; bonus=`<p><b>${B.combo}コンボ！ フラスコを1つひろった！</b></p>`; }
@@ -3727,7 +3813,7 @@ function doBall(sup){
           if(sh) Object.assign(o,{shiny:true,shinyWild:true});
           if(up||sh){ persist(); setLog(`やった！ ${w.shiny?'色ちがいの ':''}<b>${esc(nm)}</b>をつかまえた！ なかまの${esc(nameOf(w.id))}が${up?`Lv.${w.lv}`:''}${up&&sh?'の':''}${sh?'色ちがい':''}になった！`); }
           else { addExp(w.id,25); setLog(`やった！ <b>${esc(nm)}</b>をつかまえた！ もうなかまにいるので、なかまの${esc(nameOf(w.id))}がパワーアップ（EXP+25）！`); } }
-        else{ save.owned[w.id]={lv:w.lv,exp:0,form:formIdx(w.id,w.lv),sz:w.sz||1}; if(w.shiny) Object.assign(save.owned[w.id],{shiny:true,shinyWild:true}); if(save.party.length<3) save.party.push(w.id); persist(); setLog(`やった！ <b>${esc(nm)}</b>をつかまえた！ なかまになった！`); }
+        else{ save.owned[w.id]={lv:w.lv,exp:0,form:formIdx(w.id,w.lv),sz:w.sz||1}; if(w.shiny) Object.assign(save.owned[w.id],{shiny:true,shinyWild:true}); misAdd("catch"); if(save.party.length<3) save.party.push(w.id); persist(); setLog(`やった！ <b>${esc(nm)}</b>をつかまえた！ なかまになった！`); }
         B.caught.push({id:w.id, lv:w.lv, dup:had, shiny:!!w.shiny});
         w.hp=0; w.caught=true; setTimeout(after,1500);
       }else{
@@ -3752,7 +3838,7 @@ function after(){
 function finish(win){
   if(B.qd) return finishQD(win);
   if(B.trainer) return finishTrainer(win);
-  stat().maxCombo=Math.max(stat().maxCombo||0,B.maxCombo); B.extraBalls=0;
+  stat().maxCombo=Math.max(stat().maxCombo||0,B.maxCombo); B.extraBalls=0; misMax("combo",B.maxCombo); if(win && B.sid!=="review") misAdd("route");
   window.scrollTo(0,0);
   let stars=0;
   if(win){
@@ -3793,7 +3879,7 @@ function finish(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261104074713";
+const APP_VER="20261104095011";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
