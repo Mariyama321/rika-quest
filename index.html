@@ -1870,16 +1870,17 @@ const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.f
 const pick = a => a[Math.floor(Math.random()*a.length)];
 const qKey = (u,s,i) => `${u}|${s}|${i}`;
 /* レベルは100まで（v35）。Lv30までは今までどおり lv×12、それより上は 360＋(lv−30)×6 */
-const MAX_LV = 100;
+const MAX_LV = 300; /* v42: なかまは Lv300 まで。野生（でんせつ・ボスをふくむ）は WILD_MAX まで */
+const WILD_MAX = 100;
 const need = lv => lv<=30 ? lv*12 : 360+(lv-30)*6;
 /* 相手の強さをなかまに合わせる（v35）: パーティの平均Lv（partyRef）を基準に、野生・でんせつ・トレーナーのLvを上げる。ルートの元のLvより下にはしない */
 function partyRef(){ const ls=save.party.filter(id=>save.owned[id]).map(id=>save.owned[id].lv); return ls.length?Math.round(ls.reduce((a,b)=>a+b,0)/ls.length):1; }
 /* v39: 相手の強さはランダム。パーティ平均Lvの 0.6〜1.3倍（でんせつ・ボスは 0.8〜1.3倍＋2）。10%で「つよそうだ！」（1.3〜1.5倍・EXP1.5倍）。ルートの元のLvより下にはしない */
 const STRONG_RATE = 0.1;
 function enemyLv(base, boss){ const ref=partyRef(), r=Math.random();
-  if(r<STRONG_RATE) return {lv:Math.min(MAX_LV, Math.max(base+2, Math.round(ref*(1.3+Math.random()*.2)))), strong:true};
+  if(r<STRONG_RATE) return {lv:Math.min(WILD_MAX, Math.max(base+2, Math.round(ref*(1.3+Math.random()*.2)))), strong:true};
   const k = boss ? .8+Math.random()*.5 : .6+Math.random()*.7;
-  return {lv:Math.min(MAX_LV, Math.max(base, Math.round(ref*k)+(boss?2:0))), strong:false}; }
+  return {lv:Math.min(WILD_MAX, Math.max(base, Math.round(ref*k)+(boss?2:0))), strong:false}; }
 function wildLv(base, boss){ return enemyLv(base, boss).lv; }
 /* 強い相手ほど EXP が多い */
 const xp = n => Math.round(n*(1+((B&&B.wild)?B.wild.lv:1)/15));
@@ -3270,7 +3271,7 @@ Object.assign(ITEMS, {
   superflask:{n:"スーパーフラスコ", cat:"battle", price:4, d:"正解したあとに使う。ふつうのフラスコより、とてもつかまえやすい"},
   mitsu:{n:"あまいミツ", cat:"battle", price:4, d:"バトル中に使う。つぎに出てくるモンスターが、まだなかまにいないモンスターになりやすい"},
   mvpow:{n:"わざのちからアップ", cat:"grow", price:10, d:"なかまのわざ1つの いりょくを10%上げる（1つのわざに5回まで）。「なかま」画面で使う"},
-  ame:{n:"ふしぎなアメ", cat:"grow", price:8, d:"なかま1ぴきのLvが1上がる（Lv100まで）。「なかま」画面で使う"},
+  ame:{n:"ふしぎなアメ", cat:"grow", price:8, d:"なかま1ぴきのLvが1上がる（Lv300まで）。「なかま」画面で使う"},
   ink:{n:"ひかるインク", cat:"grow", price:25, d:"なかま1ぴきを色ちがいにする（見た目だけ）。「なかま」画面で使う"}
 });
 const SHOP_CATS = [["stone","しんかの石"],["tm","スペシャルわざ"],["battle","バトルのどうぐ"],["grow","そだてるどうぐ"]];
@@ -3585,7 +3586,7 @@ function spawn(){
   const max = boss ? 150 + Math.max(0, lv-14)*6 : Math.round((28 + lv*3)*sz);
   const shiny = !boss && !B.trainer && Math.random()<SHINY_RATE;
   if(EL.strong && !shiny){ B.wild = {id, lv, hp:Math.round(max*1.15), max:Math.round(max*1.15), sz, strong:true}; save.seen[id]=1; persist(); return; }
-  B.wild = shiny ? {id, lv:Math.min(MAX_LV, lv+5), hp:Math.round(max*1.5), max:Math.round(max*1.5), sz, shiny:true} : {id, lv, hp:max, max, sz};
+  B.wild = shiny ? {id, lv:Math.min(WILD_MAX, lv+5), hp:Math.round(max*1.5), max:Math.round(max*1.5), sz, shiny:true} : {id, lv, hp:max, max, sz};
   save.seen[id]=1; persist();
 }
 function addExp(id, n){
@@ -3964,7 +3965,7 @@ function finish(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261104123023";
+const APP_VER="20261104123317";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
