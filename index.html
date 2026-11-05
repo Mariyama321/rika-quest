@@ -337,6 +337,7 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .dexgrid .mcard{padding:5px 3px;gap:1px}.dexgrid .mcard .mon{width:54px;height:54px}.dexgrid .mcard b{font-size:11px}
 .dexgrid .mcard .no{font-size:9px}.dexgrid .chip{font-size:9px;padding:0 5px;line-height:15px}
 .dexgrid .mcard.unseen .mon{font-size:22px}
+.newtag{font-style:normal;font-size:10px;font-weight:800;background:var(--bad);color:#fff;border-radius:999px;padding:0 6px;margin-left:4px}
 .dexcount{font-weight:800;color:var(--muted);font-size:13px;margin:-6px 0 12px}
 
 /* map */
@@ -2042,6 +2043,267 @@ const UNITS = [
     ]}
   ]
 }
+,
+{
+  id:"rika-15", no:15, title:"第11回〜第14回のまとめ", subject:"理科", added:"2026-11-05", release:"2026-11-10",
+  region:"ふりかえりの峠",
+  legend:"matomegaron",
+  monsters:{
+    furikaeru:{arch:"slime", type:"kusa", type2:"mizu", color:"#7ccf5a", accent:"#ffcf3a", skill:"hint", forms:[{n:"フリカエル"},{n:"フリカエルキング",lv:9}], dex:"習ったことをふりかえるのが大すきなカエルのスライム。まとめの回に出てくる。"},
+    noton:{arch:"bird", type:"hikari", type2:"kusa", color:"#f3e6c0", accent:"#3d8bff", skill:"luck", forms:[{n:"ノートン"},{n:"ノートフクロウ",lv:10}], dex:"ノートのようなもようの羽をもつ鳥。ニガテな問題をメモしておく。"},
+    rokamori:{arch:"bat", type:"mizu", type2:"iwa", color:"#e9eef7", accent:"#7cc8ff", skill:"heal", forms:[{n:"ロカモリ"},{n:"ロカモリオン",lv:10}], dex:"ろ紙のようなつばさのコウモリ。とけていないつぶだけをつかまえる。"},
+    mesurin:{arch:"serpent", type:"mizu", type2:"hikari", color:"#bfe9ff", accent:"#24324a", skill:"hint", forms:[{n:"メスリン"},{n:"メスシリンダラ",lv:10}], dex:"体に目もりがあるへび。液面のへこんだところを真横から読む。"},
+    fuyugame:{arch:"turtle", type:"koori", type2:"iwa", color:"#9fb7d6", accent:"#ff5a3d", skill:"power", forms:[{n:"フユガメ"},{n:"フユゴモリガメ",lv:11}], dex:"こうらの半分が雪、半分が火山岩のカメ。冬の生き物と火山の両方にくわしい。"},
+    matomegaron:{arch:"dragon", type:"hikari", type2:"iwa", color:"#ffe28a", accent:"#3d8bff", skill:"power", legend:true, parts:{horn:"crown", pat:"stars", acc:"gem", accColor:"#e8475a"}, forms:[{n:"マトメガロン"}], dex:"ふりかえりの峠のでんせつのドラゴン。第11回〜第14回の4つの道をすべて見わたしている。"}
+  },
+  stages:[
+  { id:"s1", name:"とける道", note:"もののとけ方・取り出し方のまとめ",
+    wild:["rokamori","mesurin","furikaeru"],
+    qs:[
+      {q:"水にとけるものはどれ？", c:["ミョウバン","でんぷん","おがくず","どろ"], a:0, e:"ミョウバンは水にとけて水よう液になります。でんぷん・おがくず・どろはとけません。"},
+      {q:"水よう液といえるものはどれ？", c:["食塩水","ソース","牛にゅう","ぼくじゅう"], a:0, e:"すきとおって（とうめいで）いるものが水よう液です。ソース・牛にゅう・ぼくじゅうはとうめいではありません。"},
+      {q:"水にとかした茶色いコーヒーシュガーの液の、上のほうと下のほうのこさは？", c:["どちらも同じこさ","上のほうがこい","下のほうがこい"], a:0, fixed:true, e:"とけたもののつぶは水全体に広がるので、水よう液はどの部分も同じこさです。"},
+      {type:"order", q:"食塩とでんぷんのまざったものから、2つを分けて取り出す。そうさを順にならべよう。", c:["まざったつぶを水に入れて、かきまぜる","ろかそうちでろかする","ろ紙ごと太陽の光にあてて、つぶをかわかす","ろ液を熱して、水をじょう発させる"],
+       e:"水に入れると食塩だけがとけます。ろかすると、ろ紙にでんぷんが残り、ろ液（食塩水）を熱すると食塩が出てきます。"},
+      {q:"ろかで、ろ紙を通りぬけた液を何という？", c:["ろ液","上ずみ液","ほう和水よう液","じょう発液"], a:0, e:"ろ紙を通りぬけた液をろ液といいます。"},
+      {type:"match", q:"食塩とでんぷんを分けたとき、出てきたつぶを線でつなごう。", pairs:[["ろ紙に残ったつぶ","でんぷん"],["ろ液から出てきたつぶ","食塩"]], e:"でんぷんは水にとけないのでろ紙に残り、とけた食塩はろ液といっしょにろ紙を通りぬけます。"},
+      {q:"ろかをするとき、ガラスぼうはろ紙のどこにあてる？", c:["ろ紙が3まい重なっているところ","ろ紙が1まいのところ","ろ紙が2まい重なっているところ","ガラスぼうはろ紙にあてない"], a:0, e:"やぶれにくいように、ろ紙が重なってあつくなっているところにあてます。"},
+      {q:"20℃の水100gにホウ酸4gを入れたら、すべてとけた。水よう液の重さは何g？", c:["104g","100g","96g","4g"], a:0, n:"104", e:"水よう液の重さ＝水の重さ＋とけているものの重さ。100＋4＝104g。"},
+      {q:"20℃の水100gにホウ酸4gがとけた液は、ほう和水よう液といえる？", c:["いえない（まだとける）","いえる"], a:0, fixed:true, note:"水100gにとけるホウ酸の限度量：20℃で5g", e:"20℃では5gまでとけるので、4gではまだほう和していません。"},
+      {q:"20℃の水100gに、Aはホウ酸4g（すべてとけた）、Bはホウ酸10g（とけ残りが出た）。上ずみ液を同じ量とって重さをくらべると？", c:["Bのほうが重い","Aのほうが重い","同じ重さ"], a:0, fixed:true, note:"水100gにとけるホウ酸の限度量：20℃で5g",
+       e:"Bはほう和して5gとけているので、4gとけているAよりこく、同じ量なら重くなります。"},
+      {q:"20℃の水100gにホウ酸10gを入れると5gとけ残った。とけ残りをなくすには、20℃の水を少なくともあと何g加える？", c:["100g","50g","200g","5g"], a:0, n:"100", note:"水100gにとけるホウ酸の限度量：20℃で5g",
+       e:"とけ残りの5gをとかすには、水があと100g必要です。"},
+      {q:"20℃の水100gにホウ酸10gを入れた液を40℃まで温めると、とけ残っていたホウ酸はどうなる？", c:["量はへるが、少しとけ残る","すべてとける"], a:0, fixed:true, note:"水100gにとけるホウ酸の限度量：20℃で5g、40℃で9g",
+       e:"40℃では9gまでなので、10−9＝1gがとけ残ります。"},
+      {q:"表のA・Bのうち、水の温度が変化してもとける量がほとんど変わらないのはどちら？", c:["B","A"], a:0, fixed:true, table:[["水温(℃)","0","20","40","60","80","100"],["A(g)","3","5","9","15","24","38"],["B(g)","35.5","36","36.5","37","38","39.5"]],
+       e:"Bは0℃でも100℃でも36g前後でほとんど変わりません（Bは食塩、Aはホウ酸）。"},
+      {q:"20℃の水200gには、食塩は何gまでとける？", c:["72g","36g","18g","108g"], a:0, n:"72", note:"水100gにとける食塩の限度量：20℃で36g", e:"水が2倍なので限度量も2倍。36×2＝72g。"},
+      {q:"40℃の水300gには、ホウ酸は何gまでとける？", c:["27g","9g","18g","3g"], a:0, n:"27", note:"水100gにとけるホウ酸の限度量：40℃で9g", e:"9×3＝27g。"},
+      {q:"40℃の水100gにホウ酸を6gとかした。あと何gとかすことができる？", c:["3g","6g","9g","15g"], a:0, n:"3", note:"水100gにとけるホウ酸の限度量：40℃で9g", e:"9−6＝3g。"},
+      {q:"20℃の水100gにホウ酸を15g入れるととけ残りが出た。何℃まで温めるとすべてとける？", c:["60℃","40℃","80℃","100℃"], a:0, n:"60", table:[["水温(℃)","0","20","40","60","80","100"],["ホウ酸(g)","3","5","9","15","24","38"]],
+       e:"水100gに15gとけるのは60℃です。"},
+      {q:"メスシリンダーで水の体積を読み取るときは、どこから見る？", c:["液面のへこんだところを、真横から見る","上からのぞきこむ","下から見上げる","ななめ上から見る"], a:0, e:"目の高さを液面に合わせ、へこんだ部分の目もりを真横から読みます。"}
+    ]},
+  { id:"s2", name:"冬の道", note:"冬の植物・動物のまとめ",
+    wild:["furikaeru","noton","fuyugame"],
+    qs:[
+      {q:"葉が地面にぴったりとくっついているような冬ごしのすがたを何という？", c:["ロゼット","冬芽","球根","りんぺん"], a:0, e:"タンポポやナズナのようなすがたをロゼットといいます。"},
+      {q:"ヒガンバナの説明として正しいものは？", c:["今ついている葉は春の終わりにかれて、夏は球根ですごす","一年中、葉をつけている","今ついている葉は、来年の冬にかれる","秋に花がさくと葉が落ちる"], a:0, e:"ヒガンバナは秋に葉のないまま花をさかせ、冬は葉で養分をつくり、春の終わりに葉がかれて夏は球根ですごします。"},
+      {type:"all", q:"地下の「根」で冬ごしをしている植物を全部えらぼう。", c:["ヒガンバナ","ススキ","ダリア","ナズナ","ヤマノイモ","グラジオラス"], a:[2,4], e:"ダリア・ヤマノイモは地下の根。ススキ・グラジオラスは地下のくき、ヒガンバナは球根、ナズナはロゼットです。"},
+      {type:"match", q:"えだについていたこん虫と、冬をこすすがたを線でつなごう。", pairs:[["イラガ（えだのまゆの中）","よう虫"],["アゲハ（えだにくっついている）","さなぎ"],["カマキリ（あわのようなものの中）","たまご"]],
+       e:"イラガはまゆの中のよう虫、アゲハはさなぎ、カマキリはたまごで冬をこします。"},
+      {type:"all", q:"ミノムシと同じ「よう虫」のすがたで冬をこすこん虫を全部えらぼう。", c:["テントウムシ","コガネムシ","コオロギ","カブトムシ","ハナアブ","モンシロチョウ"], a:[1,3],
+       e:"コガネムシ・カブトムシはよう虫。テントウムシ・ハナアブは成虫、コオロギはたまご、モンシロチョウはさなぎです。"},
+      {q:"冬に葉が落ちたあとの木についている、葉や花になる芽を何という？", c:["冬芽","ロゼット","球根","さなぎ"], a:0, e:"冬芽の多くは、りんぺんでおおわれています。"},
+      {q:"冬の間も緑色の葉をしげらせている木を何という？", c:["常緑樹","落葉樹","冬芽","ロゼット"], a:0, e:"マツ・スギ・シイ・カシなどが常緑樹です。"},
+      {q:"冬みんしているときに子を産む動物は？", c:["クマ","カエル","ヤマネ","マイマイ"], a:0, e:"クマのめすは冬みん中に子を産みます。"},
+      {q:"冬に日本で見ることができない鳥はどれ？", c:["ツバメ","スズメ","ハクチョウ","ウグイス"], a:0, e:"ツバメは冬には南のあたたかい国ですごします。"},
+      {type:"all", q:"成虫のすがたで冬をこすこん虫を全部えらぼう。", c:["ナミテントウ","ミツバチ","カマキリ","アゲハ","キチョウ"], a:[0,1,4], e:"ナミテントウ・ミツバチ・キチョウは成虫。カマキリはたまご、アゲハはさなぎです。"}
+    ]},
+  { id:"s3", name:"ゆれる道", note:"火山・地震のまとめ",
+    wild:["fuyugame","noton","rokamori"],
+    qs:[
+      {q:"今もふん火を続けている火山や、過去1万年以内にふん火したことのある火山を何という？", c:["活火山","火山帯","休火山","マグマ"], a:0, e:"活火山といいます。"},
+      {q:"ふん火したときに、マグマが液体状のまま地表にふき出したものや、固まったものを何という？", c:["よう岩","火山灰","火山だん","火成岩"], a:0, e:"よう岩といいます。"},
+      {q:"マグマのねばりけが強く、はげしいふん火をする火山の形は？", c:["もりあがったドーム型","円すい形","うすく広がった平たい形"], a:0, fixed:true, e:"ねばりけが強いよう岩はドーム型の火山をつくり、はげしくふん火します。"},
+      {q:"昭和新山は、どの形の火山に分類される？", c:["ドーム型","円すい形","平たい形"], a:0, fixed:true, e:"昭和新山・有珠山・雲仙岳（普賢岳）はドーム型です。"},
+      {q:"ルーペで見ると、形がわからないほど小さなつぶの中に大きなつぶがちらばっていた。このつくりを何という？", c:["はん状組織","等粒状組織","地層","結しょう"], a:0, e:"火山岩のつくりで、はん状組織といいます。"},
+      {q:"はん状組織の岩石は、どこで、どのようにしてできた？", c:["マグマが地表や地表近くで急に冷やされてできた","マグマが地下深くでゆっくり冷やされてできた","マグマが地下深くで急に冷やされてできた","マグマが地表近くでゆっくり冷やされてできた"], a:0, e:"地表や地表近くで急に冷やされると、結しょうが大きく育たず、はん状組織になります。"},
+      {type:"match", q:"地震のゆれと、その名前を線でつなごう。", pairs:[["はじめの小さなゆれ","初期び動"],["少しおくれて来る大きなゆれ","主要動"]], e:"初期び動はP波、主要動はS波によるゆれです。"},
+      {q:"はじめの小さなゆれのデータから大きなゆれを予測して知らせる、2007年に始まったしくみは？", c:["緊急地震速報","津波注意報","ハザードマップ","地震計"], a:0, e:"緊急地震速報は2007年に始まりました。"},
+      {q:"観測した地点でのゆれの大きさを表す震度は、0からいくつまで？", c:["7","10","9","5"], a:0, n:"7", e:"震度は0〜7で、5と6には弱・強があるので10段階です。"},
+      {type:"multi", q:"震度のうち、「強」と「弱」がある数字を2つえらぼう。", c:["5","6","4","7"], a:[0,1], e:"震度5と震度6に、5弱・5強・6弱・6強があります。"},
+      {q:"一般に、地震そのものの大きさを表す値が大きくなるほど、各地点の震度は大きくなる。この値を何という？", c:["マグニチュード","震度","震央","初期び動"], a:0, e:"マグニチュード（記号M）が大きいほど、各地点の震度は大きくなります。"}
+    ]}
+  ]
+},
+{
+  id:"rika-16", no:16, title:"てこ（てんびん）", subject:"理科", added:"2026-11-05", release:"2026-11-17",
+  region:"つりあいの塔",
+  legend:"balansion",
+  monsters:{
+    shitenbo:{arch:"fox", type:"iwa", type2:"hikari", color:"#c9a27a", accent:"#ffcf3a", skill:"hint", forms:[{n:"シテンボ"},{n:"シテンギツネ",lv:8}], dex:"しっぽの先がぼうを支える支点になっているキツネ。"},
+    omorin:{arch:"golem", body:"round", type:"iwa", color:"#7a8a9a", accent:"#c9d3e0", skill:"power", size:1.1, forms:[{n:"オモリン"},{n:"オモリゴーレム",lv:9}], dex:"体がおもりでできたゴーレム。支点から遠くにつるされるほど、かたむける力が大きくなる。"},
+    tenbicchi:{arch:"bird", type:"kaze", type2:"iwa", color:"#ffe28a", accent:"#a0784b", skill:"luck", forms:[{n:"テンビッチ"},{n:"テンビンワシ",lv:9}], dex:"左右のつばさでつり合いをとるのがとくいな鳥。"},
+    hakarin:{arch:"serpent", type:"denki", type2:"iwa", color:"#e8eef7", accent:"#e8475a", skill:"hint", forms:[{n:"ハカリン"},{n:"バネハカリオン",lv:10}], dex:"ばねばかりのような体。ぼうを支える上向きの力は、下向きの力の合計と同じになる。"},
+    nendon:{arch:"slime", type:"iwa", type2:"kusa", color:"#c98a5a", accent:"#ffb84d", skill:"heal", forms:[{n:"ネンドン"},{n:"ネンドキング",lv:10}], dex:"形をかえても重さが変わらないねん土のスライム。"},
+    jushin:{arch:"beetle", type:"hikari", type2:"iwa", color:"#d9c2a0", accent:"#ff8fc8", skill:"power", forms:[{n:"ジューシン"},{n:"ジュウシンカブト",lv:10}], dex:"ぼうの重さが集まる重心をさがすカブトムシ。重心を支えるとぼうはつり合う。"},
+    tsuriain:{arch:"jelly", type:"kaze", type2:"hikari", color:"#d9d2ff", accent:"#ffcf3a", skill:"luck", forms:[{n:"ツリアイン"},{n:"ツリアイクラゲ",lv:11}], dex:"何本もの足でぼうをつり合わせるクラゲ。てんびんの組み合わせも計算できる。"},
+    kyorin:{arch:"fish", type:"denki", type2:"mizu", color:"#7cc8ff", accent:"#ffd23f", skill:"power", forms:[{n:"キョリン"},{n:"キョリカケル",lv:11}], dex:"「重さ×支点からのきょり」をすばやくかけ算する魚。"},
+    balansion:{arch:"dragon", type:"hikari", type2:"iwa", color:"#f6f2e3", accent:"#d9a400", skill:"power", legend:true, parts:{horn:"crown", pat:"stripes"}, forms:[{n:"バランシオン"}], dex:"つりあいの塔のでんせつのドラゴン。左右のつばさの「重さ×きょり」がいつも同じで、空中でぴたりと止まれる。"}
+  },
+  stages:[
+  { id:"s1", name:"支点の広場", note:"つり合い・支点・てんびん・つり合いのきまり",
+    wild:["shitenbo","omorin","tenbicchi"],
+    qs:[
+      {q:"ぼうを糸で支えたとき、水平になってどちらにもかたむかない状態を何という？", c:["つり合っている","かたむいている","支えている","おもりがない"], a:0, e:"このとき、ぼうはつり合っているといいます。"},
+      {q:"糸でぼうを支えている点を何という？", c:["支点","重心","力点","作用点"], a:0, e:"ぼうを支えている点を支点といいます。"},
+      {q:"支点の左右にものをつり下げて、つり合いをとるようにしたしくみを何という？", c:["てんびん","ばねばかり","メスシリンダー","かっ車"], a:0, e:"支点に糸をつるしてぼうをつり合わせ、左右にものをつり下げるしくみをてんびんといいます。"},
+      {q:"重さを無視できるぼうがつり合うときのきまりは？", c:["左右で「おもりの重さ×支点からのきょり」が等しい","左右でおもりの重さが等しい","左右で支点からのきょりが等しい","おもりの数が等しい"], a:0, e:"「つるしたおもりの重さ×支点からおもりをつるした点までのきょり」が左右で等しくなるとつり合います。"},
+      {q:"支点から左に5の位置に40g、右に4の位置に50gをつるした。ぼうはどうなる？", c:["つり合う","左が下がる","右が下がる"], a:0, fixed:true, e:"左40×5＝200、右50×4＝200。等しいのでつり合います。"},
+      {q:"支点から左に4の位置に40g、右に3の位置に50gをつるした。ぼうはどうなる？", c:["左が下がる","右が下がる","つり合う"], a:0, fixed:true, e:"左40×4＝160、右50×3＝150。値が大きい左側が下がります。"},
+      {q:"支点から左に6cmの位置と右に8cmの位置に、10gのおもりを1つずつつるした。ぼうはどうなる？", c:["右が下がる","左が下がる","つり合う"], a:0, fixed:true, e:"左10×6＝60、右10×8＝80。右が下がります。"},
+      {q:"支点から左に5の位置に15g、右に3の位置にXをつるすとつり合った。Xは何g？", c:["25g","15g","9g","45g"], a:0, n:"25", e:"15×5＝75。X×3＝75なので X＝25g。"},
+      {q:"支点から右に4の位置に60g、左に□の位置に48gをつるすとつり合った。□はいくつ？", c:["5","4","6","3"], a:0, n:"5", e:"60×4＝240。48×□＝240なので □＝5。"},
+      {q:"支点から左に15cmの位置に20gのおもり、右に15cmの位置にねん土をつるすとつり合った。ねん土は何g？", c:["20g","15g","30g","10g"], a:0, n:"20", e:"きょりが同じなので、重さも同じ20gです。"},
+      {q:"支点から左に15cmの位置に30gのおもり、右に10cmの位置にねん土をつるすとつり合った。ねん土は何g？", c:["45g","20g","30g","40g"], a:0, n:"45", e:"30×15＝450。ねん土×10＝450なので45g。"},
+      {q:"支点から左に5cmの位置に10gのおもりを2つ、右に10cmの位置にねん土をつるすとつり合った。ねん土は何g？", c:["10g","20g","5g","40g"], a:0, n:"10", e:"左は20×5＝100。ねん土×10＝100なので10g。"},
+      {q:"支点から左に12cmの位置に20gのおもり、右に10cmの位置にねん土をつるすとつり合った。ねん土は何g？", c:["24g","20g","12g","22g"], a:0, n:"24", e:"20×12＝240。ねん土×10＝240なので24g。"}
+    ]},
+  { id:"s2", name:"ばねばかりの間", note:"3つ以上のおもり・力のつり合い",
+    wild:["hakarin","nendon","kyorin"],
+    qs:[
+      {q:"おもりが3つ以上のときのつり合いのきまりは？", c:["左右それぞれの「重さ×きょり」の合計が等しい","いちばん重いおもりの重さが等しい","おもりの数が左右で等しい","きょりの合計が等しい"], a:0, e:"「重さ×きょり」の左右それぞれの合計が等しくなればつり合います。"},
+      {q:"支点から左に5の位置に60g、左に2の位置に30g、右に3の位置にXをつるすとつり合った。Xは何g？", c:["120g","90g","60g","180g"], a:0, n:"120", e:"左60×5＋30×2＝360。X×3＝360なのでX＝120g。"},
+      {q:"支点から左に8の位置に60g、右に4の位置に30g、右に□の位置に40gをつるすとつり合った。□はいくつ？", c:["9","8","12","6"], a:0, n:"9", e:"左60×8＝480。右30×4＝120なので、40×□＝480−120＝360。□＝9。"},
+      {q:"ばねばかりでぼうの中心をつるし、20gと60gのおもりをつるすとつり合った。ばねばかりのしめす値は？", c:["80g","60g","40g","20g"], a:0, n:"80", e:"上向きの力の合計＝下向きの力の合計。20＋60＝80g。"},
+      {q:"力のつり合いの関係として正しいものは？", c:["上向きの力の合計＝下向きの力の合計","上向きの力＝0","下向きの力の合計は2倍になる","上向きの力のほうが大きい"], a:0, e:"ぼうがつり合っているとき、上向きの力の合計と下向きの力の合計は等しくなります。"},
+      {q:"ばねばかりで中心をつるしたぼうに、左10の位置に30g、右6の位置にXをつるすとつり合った。Xは何g？", c:["50g","30g","18g","60g"], a:0, n:"50", e:"30×10＝300。X×6＝300なのでX＝50g。"},
+      {q:"ばねばかりで中心をつるしたぼうに、左10の位置に30g、右6の位置に50gをつるしてつり合った。ばねばかりのしめす値は？", c:["80g","50g","30g","20g"], a:0, n:"80", e:"30＋50＝80g。"},
+      {q:"重さを無視できるぼうの真ん中（点P）をばねばかりでつるし、点Pから右に10cmの位置に10gのおもりをつるした。ぼうはどうなる？", c:["右側が下がる","左側が下がる","つり合う"], a:0, fixed:true, e:"左には何もないので、右側が下がります。"},
+      {q:"点Pから右に10cmの位置に10gをつるしたぼうを水平にするには、20gのおもりを点Pから左に何cmの位置につるせばよい？", c:["5cm","10cm","20cm","2cm"], a:0, n:"5", e:"10×10＝100。20×□＝100なので5cm。"},
+      {q:"点Pから右10cmに10g、左5cmに20gをつるしてつり合った。ばねばかりのしめす値は？", c:["30g","20g","10g","100g"], a:0, n:"30", e:"10＋20＝30g。"},
+      {q:"点Pから右10cmに10gをつるしたぼうを水平にするには、点Pから左に4cmの位置に何gのおもりをつるせばよい？", c:["25g","40g","10g","20g"], a:0, n:"25", e:"10×10＝100。□×4＝100なので25g。"},
+      {q:"支点から左10cmに30gのおもり、右15cmに10gのおもりと、その下にねん土をつるすとつり合った。ねん土は何g？", c:["10g","20g","30g","5g"], a:0, n:"10", e:"左30×10＝300。右は15cmの位置に（10＋ねん土）gで、300÷15＝20g。ねん土は20−10＝10g。"},
+      {q:"左に5cmの位置に60g、右に12cmの位置に24gのねん土をつるした。ぼうはどうなる？", c:["左が下がる","右が下がる","つり合う"], a:0, fixed:true, e:"左60×5＝300、右24×12＝288。左が下がります。"},
+      {q:"左5cmに60g、右12cmに24gのねん土をつるして左が下がった。ねん土の下に何gのおもりをつるせばつり合う？", c:["1g","12g","5g","2g"], a:0, n:"1", e:"右を300にするには、300÷12＝25g。ねん土24gにあと1gです。"}
+    ]},
+  { id:"s3", name:"組み合わせの塔", note:"てんびんの組み合わせ・支点がはしにあるてんびん・重心（発展）",
+    wild:["tsuriain","jushin","kyorin","omorin"],
+    qs:[
+      {q:"てんびん1：左60cmにおもりA、右30cmに200gをつるすとつり合った。Aは何g？", c:["100g","200g","400g","60g"], a:0, n:"100", e:"200×30＝6000。A×60＝6000なのでA＝100g。"},
+      {q:"100gと200gのおもりでつり合っているてんびん1を、上のてんびんの点Bにつるした。点Bにかかる下向きの力は？", c:["300g","200g","100g","600g"], a:0, n:"300", e:"力のつり合いから、100＋200＝300g。"},
+      {q:"てんびん2：左20cmに300gのてんびん、右60cmにおもりCをつるすとつり合った。Cは何g？", c:["100g","300g","900g","60g"], a:0, n:"100", e:"300×20＝6000。C×60＝6000なのでC＝100g。"},
+      {q:"300gのてんびんと100gのおもりCがつるされた上のてんびんを、ばねばかりでつるした。ばねばかりの値は？", c:["400g","300g","200g","100g"], a:0, n:"400", e:"300＋100＝400g。"},
+      {q:"3本のぼうでつり合っている。左下のぼうは、左16cmに24g、右4cmに①gをつるしてつり合った。①は何g？", c:["96g","24g","64g","6g"], a:0, n:"96", e:"24×16＝384。①×4＝384なので96g。"},
+      {q:"右下のぼうは、左②cmに36g、右12cmに24gをつるしてつり合った。②はいくつ？", c:["8","12","6","16"], a:0, n:"8", e:"24×12＝288。36×②＝288なので②＝8cm。"},
+      {q:"上のぼうに、左10cmに120g（左下のぼう全体）、右③cmに60g（右下のぼう全体）がかかってつり合った。③はいくつ？", c:["20","10","5","30"], a:0, n:"20", e:"120×10＝1200。60×③＝1200なので③＝20cm。"},
+      {q:"左はしに支点があるぼうで、支点から3の位置に40g、6の位置（右はし）をばねばかりでつるすとつり合った。ばねばかりの値は？", c:["20g","40g","80g","120g"], a:0, n:"20", e:"40×3＝120。ばねばかりの力×6＝120なので20g。"},
+      {q:"左はしの支点、3の位置に40g、右はしのばねばかりが20gでつり合っている。支点がぼうを上向きに支える力は？", c:["20g","40g","60g","0g"], a:0, n:"20", e:"力のつり合いから、下向き40gのうち、ばねばかりが20g、支点が40−20＝20gを支えています。"},
+      {q:"左はしを支点にし、右はし（支点から20cm）をばねばかりでつるし、支点から6cmにXをつるした。ばねばかりは150g。Xは何g？", c:["500g","150g","300g","450g"], a:0, n:"500", e:"150×20＝3000。X×6＝3000なのでX＝500g。"},
+      {q:"ぼうの重さを無視しないとき、ぼうの重さが集まっていると考えられる点を何という？", c:["重心","支点","震源","中心点"], a:0, e:"この点を重心といいます。重心を支えるとぼうはつり合います。"},
+      {q:"太さが一様なぼうの重心はどこにある？", c:["ぼうの真ん中","太いほうのはし","細いほうのはし","ぼうの外"], a:0, e:"太さが一様なぼうの重心は真ん中にあります。太さが一様でないぼうは太いほうに重心があります。"},
+      {q:"支点を重心からずらしてぼうを支えると、どうなる？", c:["重心があるほうが下がる","重心がないほうが下がる","つり合ったまま","ぼうが上がる"], a:0, e:"ぼうはつり合わなくなり、重心があるほうが下がります。"}
+    ]}
+  ]
+},
+{
+  id:"rika-17", no:17, title:"ばね", subject:"理科", added:"2026-11-05", release:"2026-11-24",
+  region:"びよよんの谷",
+  legend:"springer",
+  monsters:{
+    baneko:{arch:"fox", type:"denki", type2:"kaze", color:"#ffd23f", accent:"#7a8a9a", skill:"luck", forms:[{n:"バネコ"},{n:"バネギツネ",lv:8}], dex:"しっぽがばねのキツネ。引っぱるともとにもどろうとする。"},
+    nobiru:{arch:"serpent", type:"kaze", type2:"denki", color:"#9c8cff", accent:"#ffffff", skill:"hint", forms:[{n:"ノビール"},{n:"ノビロン",lv:9}], dex:"重さが2倍になると、体のびも2倍になるへび。"},
+    danseisu:{arch:"slime", type:"mizu", type2:"denki", color:"#7cc8ff", accent:"#ffd23f", skill:"heal", forms:[{n:"ダンセイン"},{n:"ダンセイスライム",lv:9}], dex:"おしてもすぐもとにもどる、だん性のかたまり。"},
+    hireibird:{arch:"bird", type:"hikari", type2:"kaze", color:"#ffe9f6", accent:"#3d8bff", skill:"luck", forms:[{n:"ヒレイル"},{n:"ヒレイバード",lv:10}], dex:"まっすぐなグラフの線をえがいて飛ぶ鳥。比例の関係が大すき。"},
+    shizencho:{arch:"turtle", type:"iwa", type2:"denki", color:"#a0784b", accent:"#c9d3e0", skill:"power", forms:[{n:"シゼンチョウ"},{n:"シゼンチョウガメ",lv:10}], dex:"何もつるさないときの長さ（もとの長さ・自然長）をいつもおぼえているカメ。"},
+    kasshan:{arch:"golem", body:"cube", type:"iwa", type2:"denki", color:"#c9d3e0", accent:"#ff7a2f", skill:"power", forms:[{n:"カッシャン"},{n:"カッシャロボ",lv:10}], dex:"かっ車の車輪をもつゴーレム。両はしに30gをつるしても、ばねにかかる力は30g。"},
+    tatebane:{arch:"bat", type:"kaze", type2:"denki", color:"#d9d2ff", accent:"#24324a", skill:"hint", forms:[{n:"タテバネ"},{n:"タテバネバット",lv:11}], dex:"ばねをたてに2本つないだ体。全体ののびは1本のときの2倍。"},
+    yokobane:{arch:"beetle", type:"kusa", type2:"denki", color:"#7ccf5a", accent:"#ffd23f", skill:"heal", forms:[{n:"ヨコバネ"},{n:"ヨコバネカブト",lv:11}], dex:"ばねを横に2本ならべたツノ。1本にかかる重さは半分になる。"},
+    springer:{arch:"dragon", type:"denki", type2:"kaze", color:"#ffd23f", accent:"#7cc8ff", skill:"power", legend:true, parts:{horn:"twin", pat:"zigzag"}, forms:[{n:"スプリンガー"}], dex:"びよよんの谷のでんせつのドラゴン。ばねのような体で、どんな重さでものびの長さで当ててしまう。"}
+  },
+  stages:[
+  { id:"s1", name:"のびる草原", note:"だん性・のびと重さ・比例・もとの長さ",
+    wild:["baneko","nobiru","danseisu"],
+    qs:[
+      {q:"ばねがもとにもどろうとする性質を何という？", c:["だん性","比例","重心","ねばりけ"], a:0, e:"ばねの、もとにもどろうとする性質をだん性といいます。"},
+      {q:"10gのおもりをつるすと3cmのびるばねに、20gのおもりをつるすと何cmのびる？", c:["6cm","3cm","9cm","13cm"], a:0, n:"6", e:"重さが2倍になると、のびも2倍。3×2＝6cm。"},
+      {q:"おもりの重さを2倍、3倍にすると、ばねののびも2倍、3倍になる。この関係を何という？", c:["比例","反比例","だん性","つり合い"], a:0, e:"このような関係を比例といいます。"},
+      {q:"ばねにかかる重さが2倍になると、ばねののびは何倍になる？", c:["2倍","4倍","半分","変わらない"], a:0, n:"2", e:"ばねののびは重さに比例します。"},
+      {q:"ばね全体の長さを表す式として正しいものは？", c:["もとの長さ＋ばねののび","もとの長さ−ばねののび","ばねののび×2","もとの長さ×ばねののび"], a:0, e:"ばね全体の長さ＝もとの長さ（自然長）＋ばねののび。"},
+      {q:"おもりの重さを2倍にすると、ばね全体の長さはどうなる？", c:["2倍にはならない","ちょうど2倍になる","半分になる","変わらない"], a:0, fixed:true, e:"のびは2倍になりますが、もとの長さがあるので、全体の長さは2倍にはなりません。"},
+      {q:"何もつるさないとき10cmのばねに、20gをつるすと13cmになった。このときのばねののびは？", c:["3cm","13cm","10cm","23cm"], a:0, n:"3", e:"13−10＝3cm。"},
+      {q:"何もつるさないとき15cm、10gをつるすと17cmになるばねがある。このばねの長さが29cmになるのは何gのとき？", c:["70g","29g","140g","14g"], a:0, n:"70", e:"10gで2cmのびる。のびは29−15＝14cmで、14÷2＝7倍。10×7＝70g。"},
+      {q:"10gで2cmのびるばねに60gをつるすと何cmのびる？", c:["12cm","6cm","10cm","30cm"], a:0, n:"12", e:"2×6＝12cm。"},
+      {q:"10gで2cmのびるばねが6cmのびた。つるしたおもりは何g？", c:["30g","20g","60g","12g"], a:0, n:"30", e:"6÷2＝3倍なので、10×3＝30g。"},
+      {q:"表から、このばねのもとの長さは何cm？", c:["15cm","16cm","10cm","1cm"], a:0, n:"15", table:[["おもりの重さ(g)","0","10","20","40","60"],["ばね全体の長さ(cm)","15","16","17","19","21"]], e:"0gのときの長さがもとの長さです。"},
+      {q:"0gで15cm、10gで16cmになるばねの長さが19cmになるのは、何gのおもりをつるしたとき？", c:["40g","19g","30g","4g"], a:0, n:"40", e:"10gで1cmのびる。のびは19−15＝4cmなので40g。"}
+    ]},
+  { id:"s2", name:"グラフの丘", note:"グラフと表からばねの長さを求める",
+    wild:["hireibird","shizencho","nobiru"],
+    qs:[
+      {q:"グラフで、0gのとき10cm、10gのとき14cmのばねがある。何もつるさないときのばね全体の長さは？", c:["10cm","14cm","4cm","0cm"], a:0, n:"10", e:"おもりが0gのときの長さが、もとの長さです。"},
+      {q:"0gで10cm、10gで14cmのばねは、10gのおもりで何cmのびる？", c:["4cm","14cm","10cm","24cm"], a:0, n:"4", e:"14−10＝4cm。"},
+      {q:"10gで4cmのびる、もとの長さ10cmのばねに70gをつるした。ばねののびは？", c:["28cm","38cm","70cm","14cm"], a:0, n:"28", e:"4×7＝28cm。"},
+      {q:"10gで4cmのびる、もとの長さ10cmのばねに70gをつるした。ばね全体の長さは？", c:["38cm","28cm","48cm","74cm"], a:0, n:"38", e:"10＋28＝38cm。"},
+      {q:"10gで4cmのびる、もとの長さ10cmのばねの全体の長さが26cmになった。つるしたおもりは何g？", c:["40g","26g","16g","65g"], a:0, n:"40", e:"のびは26−10＝16cm。16÷4＝4倍なので40g。"},
+      {q:"ばねaは10gで12cm、20gで14cm、30gで16cm。加わる重さが10gふえると、のびは何cmふえる？", c:["2cm","12cm","4cm","1cm"], a:0, n:"2", e:"10gごとに2cmずつ長くなっています。"},
+      {q:"10gで12cm、20gで14cmになるばねaに、何もつるさないときの長さは？", c:["10cm","12cm","8cm","2cm"], a:0, n:"10", e:"10gで2cmのびるので、12−2＝10cm。"},
+      {q:"ばねbは10gで18cm、20gで21cm、30gで24cm。何もつるさないときのばねbの長さは？", c:["15cm","18cm","3cm","12cm"], a:0, n:"15", e:"10gで3cmのびるので、18−3＝15cm。"},
+      {q:"もとの長さ15cm、10gで3cmのびるばねbの長さが39cmになった。つるしたおもりは何g？", c:["80g","39g","24g","130g"], a:0, n:"80", e:"のびは39−15＝24cm。24÷3＝8倍なので80g。"},
+      {q:"同じ重さのおもりをつるしたとき、のびがいちばん大きいばねは、グラフでどんな線？", c:["かたむきがいちばん急な線","かたむきがいちばんゆるやかな線","0gのときの長さがいちばん長い線","水平な線"], a:0, e:"かたむきが急なばねほど、同じ重さでよくのびます。"},
+      {q:"ばねを1cmのばすのに必要な力がいちばん大きいばねは、グラフでどんな線？", c:["かたむきがいちばんゆるやかな線","かたむきがいちばん急な線","0gのときの長さがいちばん短い線","とちゅうで曲がる線"], a:0, e:"のびにくいばねほど、グラフのかたむきはゆるやかです。"}
+    ]},
+  { id:"s3", name:"つなぎ方の迷宮", note:"たて・横につなぐ・てんびんとの組み合わせ・かっ車（発展）",
+    wild:["tatebane","yokobane","kasshan","shizencho"],
+    qs:[
+      {q:"10gで1cmのびる同じばね2本をたてにつなぎ、下に30gをつるした。2本のばねののびの合計は？", c:["6cm","3cm","1.5cm","9cm"], a:0, n:"6", e:"たてにつなぐと、どちらのばねにも30gがかかります。1本3cmで合計6cm。"},
+      {q:"同じばねを2本たてにつなぐと、全体ののびは1本のときの何倍？", c:["2倍","半分","同じ","4倍"], a:0, e:"どのばねにも同じ重さがかかるので、全体ののびは2倍、3本なら3倍です。"},
+      {q:"1本のばねを切って長さを半分にすると、同じおもりをつるしたときののびは？", c:["もとの長さのときの半分","2倍","変わらない","4倍"], a:0, e:"長さが半分のばねは、のびも半分になります。"},
+      {q:"10gで1cmのびる同じばね2本を横にならべて軽いぼうをつるし、ぼうの中央に60gをつるした。ばね1本ののびは？", c:["3cm","6cm","1.5cm","12cm"], a:0, n:"3", e:"横にならべると重さは半分ずつ。1本に30gなので3cm。"},
+      {q:"中心をつるしたぼうの左12cmに60g、右9cmにばねをつけて手で引くとつり合った。手が引く力は何g？", c:["80g","60g","45g","720g"], a:0, n:"80", e:"60×12＝720。力×9＝720なので80g。"},
+      {q:"中心をつるしたぼうの左12cmに60g、右9cmのばねを80gの力で引いてつり合った。ばねばかりの値は？", c:["140g","80g","60g","20g"], a:0, n:"140", e:"下向きの力の合計は60＋80＝140g。"},
+      {q:"ばねAとばねBの間に20g、ばねBの下に30gのおもりをつるした。ばねAにかかる重さは？", c:["50g","20g","30g","10g"], a:0, n:"50", e:"ばねAには、その下のおもりの合計20＋30＝50gがかかります。ばねBには30gです。"},
+      {q:"かっ車を使って、ばねの両はしに30gずつおもりをつるした。ばねにかかる力は？", c:["30g","60g","15g","0g"], a:0, n:"30", e:"両はしに30gずつでも、ばねにかかる力は30gです。"},
+      {q:"もとの長さ10cm、30gで2cmのびるばねAを2本たてにつなぎ、間に90gをつるした。上のばねAの長さは18cm。上のばねAにかかる重さは？", c:["120g","90g","30g","180g"], a:0, n:"120", e:"のびは18−10＝8cm。30gで2cmなので、30×8÷2＝120g。"},
+      {q:"上のばねAに120g、ばねの間に90gのおもりがある。下のおもりXは何g？", c:["30g","120g","90g","210g"], a:0, n:"30", e:"上のばねには下のおもりの合計がかかるので、120−90＝30g。"},
+      {q:"もとの長さ20cm、2gで1cmのびるばねaを2本たてにつなぎ、6gをつるした。2本の全体の長さは？", c:["46cm","43cm","26cm","40cm"], a:0, n:"46", e:"どちらのばねにも6gがかかり、1本3cmのびて23cm。23×2＝46cm。"},
+      {q:"もとの長さ20cm、3gで2cmのびるばねbを2本横にならべ、12gをつるした。ばねb1本の長さは？", c:["24cm","28cm","22cm","26cm"], a:0, n:"24", e:"1本に6gがかかり、のびは4cm。20＋4＝24cm。"},
+      {q:"10gで3cmのびる、もとの長さ10cmのばねの両はしに、かっ車で40gずつつるした。ばね全体の長さは？", c:["22cm","34cm","12cm","24cm"], a:0, n:"22", e:"ばねにかかる力は40g。のびは12cmで、10＋12＝22cm。"}
+    ]}
+  ]
+},
+{
+  id:"rika-18", no:18, title:"第16回〜第17回のまとめ", subject:"理科", added:"2026-11-05", release:"2026-12-01",
+  region:"ちからの神殿",
+  legend:"forcedrago",
+  monsters:{
+    tsuribane:{arch:"jelly", type:"denki", type2:"hikari", color:"#ffe066", accent:"#24324a", skill:"hint", forms:[{n:"ツリバネ"},{n:"ツリバネクラゲ",lv:10}], dex:"ばねの足でぶら下がるクラゲ。てことばねの両方の計算がとくい。"},
+    saraha:{arch:"turtle", type:"iwa", type2:"kaze", color:"#c9d3e0", accent:"#ffcf3a", skill:"heal", forms:[{n:"サラハカリ"},{n:"サラテンビン",lv:10}], dex:"こうらの左右に皿があるカメ。ねん土の形を変えても、重さは変わらないことを知っている。"},
+    nendomaru:{arch:"slime", type:"iwa", type2:"kusa", color:"#d9a07a", accent:"#7ccf5a", skill:"power", forms:[{n:"ネンドマル"},{n:"ネンドマルス",lv:10}], dex:"まるめても細くのばしても重さが同じ、ねん土のスライム。"},
+    monosashin:{arch:"serpent", type:"hikari", type2:"denki", color:"#fff3b0", accent:"#e8475a", skill:"luck", forms:[{n:"モノサシン"},{n:"モノサシドラ",lv:11}], dex:"体がものさしのへび。ばねの下のはしの位置を0cmから読み取る。"},
+    goukein:{arch:"golem", type:"iwa", type2:"denki", color:"#a0a8b8", accent:"#ffd23f", skill:"power", forms:[{n:"ゴウケイン"},{n:"ゴウケイオー",lv:11}], dex:"上向きの力の合計と下向きの力の合計を、いつも同じにしているゴーレム。"},
+    forcedrago:{arch:"dragon", type:"iwa", type2:"denki", color:"#5c7fc4", accent:"#ffd23f", skill:"power", legend:true, parts:{horn:"crown", pat:"stripes", acc:"gem", accColor:"#ffd23f"}, forms:[{n:"フォースドラゴ"}], dex:"ちからの神殿のでんせつのドラゴン。てことばねの力をあやつり、重さとのびを自由に変える。"}
+  },
+  stages:[
+  { id:"s1", name:"てこの回ろう", note:"てこ・てんびんのまとめ",
+    wild:["saraha","nendomaru","goukein"],
+    qs:[
+      {q:"長さ60cmのぼうの真ん中をばねばかりでつるし、左20cmに60g、右15cmに□gをつるすとつり合った。□は何g？", c:["80g","60g","45g","120g"], a:0, n:"80", e:"60×20＝1200。□×15＝1200なので80g。"},
+      {q:"ぼうの真ん中をばねばかりでつるし、左20cmに60g、右15cmに80gをつるしてつり合った。ばねばかりの値は？", c:["140g","80g","60g","20g"], a:0, n:"140", e:"60＋80＝140g。"},
+      {q:"ぼうの真ん中を糸でつるし、右20cmに40g、左10cmに55g、さらにその□cm左に10gをつるすとつり合った。□はいくつ？", c:["15","10","20","25"], a:0, n:"15", e:"右40×20＝800。左55×10＝550なので、10gのおもりの「重さ×きょり」は250。きょりは25cmで、□＝25−10＝15cm。"},
+      {q:"左右20cmの位置に皿をつるしたぼうで、左の皿に100gのねん土をのせるとつり合った。右の皿の食塩は何g？", c:["100g","50g","200g","20g"], a:0, n:"100", e:"きょりが同じなので、重さも同じ100gです。"},
+      {q:"左の皿の100gのねん土をこのように変えた。つり合わなくなるのはどれ？", c:["3つに分けて、そのうち2つだけを皿にのせる","細くのばして皿にのせる","皿のはしにのせる"], a:0, e:"形を変えても重さは変わりません。皿のつるす位置も同じなのでつり合います。量をへらすとつり合わなくなります。"},
+      {q:"左右20cmに皿をつるし、左の皿（100g）を支点から10cmの位置に動かした。ぼうはどちらにかたむく？", c:["右","左","かたむかない"], a:0, fixed:true, e:"左100×10＝1000、右100×20＝2000。右が下がります。"},
+      {q:"左の皿を10cmに動かして右（20cm、食塩100g）にかたむいた。皿の位置はそのままでつり合わせるには、右の食塩をどうする？", c:["50gへらす","20gへらす","20g加える","50g加える"], a:0, e:"左は1000なので、右の食塩×20＝1000で50g。100−50＝50gへらします。"},
+      {q:"真ん中をつるしたぼうの左10cmにねん土A、右12cmに20gをつるすとつり合った。ねん土Aは何g？", c:["24g","20g","10g","12g"], a:0, n:"24", e:"20×12＝240。A×10＝240なので24g。"},
+      {q:"左8cmにねん土B、右4cmにねん土Cをつるすとつり合った。重いのはどちら？", c:["C","B","同じ"], a:0, fixed:true, e:"B×8＝C×4なので、CはBの2倍の重さです。"},
+      {q:"左8cmにB・右4cmにCでつり合い、左6cmにB・右12cmにDでもつり合った。B〜Dで最も軽いのは？", c:["D","B","C"], a:0, fixed:true, e:"C＝Bの2倍、D＝Bの半分なので、いちばん軽いのはDです。"},
+      {q:"真ん中をつるしたぼうに、左14cmに10g、左8cmにねん土E、右10cmに30gをつるすとつり合った。Eは何g？", c:["20g","30g","10g","14g"], a:0, n:"20", e:"右30×10＝300。左10×14＝140なので、E×8＝160。E＝20g。"},
+      {q:"ばねばかりの値が50gで、左9cmに20g、右5cmに20g、右にねん土Fをつるしてつり合った。ねん土Fは何g？", c:["10g","20g","30g","50g"], a:0, n:"10", e:"上向き50g＝下向きの合計なので、F＝50−20−20＝10g。"},
+      {q:"左9cmに20g、右5cmに20g、右にねん土F（10g）をつるしてつり合った。Fは20gのおもりからさらに何cm右？", c:["3","5","8","4"], a:0, n:"3", e:"左20×9＝180、右20×5＝100なので、F×きょり＝80。10×8＝80で、支点から8cm。8−5＝3cm。"}
+    ]},
+  { id:"s2", name:"ばねの回ろう", note:"ばねのまとめ",
+    wild:["tsuribane","monosashin","goukein"],
+    qs:[
+      {q:"もとの長さ15cm、10gで3cmのびるばねに60gをつるした。ばねののびは？", c:["18cm","33cm","6cm","20cm"], a:0, n:"18", e:"3×6＝18cm。"},
+      {q:"もとの長さ15cm、10gで3cmのびるばねに60gをつるした。ばね全体の長さは？", c:["33cm","18cm","45cm","21cm"], a:0, n:"33", e:"15＋18＝33cm。"},
+      {q:"もとの長さ15cm、10gで3cmのびるばねの長さが27cmになった。つるしたおもりは何g？", c:["40g","27g","12g","90g"], a:0, n:"40", e:"のびは27−15＝12cm。12÷3＝4倍なので40g。"},
+      {q:"ばねに30gの皿をつけると17cm、皿に20gのおもりAをのせると21cm。このばねは10gで何cmのびる？", c:["2cm","4cm","1cm","3cm"], a:0, n:"2", e:"20gで21−17＝4cmのびたので、10gで2cm。"},
+      {q:"30gの皿で17cm、10gで2cmのびるばね。何もつるさないときのばねの長さは？", c:["11cm","17cm","15cm","13cm"], a:0, n:"11", e:"30gで6cmのびているので、17−6＝11cm。"},
+      {q:"もとの長さ11cm、10gで2cmのびるばねに、30gの皿とおもりBをのせると33cmになった。Bは何g？", c:["80g","110g","30g","22g"], a:0, n:"80", e:"のびは33−11＝22cmで、110gぶん。皿30gを引いて80g。"},
+      {type:"match", q:"ばねのグラフのようすと、わかることを線でつなごう。", pairs:[["0gのときの長さがいちばん長い","もとの長さが最も長い"],["かたむきがいちばん急","同じ重さでのびが最も大きい"],["かたむきがいちばんゆるやか","1cmのばすのに必要な力が最も大きい"]],
+       e:"0gのときの長さはもとの長さ、かたむきが急なほどよくのびるばねです。"},
+      {q:"ばねAは10gで6cm、20gで9cm、30gで12cm（ものさしの目もり）。何もつるさないときのばねAの長さは？", c:["3cm","6cm","9cm","0cm"], a:0, n:"3", e:"10gで3cmのびるので、6−3＝3cm。"},
+      {q:"ばねBは10gで9cm、20gで13cm、30gで17cm。ばねBに30gをつるしたときののびは？", c:["12cm","17cm","4cm","13cm"], a:0, n:"12", e:"10gで4cmのびるので、もとの長さは5cm。30gでののびは17−5＝12cm。"},
+      {q:"もとの長さ3cm、10gで3cmのびるばねAを2本たてにつなぎ、全体の長さが12cmになった。つるしたおもりは何g？", c:["10g","20g","30g","40g"], a:0, n:"10", e:"1本6cmで、のびは3cm。どちらのばねにも同じ10gがかかるので、おもりは10g。"},
+      {q:"もとの長さ5cm、10gで4cmのびるばねBを2本横にならべておもりをつるすと、1本の長さが21cmになった。おもりは何g？", c:["80g","40g","160g","21g"], a:0, n:"80", e:"1本ののびは16cmで、40gぶん。2本なので40×2＝80g。"},
+      {q:"ぼうの真ん中をばねA（もとの長さ3cm、10gで3cmのびる）でつるし、左10cmに30g、右6cmにXをつるすとつり合った。Xは何g？", c:["50g","30g","18g","80g"], a:0, n:"50", e:"30×10＝300。X×6＝300なのでX＝50g。"},
+      {q:"ばねA（もとの長さ3cm、10gで3cmのびる）で30gと50gのおもりをつるしたぼうをつるした。ばねAの長さは？", c:["27cm","24cm","30cm","8cm"], a:0, n:"27", e:"ばねには80gがかかり、のびは24cm。3＋24＝27cm。"}
+    ]}
+  ]
+}
 
 /* ↑ 次の単元はこの下に { id:"rika-12", ... } を追加（既存の id は絶対に変えない） */
 ];
@@ -2116,6 +2378,10 @@ for(const [p,n,arch,type,color,accent,skill,parts,dex] of RARE_LIST)
 const RARE_ORDER = Object.keys(RARE);
 const SP = Object.assign({}, STARTERS, ...UNITS.map(u=>u.monsters));
 const DEX_ORDER = Object.keys(SP);
+/* 単元の公開日（v43）: release:"YYYY-MM-DD" がある単元は、その日（端末の日付）になるまで出さない。毎週1回分ずつ自動で開く */
+function unitOpen(u){ return !u || !u.release || today() >= u.release; }
+function monOpen(id){ const u=UNITS.find(x=>x.monsters && x.monsters[id]); return unitOpen(u); }
+const isNewUnit = u => !!u.release && unitOpen(u) && (Date.now()-new Date(u.release+"T00:00:00").getTime()) < 7*24*3600*1000;
 /* ============================================================
    追加モンスター（v31）：新しいタイプ（でんき・こおり・かぜ・ひかり）。各単元のルートに2ひきずつ
    - DEX_ORDER の最後に足す（今までの No. は変えない）。u.monsters と s.wild にも足す
@@ -2761,10 +3027,10 @@ function showStarter(){
 /* ---------- adventure map ---------- */
 let resetAsk=false;
 function showMap(){
-  const lead = save.party[0], caught = DEX_ORDER.filter(id=>save.owned[id]).length;
+  const lead = save.party[0], DEXO = DEX_ORDER.filter(monOpen), caught = DEXO.filter(id=>save.owned[id]).length;
   let h = `<div class="hero"><div class="sun"></div><div class="hill"></div><div class="hill2"></div><h1>理科クエスト</h1><p>正解してモンスターをなかまにしよう</p>
     <div class="mon lead">${artMine(lead)}</div>
-    <div class="stats"><span class="pill">${flaskSVG} フラスコ ×${save.balls}</span><span class="pill">ずかん ${caught} / ${DEX_ORDER.length}</span></div></div>`;
+    <div class="stats"><span class="pill">${flaskSVG} フラスコ ×${save.balls}</span><span class="pill">ずかん ${caught} / ${DEXO.length}</span></div></div>`;
   if(!STORE_OK || saveErr) h += `<div class="card bkcard warn"><b>この開き方では記録を保存できません</b><span>Safariの「プライベート」や、Cookieをすべてブロックする設定だと保存できないことがあります。バックアップコードで記録を守ってください。</span></div>`;
   h += '<!--BKTOP-->';
   const rg = grantRares(), mg = grantMegas(), ug = grantUR(), umg = grantUMegas(); if(rg.length||mg.length||ug.length||umg.length) h += `<div class="gets">${umg.map(umegaCard).join("")}${ug.map(urCard).join("")}${mg.map(megaCard).join("")}${rg.map(rareCard).join("")}</div>`;
@@ -2777,12 +3043,12 @@ function showMap(){
   else if(!save.owned.toratch) h += `<div class="card prof" style="opacity:.75"><div class="face">${profFace}</div><div><p>ソラノはかせ</p><p style="font-weight:500">ルート1をクリアしたら、プレゼントがあるよ。</p></div></div>`;
   const subjects=[...new Set(UNITS.map(u=>u.subject))];
   if(!subjects.includes(save.subj)) save.subj = (UNITS.find(u=>u.id===save.region)||UNITS[0]).subject;
-  const units = UNITS.filter(u=>u.subject===save.subj).sort((a,b)=>a.no-b.no);
+  const units = UNITS.filter(u=>u.subject===save.subj && unitOpen(u)).sort((a,b)=>a.no-b.no);
   if(!units.some(u=>u.id===save.region)) save.region = units[units.length-1].id;
   h += `<div class="subj">${subjects.map(sj=>`<button class="${sj===save.subj?'on':''}" data-sj="${sj}">${sj}</button>`).join("")}</div>`;
   h += `<div class="regions" id="regions">${units.map(u=>{
     const own = Object.keys(u.monsters).filter(k=>save.owned[k]).length;
-    return `<button class="card region ${u.id===save.region?'on':''}" data-r="${u.id}"><span class="rno">${u.label||`第${u.no}回`}</span><b>${esc(u.region)}</b><span class="rsub">${esc(u.title)}・なかま ${own}/${Object.keys(u.monsters).length}</span></button>`;}).join("")}</div>`;
+    return `<button class="card region ${u.id===save.region?'on':''}" data-r="${u.id}"><span class="rno">${u.label||`第${u.no}回`}${isNewUnit(u)?' <i class="newtag">NEW</i>':''}</span><b>${esc(u.region)}</b><span class="rsub">${esc(u.title)}・なかま ${own}/${Object.keys(u.monsters).length}</span></button>`;}).join("")}</div>`;
   for(const u of units.filter(x=>x.id===save.region)){
     const done = u.stages.filter(s=>save.cleared[u.id+"|"+s.id]).length, all = done===u.stages.length;
     h += `<section class="unit"><div class="unit-head"><span class="unit-no">${u.label||`第${u.no}回`}</span><h2>${esc(u.title)}</h2><span class="sub">${done}/${u.stages.length} クリア</span></div><div class="routes">`;
@@ -2939,11 +3205,12 @@ function typeChartHTML(){ return `<div class="tchart">${Object.entries(BEATS).ma
 let dexSel = null, dexCat = "main", dexGrp = "start", dexArea = 0;
 const RARE_AREAS = [["北海道・東北",0,7],["関東",7,14],["中部",14,23],["近畿",23,30],["中国・四国",30,39],["九州・沖縄",39,47]]; /* v38: ずかんは種類ボタン（dexCat）と単元ボタン（dexGrp）で切りかえ。くわしい説明はポップアップ */
 function showDex(){
-  const caught = DEX_ORDER.filter(id=>save.owned[id]).length, seen = DEX_ORDER.filter(id=>save.seen[id]).length;
+  const DEXO = DEX_ORDER.filter(monOpen), caught = DEXO.filter(id=>save.owned[id]).length, seen = DEXO.filter(id=>save.seen[id]).length;
+  const UMO = UMEGA_ORDER.filter(id=>unitOpen(UNITS.find(u=>u.id===UMEGA[id].unit))), MGO = MEGA_ORDER.filter(id=>!MEGA[id].where.unit || unitOpen(UNITS.find(u=>u.id===MEGA[id].where.unit)));
   const cnt = ids => `${ids.filter(id=>save.owned[id]).length}/${ids.length}`;
-  const CATS = [["main","ずかん",cnt(DEX_ORDER)],["rare","都道府県",cnt(RARE_ORDER)],["mega","メガ",cnt(MEGA_ORDER)],["umega","ウルトラメガ",cnt(UMEGA_ORDER)],["week","曜日",cnt(WEEK_ORDER)],["qd","ダンジョン",cnt(QD_ORDER)],["ur","ウルトラレア",cnt(UR_ORDER)]];
+  const CATS = [["main","ずかん",cnt(DEXO)],["rare","都道府県",cnt(RARE_ORDER)],["mega","メガ",cnt(MGO)],["umega","ウルトラメガ",cnt(UMO)],["week","曜日",cnt(WEEK_ORDER)],["qd","ダンジョン",cnt(QD_ORDER)],["ur","ウルトラレア",cnt(UR_ORDER)]];
   if(!CATS.some(c=>c[0]===dexCat)) dexCat="main";
-  let h = `<h2 class="sec-h">モンスターずかん</h2><p class="dexcount">つかまえた ${caught}・見つけた ${seen}・ぜんぶで ${DEX_ORDER.length}</p>`;
+  let h = `<h2 class="sec-h">モンスターずかん</h2><p class="dexcount">つかまえた ${caught}・見つけた ${seen}・ぜんぶで ${DEXO.length}</p>`;
   h += `<div class="dexcats">${CATS.map(([k,n,c])=>`<button class="${dexCat===k?'on':''}" data-cat="${k}">${n}<small>${c}</small></button>`).join("")}</div>`;
   if(dexSel && save.seen[dexSel]){
     const s=SP[dexSel], own=save.owned[dexSel];
@@ -2951,7 +3218,7 @@ function showDex(){
       <p>${own?esc(s.dex):'まだつかまえていない。つかまえると、くわしいことがわかるよ。'}</p>${own&&s.forms.length>1?`<p class="mini">しんか：${s.forms.map(f=>f.n+(f.lv?`（Lv.${f.lv}）`:'')).join(" → ")}</p>`:''}</div></div></div>`;
   }
   if(dexCat==="main"){
-  const GRPS = [["start","さいしょの4体",Object.keys(STARTERS)], ...UNITS.slice().sort((x,y)=>(x.subject>y.subject?1:x.subject<y.subject?-1:x.no-y.no)).map(u=>[u.id, unitLabel(u), DEX_ORDER.filter(id=>u.monsters[id])])];
+  const GRPS = [["start","さいしょの4体",Object.keys(STARTERS)], ...UNITS.filter(unitOpen).sort((x,y)=>(x.subject>y.subject?1:x.subject<y.subject?-1:x.no-y.no)).map(u=>[u.id, unitLabel(u), DEX_ORDER.filter(id=>u.monsters[id])])];
   if(!GRPS.some(g=>g[0]===dexGrp)) dexGrp="start";
   h += `<div class="dexgrps">${GRPS.map(([k,n,ids])=>`<button class="${dexGrp===k?'on':''}" data-grp="${k}">${esc(n)}<small>${cnt(ids)}</small></button>`).join("")}</div>`;
   const G = GRPS.find(g=>g[0]===dexGrp), U = UNITS.find(u=>u.id===dexGrp);
@@ -2964,8 +3231,8 @@ function showDex(){
   }).join("")}</div>`;
   }
   if(dexCat==="ur") h += `<h2 class="sec-h" style="margin-top:14px">ウルトラレア</h2><p class="dexcount">算数4「ぶんすうの城」の分数カードを全部★3にすると…</p><div class="grid3 dexgrid">${UR_ORDER.map(id=>save.owned[id]?`<button class="card mcard urcell" data-id="${id}"><span class="no">ウルトラレア</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typesChip(id)}</button>`:`<div class="card mcard unseen"><span class="no">ウルトラレア</span><div class="mon">${art(id,1,{sil:true})}</div><b>？？？</b></div>`).join("")}</div>`;
-  const uc = UMEGA_ORDER.filter(id=>save.owned[id]).length, wc = WEEK_ORDER.filter(id=>save.owned[id]).length;
-  if(dexCat==="umega") h += `<h2 class="sec-h" style="margin-top:14px">ウルトラメガモンスター</h2><p class="dexcount">なかまにした ${uc} / ${UMEGA_ORDER.length}　（単元のルートとでんせつを全部クリアして、ニガテの森を0問にすると手に入る）</p><div class="grid3 dexgrid">${UMEGA_ORDER.map(id=>{ const lb=unitLabel(UNITS.find(u=>u.id===UMEGA[id].unit));
+  const uc = UMO.filter(id=>save.owned[id]).length, wc = WEEK_ORDER.filter(id=>save.owned[id]).length;
+  if(dexCat==="umega") h += `<h2 class="sec-h" style="margin-top:14px">ウルトラメガモンスター</h2><p class="dexcount">なかまにした ${uc} / ${UMO.length}　（単元のルートとでんせつを全部クリアして、ニガテの森を0問にすると手に入る）</p><div class="grid3 dexgrid">${UMO.map(id=>{ const lb=unitLabel(UNITS.find(u=>u.id===UMEGA[id].unit));
     return save.owned[id]?`<button class="card mcard urcell" data-id="${id}"><span class="no">${esc(lb)}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typesChip(id)}</button>`:`<div class="card mcard unseen"><span class="no">${esc(lb)}</span><div class="mon">${art(id,1,{sil:true})}</div><b>？？？</b></div>`; }).join("")}</div>`;
   if(dexCat==="week") h += `<h2 class="sec-h" style="margin-top:14px">曜日のモンスター</h2><p class="dexcount">なかまにした ${wc} / 7　（その曜日だけ、ぼうけん・ダンジョンで出やすい）</p><div class="grid3 dexgrid">${WEEK_ORDER.map(id=>{ const lb=WDAY[SP[id].day]+"曜日";
     if(save.owned[id]) return `<button class="card mcard rarecell" data-id="${id}"><span class="no">${lb}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typesChip(id)}</button>`;
@@ -2979,8 +3246,8 @@ function showDex(){
   if(dexCat==="qd") h += `<h2 class="sec-h" style="margin-top:14px">クイズダンジョンのモンスター</h2><p class="dexcount">なかまにした ${qc} / ${QD_ORDER.length}　（ドラゴン：フロアを全部マスター／たまご：毎日のたんけん）</p><div class="grid3 dexgrid">${QD_ORDER.map(id=>{ const lb=SP[id].qd?QD_FLOORS.find(f=>f.dragon===id).lb:'たまご';
     if(!save.owned[id]) return `<div class="card mcard unseen"><span class="no">${lb}</span><div class="mon">${art(id,1,{sil:true})}</div><b>？？？</b></div>`;
     return `<button class="card mcard ${SP[id].qd?'rarecell':''}" data-id="${id}"><span class="no">${lb}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typesChip(id)}</button>`; }).join("")}</div>`;
-  const mc = MEGA_ORDER.filter(id=>save.owned[id]).length;
-  if(dexCat==="mega") h += `<h2 class="sec-h" style="margin-top:14px">メガモンスター</h2><p class="dexcount">なかまにした ${mc} / ${MEGA_ORDER.length}　（ニガテの森・ダンジョンのニガテを克服すると手に入る）</p><div class="grid3 dexgrid">${MEGA_ORDER.map(id=>{ const w=MEGA[id].where, lb=w.unit?((u=>u.label||(u.subject+"第"+u.no+"回"))(UNITS.find(u=>u.id===w.unit))):("ダンジョン"+QD_FLOORS.find(f=>f.id===w.floor).lb);
+  const mc = MGO.filter(id=>save.owned[id]).length;
+  if(dexCat==="mega") h += `<h2 class="sec-h" style="margin-top:14px">メガモンスター</h2><p class="dexcount">なかまにした ${mc} / ${MGO.length}　（ニガテの森・ダンジョンのニガテを克服すると手に入る）</p><div class="grid3 dexgrid">${MGO.map(id=>{ const w=MEGA[id].where, lb=w.unit?((u=>u.label||(u.subject+"第"+u.no+"回"))(UNITS.find(u=>u.id===w.unit))):("ダンジョン"+QD_FLOORS.find(f=>f.id===w.floor).lb);
     if(!save.owned[id]) return `<div class="card mcard unseen"><span class="no">${lb}</span><div class="mon">${art(id,1,{sil:true})}</div><b>？？？</b></div>`;
     return `<button class="card mcard rarecell" data-id="${id}"><span class="no">${lb}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typesChip(id)}</button>`; }).join("")}</div>`;
   const y = window.scrollY;
@@ -3188,8 +3455,8 @@ function showHatch(){
 
 /* ---------- ダンジョンのバトル ---------- */
 const QD_POOL = {
-  "理科": UNITS.filter(u=>u.subject==="理科").flatMap(u=>Object.keys(u.monsters).filter(k=>k!==u.legend)),
-  "社会": UNITS.filter(u=>u.subject==="社会").flatMap(u=>Object.keys(u.monsters).filter(k=>k!==u.legend))
+  "理科": UNITS.filter(u=>u.subject==="理科" && unitOpen(u)).flatMap(u=>Object.keys(u.monsters).filter(k=>k!==u.legend)),
+  "社会": UNITS.filter(u=>u.subject==="社会" && unitOpen(u)).flatMap(u=>Object.keys(u.monsters).filter(k=>k!==u.legend))
 };
 function towerNext(){
   const keys=Object.entries(qdS().m).filter(([k,r])=>r.lv>=3 && QD_Q[k]).map(([k])=>k);
@@ -3653,7 +3920,7 @@ const dexDoneCard = uid => { const u=UNITS.find(x=>x.id===uid); return `<div cla
 const SMV = {};
 const UNIT_SM = {"rika-11":["とけかたスプラッシュ","mizu"],"rika-12":["けっしょうレイン","koori"],"shakai-11":["いなほスラッシュ","kusa"],"sansu-1":["パイサークル","hikari"],
   "sansu-2":["プライムアロー","iwa"],"sansu-3":["バイバイボム","denki"],"shakai-12":["かんしょパワー","hono"],"sansu-4":["ぶんすうカッター","kaze"],
-  "shakai-6":["アルプスおろし","kaze"],"rika-13":["ふゆごもりブリザード","koori"],"rika-14":["マグマバースト","hono"],"shakai-7":["みやこのいかずち","denki"],"shakai-mark":["マークシュート","iwa"],"shakai-13":["ベジタブルストーム","kusa"]};
+  "shakai-6":["アルプスおろし","kaze"],"rika-13":["ふゆごもりブリザード","koori"],"rika-14":["マグマバースト","hono"],"rika-15":["ふりかえりフラッシュ","hikari"],"rika-16":["バランスブレイク","iwa"],"rika-17":["スプリングショット","denki"],"rika-18":["フォースクラッシュ","iwa"],"shakai-7":["みやこのいかずち","denki"],"shakai-mark":["マークシュート","iwa"],"shakai-13":["ベジタブルストーム","kusa"]};
 for(const u of UNITS){ const [n,t] = UNIT_SM[u.id] || [`${u.title}のちから`, (SP[u.legend]||{}).type||"hikari"]; SMV["u_"+u.id] = {n, t, src:`${unitLabel(u)}「${u.title}」のルートとでんせつを全部クリア`}; }
 const STAMP_SM = [[5,"ミッションスター","hikari"],[10,"がんばりストライク","hono"],[20,"まいにちメテオ","iwa"],[30,"レジェンドウィング","kaze"]];
 for(const [n,nm,t] of STAMP_SM) SMV["st_"+n] = {n:nm, t, src:`毎日のミッションを全部クリアした日が ${n}日`};
@@ -3700,8 +3967,8 @@ function missionHTML(){
     return `<div class="misrow ${dn?'done':''}"><span class="misck">${dn?'✓':''}</span><div><b>${esc(x[1])}</b><div class="bar hpbar"><i style="width:${p/x[3]*100}%"></i></div></div><span class="mini">${p}/${x[3]}</span></div>`; }).join("")}
     <p class="mini" style="margin:6px 0 0">1つクリアでフラスコ+3、3つ全部でスタンプ1こ。スタンプ ${st}こ${nx?`（あと${nx[0]-st}こでとくべつわざ「${esc(nx[1])}」）`:''}</p></div>`;
   const d=save.umis||{};
-  h+=`<details class="card mispanel" style="margin-top:10px"><summary><b>単元のミッション</b> <span class="mini">${Object.keys(d).length} / ${UNITS.length*UNIT_MIS.length}（1つでフラスコ+5・わざのちからアップ+1）</span></summary>${UNITS.map(u=>`<div class="umrow"><span>${esc(unitLabel(u))}「${esc(u.title)}」</span><span>${UNIT_MIS.map(([mid,txt])=>`<i class="${d[u.id+"|"+mid]?'on':''}" title="${esc(txt)}">${mid==="star3"?'★3':mid==="boss3"?'でんせつ':'ずかん'}</i>`).join("")}</span></div>`).join("")}</details>`;
-  const sm=smS(), keys=Object.keys(SMV);
+  h+=`<details class="card mispanel" style="margin-top:10px"><summary><b>単元のミッション</b> <span class="mini">${Object.keys(d).length} / ${UNITS.length*UNIT_MIS.length}（1つでフラスコ+5・わざのちからアップ+1）</span></summary>${UNITS.filter(unitOpen).map(u=>`<div class="umrow"><span>${esc(unitLabel(u))}「${esc(u.title)}」</span><span>${UNIT_MIS.map(([mid,txt])=>`<i class="${d[u.id+"|"+mid]?'on':''}" title="${esc(txt)}">${mid==="star3"?'★3':mid==="boss3"?'でんせつ':'ずかん'}</i>`).join("")}</span></div>`).join("")}</details>`;
+  const sm=smS(), keys=Object.keys(SMV).filter(k=>!k.startsWith("u_") || unitOpen(UNITS.find(u=>"u_"+u.id===k)));
   h+=`<details class="card mispanel" style="margin-top:10px"><summary><b>とくべつわざ</b> <span class="mini">${Object.keys(sm).filter(k=>SMV[k]).length} / ${keys.length}</span></summary><div class="smlist">${keys.map(k=>`<div class="smrow ${sm[k]?'on':''}"><b>${sm[k]?esc(SMV[k].n):'？？？'}</b><span class="mini">${typeChip(SMV[k].t)} ${esc(SMV[k].src)}</span></div>`).join("")}</div></details>`;
   return h; }
 
@@ -3711,7 +3978,7 @@ const TRAINERS = ["たんけんたいのソラ","りかクラブのミナ","ち�
 function seededRand(n){ let a=n*9973+7; return ()=>{ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
 function trainerOf(r){
   const R=seededRand(r), nm = r<=TRAINERS.length ? TRAINERS[r-1] : `チャンピオンのアオイ（${r-TRAINERS.length+1}回目）`;
-  const pool=DEX_ORDER.filter(id=>!SP[id].legend), legends=UNITS.map(u=>u.legend).filter(Boolean), team=[];
+  const pool=DEX_ORDER.filter(id=>!SP[id].legend && monOpen(id)), legends=UNITS.filter(unitOpen).map(u=>u.legend).filter(Boolean), team=[];
   while(team.length<3){ const id=pool[Math.floor(R()*pool.length)]; if(!team.includes(id)) team.push(id); }
   if(r>=5) team[2]=legends[Math.floor(R()*legends.length)];
   return {r, nm, team, lv:Math.min(MAX_LV, Math.max(4+r*3, partyRef()+Math.floor(r/2))), idx:0};
@@ -3769,7 +4036,7 @@ function showPlaza(){
   const bg=save.badges||{};
   h+=`<h2 class="sec-h" style="margin-top:22px">バッジ</h2><p class="dexcount">あつめた ${Object.keys(bg).length} / ${BADGES.length}　（手に入れるとフラスコがもらえる）</p><div class="grid3">${BADGES.map(([id,n,d,r])=>`<div class="card mcard badge ${bg[id]?'on':''}"><div class="mon">${badgeSVG(!!bg[id])}</div><b>${esc(n)}</b><span class="mini">${esc(d)}</span><span class="mini">フラスコ +${r}</span></div>`).join("")}</div>`;
   const dd=save.dexDone||{};
-  h+=`<h2 class="sec-h" style="margin-top:22px">ずかんコンプリート</h2><p class="dexcount">単元のモンスターを全部なかまにすると、ふしぎなアメ×3・フラスコ +10</p><div class="card" style="padding:8px 12px">${UNITS.map(u=>{ const ids=Object.keys(u.monsters), own=ids.filter(id=>save.owned[id]).length; return `<div class="ddrow"><span>${esc(unitLabel(u))}「${esc(u.title)}」</span><b>${dd[u.id]?'コンプリート！':`${own} / ${ids.length}`}</b></div>`; }).join("")}</div>`;
+  h+=`<h2 class="sec-h" style="margin-top:22px">ずかんコンプリート</h2><p class="dexcount">単元のモンスターを全部なかまにすると、ふしぎなアメ×3・フラスコ +10</p><div class="card" style="padding:8px 12px">${UNITS.filter(unitOpen).map(u=>{ const ids=Object.keys(u.monsters), own=ids.filter(id=>save.owned[id]).length; return `<div class="ddrow"><span>${esc(unitLabel(u))}「${esc(u.title)}」</span><b>${dd[u.id]?'コンプリート！':`${own} / ${ids.length}`}</b></div>`; }).join("")}</div>`;
   app.innerHTML=h; shopMsg="";
   app.querySelectorAll("[data-buy]").forEach(b=>b.onclick=()=>{ const k=b.dataset.buy; if(buyItem(k)) shopMsg=`「${esc(ITEMS[k].n)}」を買った！`; const y=window.scrollY; showPlaza(); window.scrollTo(0,y); });
   const g=id=>document.getElementById(id);
@@ -4265,7 +4532,7 @@ function finish(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261105021147";
+const APP_VER="20261105023203";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
