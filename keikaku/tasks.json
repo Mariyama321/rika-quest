@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated": "2026-11-04T05:55+09:00",
+ "updated": "2026-11-06T05:54+09:00",
  "week": {
   "0": "テニス",
   "1": "",
@@ -113,58 +113,6 @@
    "assigned": "2026-10-27",
    "due": "2026-11-03",
    "suggest": "2026-11-01",
-   "doneInNotebook": false
-  },
-  {
-   "id": "h_rmvd9jjaq_20261028",
-   "kind": "habit",
-   "subj": "算数",
-   "src": "塾",
-   "title": "計算",
-   "lesson": "",
-   "detail": "",
-   "assigned": "2026-10-28",
-   "due": "",
-   "suggest": "2026-10-28",
-   "doneInNotebook": false
-  },
-  {
-   "id": "h_hmvd9w2ye_20261029",
-   "kind": "habit",
-   "subj": "国語",
-   "src": "学校",
-   "title": "学校の漢字",
-   "lesson": "",
-   "detail": "",
-   "assigned": "2026-10-29",
-   "due": "",
-   "suggest": "2026-10-29",
-   "doneInNotebook": false
-  },
-  {
-   "id": "h_hmvheencv_20261029",
-   "kind": "habit",
-   "subj": "理科",
-   "src": "学校",
-   "title": "理科ノート整理",
-   "lesson": "",
-   "detail": "",
-   "assigned": "2026-10-29",
-   "due": "",
-   "suggest": "2026-10-29",
-   "doneInNotebook": false
-  },
-  {
-   "id": "h_rmvd9jjaq_20261029",
-   "kind": "habit",
-   "subj": "算数",
-   "src": "塾",
-   "title": "計算",
-   "lesson": "",
-   "detail": "",
-   "assigned": "2026-10-29",
-   "due": "",
-   "suggest": "2026-10-29",
    "doneInNotebook": false
   },
   {
@@ -304,7 +252,7 @@
    "src": "塾",
    "title": "算数の宿題",
    "lesson": "4下第14回 展開図と見取図",
-   "detail": "4下第14回",
+   "detail": "ノートワーク\nトレーニング\n基本\n計日79~81\n＋αアタック対策6~9回基本",
    "assigned": "2026-11-03",
    "due": "2026-11-10",
    "suggest": "2026-11-07",
@@ -317,7 +265,7 @@
    "src": "塾",
    "title": "理科の宿題",
    "lesson": "4下第14回 火山・地震",
-   "detail": "",
+   "detail": "①ノートワーク\n②第14回トレーニング・基本問題\n③ポイント発見、リトライ",
    "assigned": "2026-11-03",
    "due": "2026-11-10",
    "suggest": "2026-11-08",
@@ -751,6 +699,71 @@
    "due": "",
    "suggest": "2026-11-18",
    "doneInNotebook": false
+  },
+  {
+   "id": "h_hmvd9w2ye_20261119",
+   "kind": "habit",
+   "subj": "国語",
+   "src": "学校",
+   "title": "学校の漢字",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-11-19",
+   "due": "",
+   "suggest": "2026-11-19",
+   "doneInNotebook": false
+  },
+  {
+   "id": "h_hmvheencv_20261119",
+   "kind": "habit",
+   "subj": "理科",
+   "src": "学校",
+   "title": "理科ノート整理",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-11-19",
+   "due": "",
+   "suggest": "2026-11-19",
+   "doneInNotebook": false
+  },
+  {
+   "id": "h_rmvd9jjaq_20261119",
+   "kind": "habit",
+   "subj": "算数",
+   "src": "塾",
+   "title": "計算",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-11-19",
+   "due": "",
+   "suggest": "2026-11-19",
+   "doneInNotebook": false
+  },
+  {
+   "id": "r_r3_20261120",
+   "kind": "hw",
+   "subj": "国語",
+   "src": "塾",
+   "title": "国語の宿題",
+   "lesson": "アタックテスト 6-10回",
+   "detail": "",
+   "assigned": "2026-11-20",
+   "due": "2026-11-27",
+   "suggest": "2026-11-23",
+   "doneInNotebook": false
+  },
+  {
+   "id": "r_r4_20261120",
+   "kind": "hw",
+   "subj": "社会",
+   "src": "塾",
+   "title": "社会の宿題",
+   "lesson": "アタックテスト 6-10回",
+   "detail": "",
+   "assigned": "2026-11-20",
+   "due": "2026-11-27",
+   "suggest": "2026-11-23",
+   "doneInNotebook": false
   }
  ],
  "tests": [
@@ -858,6 +871,16 @@
    "title": "塾",
    "due": "2027-01-02",
    "off": true
+  },
+  {
+   "title": "冬期講習",
+   "due": "2027-01-04",
+   "off": false
+  },
+  {
+   "title": "冬期講習",
+   "due": "2027-01-05",
+   "off": false
   }
  ]
 }
