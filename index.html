@@ -210,6 +210,9 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .shophead{display:flex;gap:10px;align-items:center;padding:8px 12px;flex-wrap:wrap}
 .shopmsg{font-weight:800;color:var(--good);margin:10px 0 0}
 .shopcat{font-size:16px;margin:14px 0 8px}
+.ptabs{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin:14px 0 10px;position:sticky;top:0;z-index:5;background:var(--bg);padding:6px 0}
+.ptabs button{border:2px solid var(--ink);border-radius:10px;background:var(--panel);padding:6px 2px;font-weight:800;font-size:11.5px;line-height:1.2}
+.ptabs button.on{background:var(--sun);box-shadow:0 2px 0 var(--ink)}
 .shopgrid{display:flex;flex-direction:column;gap:8px}
 .shopgrid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .sitem2{display:grid;grid-template-columns:32px 1fr;gap:4px 6px;align-items:center;padding:6px 8px;border-width:2px;box-shadow:0 3px 0 var(--ink)}
@@ -2789,7 +2792,9 @@ const need = lv => lv<=30 ? lv*12 : 360+(lv-30)*6;
 function partyRef(){ const ls=save.party.filter(id=>save.owned[id]).map(id=>save.owned[id].lv); return ls.length?Math.round(ls.reduce((a,b)=>a+b,0)/ls.length):1; }
 /* v39: 相手の強さはランダム。パーティ平均Lvの 0.6〜1.3倍（でんせつ・ボスは 0.8〜1.3倍＋2）。10%で「つよそうだ！」（1.3〜1.5倍・EXP1.5倍）。ルートの元のLvより下にはしない */
 const STRONG_RATE = 0.1;
+/* v45: ボス（でんせつのすみか・ダンジョンのボス）は、いつもパーティ平均Lvより少し上（平均×1.08〜1.2＋3。「つよそうだ！」なら×1.25〜1.35＋3）。ボスだけ Lv上限は MAX_LV */
 function enemyLv(base, boss){ const ref=partyRef(), r=Math.random();
+  if(boss){ const st=r<STRONG_RATE, k=st?1.25+Math.random()*.1:1.08+Math.random()*.12; return {lv:Math.min(MAX_LV, Math.max(base, Math.round(ref*k)+3)), strong:st}; }
   if(r<STRONG_RATE) return {lv:Math.min(WILD_MAX, Math.max(base+2, Math.round(ref*(1.3+Math.random()*.2)))), strong:true};
   const k = boss ? .8+Math.random()*.5 : .6+Math.random()*.7;
   return {lv:Math.min(WILD_MAX, Math.max(base, Math.round(ref*k)+(boss?2:0))), strong:false}; }
@@ -3521,12 +3526,13 @@ function showParty(){
   <p class="mini" style="margin:16px 0 8px">パーティ（3ひきまで）は黄色。タップしてえらぼう。</p>
   <div class="grid3">${ids.map(id=>`<button class="card mcard ${save.party.includes(id)?'inparty':''}" data-id="${id}"><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b><span class="mini">Lv.${save.owned[id].lv}</span>${canEvo(id)?'<span class="evotag">しんかOK</span>':''}</button>`).join("")}</div>
   <div class="card detail"><div class="row"><div class="mon">${artMine(d)}</div><div style="min-width:0"><h3>${esc(nameOf(d))}</h3><div>${typesChip(d)} <span class="mini">Lv.${dO.lv}</span></div><p class="mini">${SKILLS[SP[d].skill].n}：${SKILLS[SP[d].skill].d}</p><p class="mini">${dO.shinyWild?'<b>本物の色ちがい</b>（こうげき・HP 1.2倍）・':dO.shiny?'色ちがい（インク）・':''}さいだいHP ${maxHPOf(d)}・${sizeText(d)}</p></div></div>
-    <div class="mvlist">${movesOf(d).map(k=>{ const up=((dO.mvUp||{})[k]||0); return `<span class="mvchip mt-${moveType(d,k)||'none'}"><b>${esc(MOVES[k].n)}</b><small>${moveInfo(d,k)}</small>${(bag().mvpow||0)>0&&up<5?`<button class="mvup" data-mvup="${k}">＋いりょく（${bag().mvpow}）</button>`:''}</span>`; }).join("")}</div>
+    <div class="mvlist">${movesOf(d).map(k=>{ const up=((dO.mvUp||{})[k]||0); return `<span class="mvchip mt-${moveType(d,k)||'none'}"><b>${esc(MOVES[k].n)}</b><small>${moveInfo(d,k)}</small>${(bag().mvpow||0)>0&&up<5?`<button class="mvup" data-mvup="${k}">＋いりょく（${bag().mvpow}）</button>`:''}${(dO.ext||[]).includes(k)?`<button class="mvup" data-forget="${k}">わすれる</button>`:''}</span>`; }).join("")}</div>
     ${Object.keys(smS()).some(k=>SMV[k])?`<div class="smpick"><span class="mini">とくべつわざ：</span>${Object.keys(smS()).filter(k=>SMV[k]).map(k=>`<button class="${dO.sm==="sm_"+k?'on':''}" data-sm="${k}">${esc(SMV[k].n)}</button>`).join("")}${dO.sm?'<button data-sm="">はずす</button>':''}</div>`:''}${nextMoveText(d)}
     ${canEvo(d)?`<button class="btn go evobtn" id="evo">${esc(nameOf(d))}をしんかさせる！</button>`:(SP[d].forms[curF(d)+1]?`<p class="mini">${evoNeedText(SP[d].forms[curF(d)+1])}で、しんかできる${SP[d].forms[curF(d)+1].item?'（石はひろばのショップで買える）':''}</p>`:'')}
     ${(()=>{ const bb=bag(), o=dO, ts=[SP[d].type,SP[d].type2].filter(Boolean); let x="";
       if((bb.ame||0)>0 && o.lv<MAX_LV) x+=`<button class="btn alt" data-use="ame">ふしぎなアメ（${bb.ame}）<br><small>Lv.${o.lv}→${o.lv+1}</small></button>`;
       if((bb.ink||0)>0 && !o.shiny) x+=`<button class="btn alt" data-use="ink">ひかるインク（${bb.ink}）<br><small>色ちがいにする</small></button>`;
+      const cur=movesOf(d); for(const t of ts) for(const i of [1,2,3]){ const k=t+i, ik="mv_"+k; if((bb[ik]||0)>0 && !cur.includes(k)) x+=`<button class="btn alt" data-use="${ik}">「${esc(MOVES[k].n)}」をおぼえる<br><small>わざのほん（${bb[ik]}）${cur.length>=4?'・わざが4つなので1つと入れかわる':''}</small></button>`; }
       for(const t of ts) if((bb["tm_"+t]||0)>0 && o.tm!=="sp_"+t) x+=`<button class="btn alt" data-use="tm_${t}">「${SPNAMES[t]}」をおぼえる<br><small>わざマシン（${bb["tm_"+t]}）${o.tm?'・今のスペシャルわざとこうかん':''}</small></button>`;
       return x?`<div class="itembtns">${x}</div>`:''; })()}
     <div class="btns">${save.party[0]!==d?`<button class="btn go" id="mklead">せんとうにする</button>`:''}${inP?(save.party.length>1?`<button class="btn alt" id="rm">パーティからはずす</button>`:''):`<button class="btn alt" id="add" ${save.party.length>=3?'disabled':''}>${save.party.length>=3?'パーティがいっぱい':'パーティに入れる'}</button>`}</div></div>
@@ -3535,11 +3541,13 @@ function showParty(){
   const g=id=>document.getElementById(id);
   if(g("evo")) g("evo").onclick=()=>showEvolve(d);
   app.querySelectorAll("[data-mvup]").forEach(b=>b.onclick=()=>{ const k=b.dataset.mvup, o=save.owned[d], bb=bag(); if(!(bb.mvpow>0)) return; o.mvUp=o.mvUp||{}; if((o.mvUp[k]||0)>=5) return; o.mvUp[k]=(o.mvUp[k]||0)+1; bb.mvpow--; persist(); const y=window.scrollY; showParty(); window.scrollTo(0,y); });
+  app.querySelectorAll("[data-forget]").forEach(b=>b.onclick=()=>{ const o=save.owned[d]; o.ext=(o.ext||[]).filter(x=>x!==b.dataset.forget); persist(); const y=window.scrollY; showParty(); window.scrollTo(0,y); });
   app.querySelectorAll("[data-sm]").forEach(b=>b.onclick=()=>{ const k=b.dataset.sm, o=save.owned[d]; if(k) o.sm="sm_"+k; else delete o.sm; persist(); const y=window.scrollY; showParty(); window.scrollTo(0,y); });
   app.querySelectorAll("[data-use]").forEach(b=>b.onclick=()=>{ const k=b.dataset.use, bb=bag(), o=save.owned[d]; if(!(bb[k]>0)) return;
     if(k==="ame"){ if(o.lv>=MAX_LV) return; o.lv++; o.exp=0; }
     else if(k==="ink"){ o.shiny=true; }
     else if(k.startsWith("tm_")){ o.tm="sp_"+k.slice(3); }
+    else if(k.startsWith("mv_")){ const mv=ITEMS[k].mv; o.ext=[...(o.ext||[]).filter(x=>x!==mv), mv].slice(-3); }
     bb[k]--; persist(); showParty(); });
   if(g("mklead")) g("mklead").onclick=()=>{ save.party=[d,...save.party.filter(x=>x!==d)].slice(0,3); persist(); showParty(); };
   if(g("rm")) g("rm").onclick=()=>{ save.party=save.party.filter(x=>x!==d); persist(); showParty(); };
@@ -4098,7 +4106,9 @@ function learnLv(id,k){ const e=learnSet(id).find(x=>x[0]===k); return e?e[1]:(M
 function movesOf(id){
   const lv=(save.owned[id]||{}).lv||1, sig=sigOf(id), learn=learnable(id).filter(k=>learnLv(id,k)<=lv);
   const o=save.owned[id]||{}, tm=o.tm, sm=o.sm, top=[sig, tm&&MOVES[tm]?tm:null, sm&&MOVES[sm]&&smS()[sm.slice(3)]?sm:null].filter(Boolean);
-  return [...top, ...learn.slice(-(4-top.length))];
+  /* v45: ショップの「わざのほん」でおぼえたわざ（o.ext）は、レベルでおぼえるわざより優先してわく に入る */
+  const room=4-top.length, ex=(o.ext||[]).filter(k=>MOVES[k]&&!top.includes(k)).slice(-room), rest=learn.filter(k=>!ex.includes(k)), r2=room-ex.length;
+  return [...top, ...ex, ...(r2>0?rest.slice(-r2):[])];
 }
 function moveType(id,k){ const M=MOVES[k]; return M.t || (M.sig ? SP[id].type : null); }
 function moveInfo(id,k){ const M=MOVES[k], t=moveType(id,k), up=((save.owned[id]||{}).mvUp||{})[k]||0; return `${M.special?'とくべつ・':''}${t?TYPES[t]:'ふつう'}・いりょく${Math.round(M.pow*10*(1+up*.1))}${up?`（+${up}）`:''}${M.combo?`・${M.combo}コンボ`:''}${M.eff?'・'+EFF[M.eff]:''}`; }
@@ -4187,10 +4197,12 @@ Object.assign(ITEMS, {
   ame:{n:"ふしぎなアメ", cat:"grow", price:8, d:"なかま1ぴきのLvが1上がる（Lv300まで）。「なかま」画面で使う"},
   ink:{n:"ひかるインク", cat:"grow", price:25, d:"なかま1ぴきを色ちがいにする（見た目だけ）。「なかま」画面で使う"}
 });
-const SHOP_CATS = [["stone","しんかの石"],["tm","スペシャルわざ"],["battle","バトルのどうぐ"],["grow","そだてるどうぐ"]];
+for(const t of Object.keys(TYPES)) for(const i of [1,2,3]){ const k=t+i, M=MOVES[k]; ITEMS["mv_"+k] = {n:`わざのほん「${M.n}」`, cat:"move", t, mv:k, tier:i, price:[0,5,8,15][i], d:`${TYPES[t]}タイプ（2つ目のタイプもふくむ）のなかま1ぴきが、Lvに関係なくすぐおぼえる`}; }
+const SHOP_CATS = [["move","ふつうのわざ"],["tm","スペシャルわざ"],["stone","しんかの石"],["battle","バトルのどうぐ"],["grow","そだてるどうぐ"]];
 function itemSVG(k){
   const it=ITEMS[k], K="#24324a", c=it.t?TCOL[it.t]:"#ffcf3a";
   if(it.cat==="stone") return `<svg viewBox="0 0 40 40"><polygon points="20,3 33,13 29,35 11,35 7,13" fill="${c}" stroke="${K}" stroke-width="2.5" stroke-linejoin="round"/><polygon points="20,3 24,13 20,35 16,13" fill="#fff" opacity=".45"/></svg>`;
+  if(it.cat==="move") return `<svg viewBox="0 0 40 40"><path d="M6 8 Q13 5 20 9 Q27 5 34 8 V33 Q27 30 20 34 Q13 30 6 33Z" fill="${c}" stroke="${K}" stroke-width="2.5" stroke-linejoin="round"/><path d="M20 9 V34" stroke="${K}" stroke-width="2"/><g fill="#fff" stroke="${K}" stroke-width="1">${Array.from({length:it.tier},(_,i)=>`<circle cx="${13}" cy="${14+i*6}" r="2.2"/>`).join("")}</g></svg>`;
   if(it.cat==="tm") return `<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="16" fill="${c}" stroke="${K}" stroke-width="2.5"/><circle cx="20" cy="20" r="5" fill="#fff" stroke="${K}" stroke-width="2"/><path d="M9 14 A12 12 0 0 1 16 8" stroke="#fff" stroke-width="2.5" fill="none" opacity=".7"/></svg>`;
   if(k==="kizu") return `<svg viewBox="0 0 40 40"><rect x="13" y="4" width="14" height="6" rx="2" fill="${K}"/><path d="M12 10 H28 V33 Q28 36 25 36 H15 Q12 36 12 33Z" fill="#b8f0d0" stroke="${K}" stroke-width="2.5"/><path d="M20 17 V29 M14 23 H26" stroke="#e8475a" stroke-width="4"/></svg>`;
   if(k==="superflask") return flaskSVG.replace('fill="#ff7a2f"','fill="#ffcf3a"').replace('viewBox="0 0 30 36"','viewBox="-5 -2 40 40"');
@@ -4361,32 +4373,61 @@ function finishTrainer(win){
 }
 
 /* ---------- ひろば（ショップ・バトルタワー・バッジ・ずかんコンプリート） ---------- */
-let shopMsg="";
+let shopMsg="", plazaTab="shop", shopCat="move", shopType=null;
+/* v45: ひろばはタブ切りかえ（ショップ／ミッション／タワー／バッジ／コンプリート）。ショップはカテゴリタブ＋ふつうのわざはタイプでしぼりこみ */
 function showPlaza(){
   const gets=rewardCards();
   const bt=save.btower||{best:0}, nx=(bt.best||0)+1, t=trainerOf(nx), qn=trainerQs().length;
   let h=`<h2 class="sec-h">ひろば</h2><div class="card shophead"><span class="pill">${flaskSVG} フラスコ ×${save.balls}</span><span class="mini">フラスコで道具を買えるよ。つかまえる分ものこしておこう</span></div>`;
   if(gets) h+=`<div class="gets">${gets}</div>`;
   if(shopMsg) h+=`<p class="shopmsg">${shopMsg}</p>`;
-  h+=missionHTML();
-  h+=`<h2 class="sec-h" style="margin-top:22px">ショップ</h2>`;
-  const CATD={stone:"そのタイプの一部のモンスターを、Lv15 でさいごのすがたにしんかさせる（1回で1こ使う）。「なかま」画面でしんか",
-    tm:"そのタイプ（2つ目のタイプもふくむ）のなかま1ぴきに、スペシャルわざ（いりょく24・2コンボ）をおぼえさせる。「なかま」画面で使う"};
-  for(const [c,cn] of SHOP_CATS){
-    if(CATD[c]){ h+=`<h3 class="shopcat">${cn}</h3><p class="mini" style="margin:-4px 0 8px">${CATD[c]}</p><div class="shopgrid2">${Object.entries(ITEMS).filter(([,it])=>it.cat===c).map(([k,it])=>`<div class="card sitem2"><div class="sic">${itemSVG(k)}</div><div class="sin"><b>${esc(c==="tm"?SPNAMES[it.t]:it.n)}</b><span class="mini">${c==="tm"?TYPES[it.t]+'・':''}もっている ${bag()[k]||0}</span></div><button class="btn sbuy" data-buy="${k}" ${save.balls<it.price?'disabled':''}>${flaskSVG}${it.price}</button></div>`).join("")}</div>`; continue; }
-    h+=`<h3 class="shopcat">${cn}</h3><div class="shopgrid">${Object.entries(ITEMS).filter(([,it])=>it.cat===c).map(([k,it])=>`<div class="card sitem"><div class="sic">${itemSVG(k)}</div><div class="sin"><b>${esc(it.n)}</b><span class="mini">${esc(it.d)}</span><span class="mini">もっている ${bag()[k]||0}こ</span></div><button class="btn sbuy" data-buy="${k}" ${save.balls<it.price?'disabled':''}>${flaskSVG}${it.price}</button></div>`).join("")}</div>`;
+  const PT=[["shop","ショップ"],["mission","ミッション"],["tower","タワー"],["badge","バッジ"],["dex","コンプ"]];
+  h+=`<div class="ptabs">${PT.map(([k,n])=>`<button class="${plazaTab===k?'on':''}" data-pt="${k}">${n}</button>`).join("")}</div>`;
+  if(plazaTab==="shop"){
+    const CATD={move:"なかまのタイプ（2つ目のタイプもふくむ）のわざを、Lvに関係なくおぼえられる。●の数が多いほどつよい（●●●は3コンボで使える）。「なかま」画面で使う",
+      tm:"そのタイプのなかま1ぴきに、スペシャルわざ（いりょく24・2コンボ）をおぼえさせる。「なかま」画面で使う",
+      stone:"そのタイプの一部のモンスターを、Lv15 でさいごのすがたにしんかさせる（1回で1こ使う）。「なかま」画面でしんか",
+      battle:"バトル中に使う道具", grow:"なかまをそだてる道具。「なかま」画面で使う"};
+    h+=`<div class="dexcats" style="margin-top:4px">${SHOP_CATS.map(([c,cn])=>`<button class="${shopCat===c?'on':''}" data-sc="${c}">${cn}</button>`).join("")}</div>`;
+    h+=`<p class="mini" style="margin:0 0 8px">${CATD[shopCat]}</p>`;
+    let list=Object.entries(ITEMS).filter(([,it])=>it.cat===shopCat);
+    if(shopCat==="move"){
+      const lt=[SP[save.party[0]].type, SP[save.party[0]].type2].filter(Boolean);
+      if(!shopType) shopType=lt[0];
+      h+=`<div class="dexgrps">${Object.keys(TYPES).map(t=>`<button class="${shopType===t?'on':''}" data-st="${t}">${TYPES[t]}${lt.includes(t)?'<small>せんとう</small>':''}</button>`).join("")}</div>`;
+      list=list.filter(([,it])=>it.t===shopType);
+      const who=Object.keys(save.owned).filter(id=>SP[id]&&[SP[id].type,SP[id].type2].includes(shopType));
+      h+=`<p class="mini" style="margin:0 0 8px">おぼえられるなかま：${who.length?who.slice(0,6).map(id=>esc(nameOf(id))).join("・")+(who.length>6?` ほか${who.length-6}ひき`:''):'まだいない'}</p>`;
+      h+=`<div class="shopgrid">${list.map(([k,it])=>{ const M=MOVES[it.mv]; return `<div class="card sitem"><div class="sic">${itemSVG(k)}</div><div class="sin"><b>${esc(M.n)} <span class="mini" style="display:inline">${'●'.repeat(it.tier)}</span></b><span class="mini">いりょく${Math.round(M.pow*10)}${M.eff?'・'+EFF[M.eff]:''}${M.combo?`・${M.combo}コンボで使える`:''}</span><span class="mini">もっている ${bag()[k]||0}こ</span></div><button class="btn sbuy" data-buy="${k}" ${save.balls<it.price?'disabled':''}>${flaskSVG}${it.price}</button></div>`; }).join("")}</div>`;
+    } else if(shopCat==="tm"||shopCat==="stone"){
+      h+=`<div class="shopgrid2">${list.map(([k,it])=>`<div class="card sitem2"><div class="sic">${itemSVG(k)}</div><div class="sin"><b>${esc(shopCat==="tm"?SPNAMES[it.t]:it.n)}</b><span class="mini">${shopCat==="tm"?TYPES[it.t]+'・':''}もっている ${bag()[k]||0}</span></div><button class="btn sbuy" data-buy="${k}" ${save.balls<it.price?'disabled':''}>${flaskSVG}${it.price}</button></div>`).join("")}</div>`;
+    } else {
+      h+=`<div class="shopgrid">${list.map(([k,it])=>`<div class="card sitem"><div class="sic">${itemSVG(k)}</div><div class="sin"><b>${esc(it.n)}</b><span class="mini">${esc(it.d)}</span><span class="mini">もっている ${bag()[k]||0}こ</span></div><button class="btn sbuy" data-buy="${k}" ${save.balls<it.price?'disabled':''}>${flaskSVG}${it.price}</button></div>`).join("")}</div>`;
+    }
   }
-  h+=`<h2 class="sec-h" style="margin-top:22px">バトルタワー</h2><div class="card btcard"><div class="btteam">${t.team.map(id=>`<div class="mon">${art(id,t.lv,{sil:!save.seen[id]})}</div>`).join("")}</div>
+  if(plazaTab==="mission") h+=missionHTML();
+  if(plazaTab==="tower"){
+  h+=`<div class="card btcard"><div class="btteam">${t.team.map(id=>`<div class="mon">${art(id,t.lv,{sil:!save.seen[id]})}</div>`).join("")}</div>
     <div><b>${nx}人目：${esc(t.nm)}</b><span class="mini">モンスター3びき・Lv.${t.lv}　さいこう記録 ${bt.best||0}人。クリアしたルートの問題（全教科）から出る。勝つとフラスコ +${3+nx}</span></div>
     <button class="btn go" id="btgo" ${qn>=10?'':'disabled'}>${qn>=10?'いどむ！':'ルートをクリアすると開く'}</button>${bt.best?`<button class="btn alt" id="btre" style="margin-top:8px">${bt.best}人目にもう一度いどむ</button>`:''}</div>`;
+  }
+  if(plazaTab==="badge"){
   const bg=save.badges||{};
-  h+=`<h2 class="sec-h" style="margin-top:22px">バッジ</h2><p class="dexcount">あつめた ${Object.keys(bg).length} / ${BADGES.length}　（手に入れるとフラスコがもらえる）</p><div class="grid3">${BADGES.map(([id,n,d,r])=>`<div class="card mcard badge ${bg[id]?'on':''}"><div class="mon">${badgeSVG(!!bg[id])}</div><b>${esc(n)}</b><span class="mini">${esc(d)}</span><span class="mini">フラスコ +${r}</span></div>`).join("")}</div>`;
+  h+=`<p class="dexcount">あつめた ${Object.keys(bg).length} / ${BADGES.length}　（手に入れるとフラスコがもらえる）</p><div class="grid3">${BADGES.map(([id,n,d,r])=>`<div class="card mcard badge ${bg[id]?'on':''}"><div class="mon">${badgeSVG(!!bg[id])}</div><b>${esc(n)}</b><span class="mini">${esc(d)}</span><span class="mini">フラスコ +${r}</span></div>`).join("")}</div>`;
+  }
+  if(plazaTab==="dex"){
   const dd=save.dexDone||{};
-  h+=`<h2 class="sec-h" style="margin-top:22px">ずかんコンプリート</h2><p class="dexcount">単元のモンスターを全部なかまにすると、ふしぎなアメ×3・フラスコ +10</p><div class="card" style="padding:8px 12px">${UNITS.filter(unitOpen).map(u=>{ const ids=Object.keys(u.monsters), own=ids.filter(id=>save.owned[id]).length; return `<div class="ddrow"><span>${esc(unitLabel(u))}「${esc(u.title)}」</span><b>${dd[u.id]?'コンプリート！':`${own} / ${ids.length}`}</b></div>`; }).join("")}</div>`;
+  h+=`<p class="dexcount">単元のモンスターを全部なかまにすると、ふしぎなアメ×3・フラスコ +10</p><div class="card" style="padding:8px 12px">${UNITS.filter(unitOpen).map(u=>{ const ids=Object.keys(u.monsters), own=ids.filter(id=>save.owned[id]).length; return `<div class="ddrow"><span>${esc(unitLabel(u))}「${esc(u.title)}」</span><b>${dd[u.id]?'コンプリート！':`${own} / ${ids.length}`}</b></div>`; }).join("")}</div>`;
+  }
   app.innerHTML=h; shopMsg="";
-  app.querySelectorAll("[data-buy]").forEach(b=>b.onclick=()=>{ const k=b.dataset.buy; if(buyItem(k)) shopMsg=`「${esc(ITEMS[k].n)}」を買った！`; const y=window.scrollY; showPlaza(); window.scrollTo(0,y); });
+  const rer=()=>{ const y=window.scrollY; showPlaza(); window.scrollTo(0,y); };
+  app.querySelectorAll("[data-pt]").forEach(b=>b.onclick=()=>{ plazaTab=b.dataset.pt; rer(); });
+  app.querySelectorAll("[data-sc]").forEach(b=>b.onclick=()=>{ shopCat=b.dataset.sc; rer(); });
+  app.querySelectorAll("[data-st]").forEach(b=>b.onclick=()=>{ shopType=b.dataset.st; rer(); });
+  app.querySelectorAll("[data-buy]").forEach(b=>b.onclick=()=>{ const k=b.dataset.buy; if(buyItem(k)) shopMsg=`「${esc(ITEMS[k].n)}」を買った！`+(ITEMS[k].cat==="move"||ITEMS[k].cat==="tm"?'　「なかま」画面でおぼえさせよう':''); rer(); });
+  const on=app.querySelector(".dexgrps .on"); if(on) on.scrollIntoView({block:"nearest",inline:"center"});
   const g=id=>document.getElementById(id);
-  if(qn>=10) g("btgo").onclick=()=>startTrainer(nx);
+  if(g("btgo")) g("btgo").onclick=()=>startTrainer(nx);
   if(g("btre")) g("btre").onclick=()=>startTrainer(bt.best);
 }
 
@@ -4556,7 +4597,7 @@ function renderBattle(enter){
     ${B.swapOpen?`<div class="swap">${save.party.map(id=>`<button class="${id===me?'cur':''}" data-id="${id}" ${useHP()&&hpOf(id)<=0?'disabled':''}><div class="mon">${artMine(id)}</div>${esc(nameOf(id))}${useHP()?`<small>HP ${hpOf(id)}/${maxHPOf(id)}</small>`:''}</button>`).join("")}</div>`:''}</div>
     <div id="fb"></div>
   </div>`;
-  document.getElementById("back").onclick=()=>{ B=null; home(); };
+  document.getElementById("back").onclick=()=>{ if(B){ misMax("combo",B.maxCombo||0); stat().maxCombo=Math.max(stat().maxCombo||0,B.maxCombo||0); persist(); } B=null; home(); };
   let sel=[];
   app.querySelectorAll(".choice").forEach(btn=>btn.onclick=()=>{
     if(B.busy) return; const i=+btn.dataset.i;
@@ -4715,7 +4756,7 @@ function judge(picked){
   if(ok){
     const first = !item.missed;
     if(first) misAdd("ok"); if(B.qd) misAdd("qd"); if(B.sid==="review") misAdd("review");
-    if(first){ B.combo++; B.maxCombo=Math.max(B.maxCombo,B.combo); }
+    if(first){ B.combo++; B.maxCombo=Math.max(B.maxCombo,B.combo); misMax("combo",B.combo); stat().maxCombo=Math.max(stat().maxCombo||0,B.maxCombo); }
     let bonus = first ? "" : `<p class="mini">まちがえたあとの正解なので、ごほうびは少なめ（EXP半分・コンボはふえない）。1回で正解するとたくさんもらえるよ。</p>`;
     if(first && B.combo%3===0){ save.balls++; B.ballsGot++; bonus=`<p><b>${B.combo}コンボ！ フラスコを1つひろった！</b></p>`; }
     if(B.sid==="review") delete save.wrong[item.key];
@@ -4878,7 +4919,7 @@ function finish(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261105024635";
+const APP_VER="20261105074507";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
