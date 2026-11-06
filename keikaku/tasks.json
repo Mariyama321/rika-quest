@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated": "2026-11-06T05:54+09:00",
+ "updated": "2026-11-07T05:53+09:00",
  "week": {
   "0": "テニス",
   "1": "",
@@ -11,32 +11,6 @@
   "6": "塾（個別 算数ワーク）"
  },
  "tasks": [
-  {
-   "id": "r_r3_20261016",
-   "kind": "hw",
-   "subj": "国語",
-   "src": "塾",
-   "title": "国語の宿題",
-   "lesson": "4下第11回 詩 表現を中心に読む／敬語①",
-   "detail": "ノートワーク\n（読解のポイント発見）\n新演習・漢字日記11回語句\n漢字日記漢字12回",
-   "assigned": "2026-10-16",
-   "due": "2026-10-23",
-   "suggest": "2026-10-22",
-   "doneInNotebook": false
-  },
-  {
-   "id": "r_r4_20261016",
-   "kind": "hw",
-   "subj": "社会",
-   "src": "塾",
-   "title": "社会の宿題",
-   "lesson": "4下第11回 米づくり",
-   "detail": "ノートワーク\n第11回トレーニング\n第11回基本問題\n（リトライまで頑張ろう）",
-   "assigned": "2026-10-16",
-   "due": "2026-10-23",
-   "suggest": "2026-10-22",
-   "doneInNotebook": false
-  },
   {
    "id": "r_r1_20261020",
    "kind": "hw",
@@ -764,6 +738,32 @@
    "due": "2026-11-27",
    "suggest": "2026-11-23",
    "doneInNotebook": false
+  },
+  {
+   "id": "h_hmvhef369_20261121",
+   "kind": "habit",
+   "subj": "社会",
+   "src": "家",
+   "title": "社会ノート整理",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-11-21",
+   "due": "",
+   "suggest": "2026-11-21",
+   "doneInNotebook": false
+  },
+  {
+   "id": "h_rmvd9jjaq_20261121",
+   "kind": "habit",
+   "subj": "算数",
+   "src": "塾",
+   "title": "計算",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-11-21",
+   "due": "",
+   "suggest": "2026-11-21",
+   "doneInNotebook": false
   }
  ],
  "tests": [
@@ -880,6 +880,11 @@
   {
    "title": "冬期講習",
    "due": "2027-01-05",
+   "off": false
+  },
+  {
+   "title": "冬期講習",
+   "due": "2027-01-06",
    "off": false
   }
  ]
