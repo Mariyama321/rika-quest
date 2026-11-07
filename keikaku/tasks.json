@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated": "2026-11-07T16:53+09:00",
+ "updated": "2026-11-08T05:53+09:00",
  "week": {
   "0": "テニス",
   "1": "",
@@ -113,32 +113,6 @@
    "assigned": "2026-10-30",
    "due": "2026-11-06",
    "suggest": "2026-11-02",
-   "doneInNotebook": false
-  },
-  {
-   "id": "h_hmvhef369_20261031",
-   "kind": "habit",
-   "subj": "社会",
-   "src": "家",
-   "title": "社会ノート整理",
-   "lesson": "",
-   "detail": "",
-   "assigned": "2026-10-31",
-   "due": "",
-   "suggest": "2026-10-31",
-   "doneInNotebook": false
-  },
-  {
-   "id": "h_rmvd9jjaq_20261031",
-   "kind": "habit",
-   "subj": "算数",
-   "src": "塾",
-   "title": "計算",
-   "lesson": "",
-   "detail": "",
-   "assigned": "2026-10-31",
-   "due": "",
-   "suggest": "2026-10-31",
    "doneInNotebook": false
   },
   {
@@ -764,6 +738,32 @@
    "due": "",
    "suggest": "2026-11-21",
    "doneInNotebook": false
+  },
+  {
+   "id": "h_hmvd9w2ye_20261122",
+   "kind": "habit",
+   "subj": "国語",
+   "src": "学校",
+   "title": "学校の漢字",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-11-22",
+   "due": "",
+   "suggest": "2026-11-22",
+   "doneInNotebook": false
+  },
+  {
+   "id": "h_rmvd9jjaq_20261122",
+   "kind": "habit",
+   "subj": "算数",
+   "src": "塾",
+   "title": "計算",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-11-22",
+   "due": "",
+   "suggest": "2026-11-22",
+   "doneInNotebook": false
   }
  ],
  "tests": [
@@ -885,6 +885,11 @@
   {
    "title": "冬期講習",
    "due": "2027-01-06",
+   "off": false
+  },
+  {
+   "title": "冬期講習",
+   "due": "2027-01-07",
    "off": false
   }
  ]
