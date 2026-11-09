@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated": "2026-11-09T05:53+09:00",
+ "updated": "2026-11-10T05:54+09:00",
  "week": {
   "0": "テニス",
   "1": "",
@@ -112,32 +112,6 @@
    "detail": "ノートワーク\n第13回トレーニング\n第13回基本問題\n（リトライまで頑張ろう）",
    "assigned": "2026-10-30",
    "due": "2026-11-06",
-   "suggest": "2026-11-02",
-   "doneInNotebook": false
-  },
-  {
-   "id": "h_hmvd9w2ye_20261102",
-   "kind": "habit",
-   "subj": "国語",
-   "src": "学校",
-   "title": "学校の漢字",
-   "lesson": "",
-   "detail": "",
-   "assigned": "2026-11-02",
-   "due": "",
-   "suggest": "2026-11-02",
-   "doneInNotebook": false
-  },
-  {
-   "id": "h_rmvd9jjaq_20261102",
-   "kind": "habit",
-   "subj": "算数",
-   "src": "塾",
-   "title": "計算",
-   "lesson": "",
-   "detail": "",
-   "assigned": "2026-11-02",
-   "due": "",
    "suggest": "2026-11-02",
    "doneInNotebook": false
   },
@@ -789,6 +763,32 @@
    "assigned": "2026-11-23",
    "due": "2026-11-30",
    "suggest": "",
+   "doneInNotebook": false
+  },
+  {
+   "id": "r_r1_20261124",
+   "kind": "hw",
+   "subj": "算数",
+   "src": "塾",
+   "title": "算数の宿題",
+   "lesson": "4下第16回 ならべ方を調べる【場合の数】",
+   "detail": "4下第16回",
+   "assigned": "2026-11-24",
+   "due": "2026-12-01",
+   "suggest": "2026-11-28",
+   "doneInNotebook": false
+  },
+  {
+   "id": "r_r2_20261124",
+   "kind": "hw",
+   "subj": "理科",
+   "src": "塾",
+   "title": "理科の宿題",
+   "lesson": "4下第16回 てこ（てんびん）",
+   "detail": "",
+   "assigned": "2026-11-24",
+   "due": "2026-12-01",
+   "suggest": "2026-11-29",
    "doneInNotebook": false
   }
  ],
