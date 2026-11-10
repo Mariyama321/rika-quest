@@ -335,11 +335,19 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .dexcats button small,.dexgrps button small{font-size:11px;color:var(--muted)}
 .dexcats button.on{background:var(--sun)}.dexgrps button.on{background:var(--ink);color:#fff}.dexgrps button.on small{color:#cfd8e6}
 .dexgrps button{border-width:1.5px;font-size:12px;padding:2px 10px}
+.dexcats.wrap{flex-wrap:wrap;overflow:visible;margin:0 0 8px;padding:0}
+.dexcats.wrap button{flex:1 1 calc(25% - 6px);justify-content:center;padding:4px 4px;font-size:12px;flex-direction:column;align-items:center;gap:0;line-height:1.25}
+.dexsubj{display:grid;grid-template-columns:repeat(auto-fit,minmax(70px,1fr));gap:6px;margin:0 0 8px}
+.dexsubj button{border:2px solid var(--ink);border-radius:10px;background:var(--panel);padding:4px 2px;font-weight:800;font-size:13px;display:flex;flex-direction:column;align-items:center;line-height:1.25}
+.dexsubj button small{font-size:10px;color:var(--muted)}.dexsubj button.on{background:var(--grass);color:#fff}.dexsubj button.on small{color:#eaffdf}
+.dexown{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;margin:0 0 8px}
+.dexown input{width:18px;height:18px}
+body.dexonly .dexgrid .mcard.unseen, body.dexonly .dexgrid .mcard.seenonly{display:none}
 .dexpop{position:fixed;inset:0;z-index:40;background:rgba(36,50,74,.45);display:flex;align-items:center;justify-content:center;padding:16px}
 .dexpop .detail{position:relative;width:100%;max-width:440px;max-height:80vh;overflow-y:auto;margin:0}
 .dexclose{position:absolute;right:8px;top:6px;border:2px solid var(--ink);background:var(--panel);border-radius:50%;width:32px;height:32px;font-weight:800;font-size:16px;line-height:1}
 .dexgrid{grid-template-columns:repeat(4,1fr);gap:6px}
-.dexgrid .mcard{padding:5px 3px;gap:1px}.dexgrid .mcard .mon{width:54px;height:54px}.dexgrid .mcard b{font-size:11px}
+.dexgrid .mcard{padding:5px 3px;gap:1px}.dexgrid .mcard .mon{width:62px;height:62px}.dexgrid .mcard b{font-size:11.5px}
 .dexgrid .mcard .no{font-size:9px}.dexgrid .chip{font-size:9px;padding:0 5px;line-height:15px}
 .dexgrid .mcard.unseen .mon{font-size:22px}
 .newtag{font-style:normal;font-size:10px;font-weight:800;background:var(--bad);color:#fff;border-radius:999px;padding:0 6px;margin-left:4px}
@@ -2804,6 +2812,7 @@ function wildLv(base, boss){ return enemyLv(base, boss).lv; }
 /* 強い相手ほど EXP が多い */
 const xp = n => Math.round(n*(1+((B&&B.wild)?B.wild.lv:1)/15));
 
+const APP_NO = "v48";
 let save = load();
 function load(){
   try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && s.v===2){ for(const [id,o] of Object.entries(s.owned)) if(o.form==null && SP[id]) o.form = formIdx(id,o.lv); if(!s.wrongEver) s.wrongEver=Object.fromEntries(Object.keys(s.wrong||{}).map(k=>[k,1])); cleanGone(s); return s; } }catch(e){}
@@ -2823,7 +2832,7 @@ try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persis
 function saveStatusHTML(){
   const ok = STORE_OK && !saveErr, t = save.savedAt ? new Date(save.savedAt) : null;
   const ts = t ? `${t.getMonth()+1}/${t.getDate()} ${t.getHours()}:${String(t.getMinutes()).padStart(2,"0")}` : "まだなし";
-  return `<div class="savest ${ok?'':'ng'}">開き方：${IS_APP?'ホーム画面アプリ':'ブラウザ（Safariなど）'}　保存：${ok?'できる':'できない'+(saveErr?'（'+esc(saveErr)+'）':'')}　さいごの保存：${ts}</div>`;
+  return `<div class="savest ${ok?'':'ng'}">バージョン：${APP_NO}（${APP_VER.startsWith('__')?'プレビュー':APP_VER.slice(4,6)+'/'+APP_VER.slice(6,8)+' '+APP_VER.slice(8,10)+':'+APP_VER.slice(10,12)}）　開き方：${IS_APP?'ホーム画面アプリ':'ブラウザ（Safariなど）'}　保存：${ok?'できる':'できない'+(saveErr?'（'+esc(saveErr)+'）':'')}　さいごの保存：${ts}</div>`;
 }
 
 function formIdx(id, lv){ const f=SP[id].forms; let k=0; f.forEach((x,i)=>{ if(i && lv>=x.lv && !x.item) k=i; }); return k; }
@@ -3534,7 +3543,7 @@ function showParty(){
     ${(()=>{ const bb=bag(), o=dO, ts=[SP[d].type,SP[d].type2].filter(Boolean); let x="";
       if((bb.ame||0)>0 && o.lv<MAX_LV) x+=`<button class="btn alt" data-use="ame">ふしぎなアメ（${bb.ame}）<br><small>Lv.${o.lv}→${o.lv+1}</small></button>`;
       if((bb.ink||0)>0 && !o.shiny) x+=`<button class="btn alt" data-use="ink">ひかるインク（${bb.ink}）<br><small>色ちがいにする</small></button>`;
-      const cur=movesOf(d); for(const t of ts) for(const i of [1,2,3,4]){ const k=t+i, ik="mv_"+k; if((bb[ik]||0)>0 && !cur.includes(k)) x+=`<button class="btn alt" data-use="${ik}">「${esc(MOVES[k].n)}」をおぼえる<br><small>わざのほん（${bb[ik]}）${cur.length>=4?'・わざが4つなので1つと入れかわる':''}</small></button>`; }
+      const cur=movesOf(d); for(const [t,i] of [...ts.flatMap(t=>[1,2,3].map(i=>[t,i])), ...Object.keys(TYPES).map(t=>[t,4])]){ const k=t+i, ik="mv_"+k; if((bb[ik]||0)>0 && !cur.includes(k)) x+=`<button class="btn alt" data-use="${ik}">「${esc(MOVES[k].n)}」をおぼえる<br><small>わざのほん（${bb[ik]}）${cur.length>=4?'・わざが4つなので1つと入れかわる':''}</small></button>`; }
       for(const t of ts) if((bb["tm_"+t]||0)>0 && o.tm!=="sp_"+t) x+=`<button class="btn alt" data-use="tm_${t}">「${SPNAMES[t]}」をおぼえる<br><small>わざマシン（${bb["tm_"+t]}）${o.tm?'・今のスペシャルわざとこうかん':''}</small></button>`;
       return x?`<div class="itembtns">${x}</div>`:''; })()}
     <div class="btns">${save.party[0]!==d?`<button class="btn go" id="mklead">せんとうにする</button>`:''}${inP?(save.party.length>1?`<button class="btn alt" id="rm">パーティからはずす</button>`:''):`<button class="btn alt" id="add" ${save.party.length>=3?'disabled':''}>${save.party.length>=3?'パーティがいっぱい':'パーティに入れる'}</button>`}</div></div>
@@ -3558,7 +3567,7 @@ function showParty(){
 function typeChartHTML(){ return `<div class="tchart">${Object.entries(BEATS).map(([a,ds])=>`<span>${typeChip(a)}</span><span class="ar">→</span><span>${ds.map(typeChip).join(" ")}</span>`).join("")}</div>`; }
 
 /* ---------- dex ---------- */
-let dexSel = null, dexCat = "main", dexGrp = "start", dexArea = 0;
+let dexSel = null, dexCat = "main", dexGrp = "start", dexArea = 0, dexSubj = null, dexOwn = false, GRPS_LAST = [];
 const RARE_AREAS = [["北海道・東北",0,7],["関東",7,14],["中部",14,23],["近畿",23,30],["中国・四国",30,39],["九州・沖縄",39,47]]; /* v38: ずかんは種類ボタン（dexCat）と単元ボタン（dexGrp）で切りかえ。くわしい説明はポップアップ */
 function showDex(){
   const DEXO = DEX_ORDER.filter(monOpen), caught = DEXO.filter(id=>save.owned[id]).length, seen = DEXO.filter(id=>save.seen[id]).length;
@@ -3567,23 +3576,29 @@ function showDex(){
   const CATS = [["main","ずかん",cnt(DEXO)],["rare","都道府県",cnt(RARE_ORDER)],["mega","メガ",cnt(MGO)],["umega","ウルトラメガ",cnt(UMO)],["week","曜日",cnt(WEEK_ORDER)],["day","日替わり",String(dayIds().length)],["qd","ダンジョン",cnt(QD_ORDER)],["ur","ウルトラレア",cnt(UR_ORDER)]];
   if(!CATS.some(c=>c[0]===dexCat)) dexCat="main";
   let h = `<h2 class="sec-h">モンスターずかん</h2><p class="dexcount">つかまえた ${caught}・見つけた ${seen}・ぜんぶで ${DEXO.length}</p>`;
-  h += `<div class="dexcats">${CATS.map(([k,n,c])=>`<button class="${dexCat===k?'on':''}" data-cat="${k}">${n}<small>${c}</small></button>`).join("")}</div>`;
+  h += `<label class="dexown"><input type="checkbox" id="dexown" ${dexOwn?"checked":""}> なかまにしたモンスターだけ見る</label>`;
+  h += `<div class="dexcats wrap">${CATS.map(([k,n,c])=>`<button class="${dexCat===k?'on':''}" data-cat="${k}">${n}<small>${c}</small></button>`).join("")}</div>`;
   if(dexSel && save.seen[dexSel]){
     const s=SP[dexSel], own=save.owned[dexSel];
     h += `<div class="dexpop" id="dexpop"><div class="card detail"><button class="dexclose" id="dexclose" aria-label="とじる">×</button><div class="row"><div class="mon">${(own?artMine(dexSel):art(dexSel,1,{sil:true}))}</div><div style="min-width:0"><span class="mini">${s.umega?'ウルトラメガモンスター':s.week?`${WDAY[s.day]}曜日のモンスター`:s.daily?`${s.ymd[1]}月${s.ymd[2]}日の日替わりモンスター`:s.ur?'ウルトラレアモンスター':s.mega?'メガモンスター（'+esc(megaWhere(dexSel))+'を克服）':s.qd?'クイズダンジョンの伝説のドラゴン':s.egg?'たまごから生まれるモンスター':s.rare?`${MAPD[s.pref][0]}のレアモンスター`:`No.${String(DEX_ORDER.indexOf(dexSel)+1).padStart(3,"0")}`}</span><h3>${esc(own?nameOf(dexSel):s.forms[0].n)}</h3>${typesChip(dexSel)}</div></div>
-      <p>${own?esc(s.dex):'まだつかまえていない。つかまえると、くわしいことがわかるよ。'}</p>${own&&s.forms.length>1?`<p class="mini">しんか：${s.forms.map(f=>f.n+(f.lv?`（Lv.${f.lv}）`:'')).join(" → ")}</p>`:''}</div></div></div>`;
+      <p>${own?esc(s.dex):'まだつかまえていない。つかまえると、くわしいことがわかるよ。'}</p>${(()=>{ const sg=sigOf(dexSel), M=sg&&MOVES[sg]; const u=M?`<p class="mini"><b>このモンスターだけのわざ：「${esc(M.n)}」</b>（${moveInfo(dexSel,sg)}）</p>`:''; if(!own) return u; return u+`<p class="mini" style="margin-bottom:2px">Lv.${own.lv}・いまのわざ</p><div class="mvlist">${movesOf(dexSel).map(k=>`<span class="mvchip mt-${moveType(dexSel,k)||'none'}"><b>${esc(MOVES[k].n)}</b><small>${moveInfo(dexSel,k)}</small></span>`).join("")}</div>`; })()}${own&&s.forms.length>1?`<p class="mini">しんか：${s.forms.map(f=>f.n+(f.lv?`（Lv.${f.lv}）`:'')).join(" → ")}</p>`:''}</div></div></div>`;
   }
   if(dexCat==="main"){
   const GRPS = [["start","さいしょの4体",Object.keys(STARTERS)], ...UNITS.filter(unitOpen).sort((x,y)=>(x.subject>y.subject?1:x.subject<y.subject?-1:x.no-y.no)).map(u=>[u.id, unitLabel(u), DEX_ORDER.filter(id=>u.monsters[id])])];
   if(!GRPS.some(g=>g[0]===dexGrp)) dexGrp="start";
-  h += `<div class="dexgrps">${GRPS.map(([k,n,ids])=>`<button class="${dexGrp===k?'on':''}" data-grp="${k}">${esc(n)}<small>${cnt(ids)}</small></button>`).join("")}</div>`;
+  const subjOf = k => k==="start" ? "さいしょ" : (UNITS.find(u=>u.id===k)||{}).subject;
+  const SUBJS = [...new Set(GRPS.map(g=>subjOf(g[0])))];
+  GRPS_LAST = GRPS.map(g=>[g[0], subjOf(g[0])]);
+  if(!dexSubj || !SUBJS.includes(dexSubj)) dexSubj = subjOf(dexGrp);
+  h += `<div class="dexsubj">${SUBJS.map(sb=>{ const ids=GRPS.filter(g=>subjOf(g[0])===sb).flatMap(g=>g[2]); return `<button class="${dexSubj===sb?'on':''}" data-subj="${sb}">${esc(sb)}<small>${cnt(ids)}</small></button>`; }).join("")}</div>`;
+  h += `<div class="dexgrps">${GRPS.filter(g=>subjOf(g[0])===dexSubj).map(([k,n,ids])=>`<button class="${dexGrp===k?'on':''}" data-grp="${k}">${esc(n)}<small>${cnt(ids)}</small></button>`).join("")}</div>`;
   const G = GRPS.find(g=>g[0]===dexGrp), U = UNITS.find(u=>u.id===dexGrp);
   if(U) h += `<p class="dexcount">${esc(unitLabel(U))}「${esc(U.title)}」のモンスター</p>`;
   h += `<div class="grid3 dexgrid">${G[2].map(id=>{ const i=DEX_ORDER.indexOf(id);
     const no = `No.${String(i+1).padStart(3,"0")}`;
     if(!save.seen[id]) return `<div class="card mcard unseen"><span class="no">${no}</span><div class="mon">？</div><b>？？？</b></div>`;
     const own = save.owned[id];
-    return `<button class="card mcard" data-id="${id}"><span class="no">${no}</span><div class="mon">${(own?artMine(id):art(id,1,{sil:true}))}</div><b>${esc(own?nameOf(id):SP[id].forms[0].n)}</b>${own?typesChip(id):'<span class="mini">見つけた</span>'}</button>`;
+    return `<button class="card mcard ${own?'':'seenonly'}" data-id="${id}"><span class="no">${no}</span><div class="mon">${(own?artMine(id):art(id,1,{sil:true}))}</div><b>${esc(own?nameOf(id):SP[id].forms[0].n)}</b>${own?typesChip(id):'<span class="mini">見つけた</span>'}</button>`;
   }).join("")}</div>`;
   }
   if(dexCat==="ur") h += `<h2 class="sec-h" style="margin-top:14px">ウルトラレア</h2><p class="dexcount">算数4「ぶんすうの城」の分数カードを全部★3にすると…</p><div class="grid3 dexgrid">${UR_ORDER.map(id=>save.owned[id]?`<button class="card mcard urcell" data-id="${id}"><span class="no">ウルトラレア</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typesChip(id)}</button>`:`<div class="card mcard unseen"><span class="no">ウルトラレア</span><div class="mon">${art(id,1,{sil:true})}</div><b>？？？</b></div>`).join("")}</div>`;
@@ -3591,11 +3606,11 @@ function showDex(){
   if(dexCat==="umega") h += `<h2 class="sec-h" style="margin-top:14px">ウルトラメガモンスター</h2><p class="dexcount">なかまにした ${uc} / ${UMO.length}　（単元のルートとでんせつを全部クリアして、ニガテの森を0問にすると手に入る）</p><div class="grid3 dexgrid">${UMO.map(id=>{ const lb=unitLabel(UNITS.find(u=>u.id===UMEGA[id].unit));
     return save.owned[id]?`<button class="card mcard urcell" data-id="${id}"><span class="no">${esc(lb)}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typesChip(id)}</button>`:`<div class="card mcard unseen"><span class="no">${esc(lb)}</span><div class="mon">${art(id,1,{sil:true})}</div><b>？？？</b></div>`; }).join("")}</div>`;
   if(dexCat==="day"){ const tid=dayToday(), ts=SP[tid], lst=dayIds().filter(x=>x!==tid);
-    const cell=(id,lb)=>save.owned[id]?`<button class="card mcard rarecell" data-id="${id}"><span class="no">${lb}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typesChip(id)}</button>`:save.seen[id]?`<button class="card mcard" data-id="${id}"><span class="no">${lb}</span><div class="mon">${art(id,1,{sil:true})}</div><b>${esc(SP[id].forms[0].n)}</b><span class="mini">見つけた</span></button>`:`<div class="card mcard unseen"><span class="no">${lb}</span><div class="mon">？</div><b>？？？</b></div>`;
+    const cell=(id,lb)=>save.owned[id]?`<button class="card mcard rarecell" data-id="${id}"><span class="no">${lb}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typesChip(id)}</button>`:save.seen[id]?`<button class="card mcard seenonly" data-id="${id}"><span class="no">${lb}</span><div class="mon">${art(id,1,{sil:true})}</div><b>${esc(SP[id].forms[0].n)}</b><span class="mini">見つけた</span></button>`:`<div class="card mcard unseen"><span class="no">${lb}</span><div class="mon">？</div><b>？？？</b></div>`;
     h += `<h2 class="sec-h" style="margin-top:14px">日替わりモンスター</h2><p class="dexcount">なかまにした ${dayIds().length}ひき　（毎日ちがうモンスターが、その日だけ ぼうけん・ダンジョンで出やすい）</p><div class="grid3 dexgrid">${cell(tid,"きょう")}${lst.map(id=>cell(id,`${SP[id].ymd[1]}/${SP[id].ymd[2]}`)).join("")}</div>`; }
   if(dexCat==="week") h += `<h2 class="sec-h" style="margin-top:14px">曜日のモンスター</h2><p class="dexcount">なかまにした ${wc} / 7　（その曜日だけ、ぼうけん・ダンジョンで出やすい）</p><div class="grid3 dexgrid">${WEEK_ORDER.map(id=>{ const lb=WDAY[SP[id].day]+"曜日";
     if(save.owned[id]) return `<button class="card mcard rarecell" data-id="${id}"><span class="no">${lb}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typesChip(id)}</button>`;
-    if(save.seen[id]) return `<button class="card mcard" data-id="${id}"><span class="no">${lb}</span><div class="mon">${art(id,1,{sil:true})}</div><b>${esc(SP[id].forms[0].n)}</b><span class="mini">見つけた</span></button>`;
+    if(save.seen[id]) return `<button class="card mcard seenonly" data-id="${id}"><span class="no">${lb}</span><div class="mon">${art(id,1,{sil:true})}</div><b>${esc(SP[id].forms[0].n)}</b><span class="mini">見つけた</span></button>`;
     return `<div class="card mcard unseen"><span class="no">${lb}</span><div class="mon">？</div><b>？？？</b></div>`; }).join("")}</div>`;
   const rc = RARE_ORDER.filter(id=>save.owned[id]).length;
   if(dexCat==="rare") h += `<h2 class="sec-h" style="margin-top:14px">都道府県のレアモンスター</h2><p class="dexcount">なかまにした ${rc} / 47　（「ちず」でその都道府県を「かんぜん」にすると手に入る）</p><div class="dexgrps">${RARE_AREAS.map(([n,a0,a1],i)=>`<button class="${dexArea===i?'on':''}" data-area="${i}">${n}<small>${RARE_ORDER.slice(a0,a1).filter(id=>save.owned[id]).length}/${a1-a0}</small></button>`).join("")}</div><div class="grid3 dexgrid">${RARE_ORDER.slice(RARE_AREAS[dexArea][1],RARE_AREAS[dexArea][2]).map(id=>{ const pn=MAPD[RARE[id].pref][0];
@@ -3615,6 +3630,9 @@ function showDex(){
   app.querySelectorAll("[data-cat]").forEach(b=>b.onclick=()=>{ dexCat=b.dataset.cat; dexSel=null; showDex(); window.scrollTo(0,0); });
   app.querySelectorAll("[data-area]").forEach(b=>b.onclick=()=>{ dexArea=+b.dataset.area; dexSel=null; showDex(); });
   app.querySelectorAll("[data-grp]").forEach(b=>b.onclick=()=>{ dexGrp=b.dataset.grp; dexSel=null; showDex(); });
+  app.querySelectorAll("[data-subj]").forEach(b=>b.onclick=()=>{ dexSubj=b.dataset.subj; const g=GRPS_LAST.find(x=>x[1]===dexSubj); if(g) dexGrp=g[0]; dexSel=null; showDex(); });
+  document.body.classList.toggle("dexonly", dexOwn);
+  { const cb=document.getElementById("dexown"); if(cb) cb.onchange=()=>{ dexOwn=cb.checked; showDex(); }; }
   const pop=document.getElementById("dexpop"); if(pop){ const close=()=>{ dexSel=null; showDex(); }; document.getElementById("dexclose").onclick=close; pop.onclick=e=>{ if(e.target===pop) close(); }; }
   const on=app.querySelector(".dexgrps .on"); if(on) on.scrollIntoView({block:"nearest",inline:"center"});
 }
@@ -4192,7 +4210,13 @@ for(const [id,[n,e,p]] of Object.entries(UNIQ)){
 function migSig(s){ for(const [id,o] of Object.entries(s.owned||{})){ const u=MOVES["u_"+id]; if(!u||!o.mvUp) continue; for(const g of ["sig_legend","sig_mega","sig_umega","sig_week","sig_ur"]) if(o.mvUp[g]&&!o.mvUp["u_"+id]){ o.mvUp["u_"+id]=o.mvUp[g]; delete o.mvUp[g]; } } }
 migSig(save);
 
-function sigOf(id){ if(MOVES["u_"+id]) return "u_"+id; const s=SP[id]; return s.umega?"sig_umega":s.mega?"sig_mega":s.ur?"sig_ur":s.week?"sig_week":s.legend?"sig_legend":null; }
+/* v48: でんせつ等いがいの全モンスターにも、そのモンスターだけのわざ（名前＝さいしょのすがたの名前＋タイプのことば。じょうたいは id から決まる） */
+const AUTO_SUF = {mizu:["スプラッシュ","アクアショット","ウォーターガン"], hono:["バーニング","フレイム","ファイアキック"], kusa:["リーフストーム","グリーンウィップ","フラワーショット"], iwa:["ロッククラッシュ","ストーンブロウ","ガンセキアタック"], denki:["スパーク","サンダーショット","ボルトアタック"], koori:["フリーズ","アイスブレス","スノーショット"], kaze:["トルネード","ウィンドカッター","ゲイルアタック"], hikari:["シャイン","ライトビーム","スターフラッシュ"]};
+const AUTO_ST = ["psn","par","slp","aup","dup","adn","ddn","heal","psn","par"];
+function autoU(id){ const s=SP[id]; if(!s) return null; let h=0; for(const c of id) h=(h*31+c.charCodeAt(0))>>>0;
+  const suf=AUTO_SUF[s.type]||["アタック"], e=AUTO_ST[h%AUTO_ST.length];
+  MOVES["u_"+id] = uMove(s.forms[0].n+suf[(h>>>4)%suf.length], e, 1.5+((h>>>8)%4)*.05, 2); return "u_"+id; }
+function sigOf(id){ if(MOVES["u_"+id]) return "u_"+id; if(SP[id] && !SP[id].umega && !SP[id].mega && !SP[id].ur && !SP[id].week && !SP[id].legend) return autoU(id); const s=SP[id]; return s.umega?"sig_umega":s.mega?"sig_mega":s.ur?"sig_ur":s.week?"sig_week":s.legend?"sig_legend":null; }
 function learnSet(id){ const s=SP[id], a=[["tackle",1],[s.type+"1",3],[s.type+"2",8],[s.type+"3",15]];
   if(s.type2 && s.type2!==s.type) a.push([s.type2+"1",5],[s.type2+"2",11],[s.type2+"3",18]);
   return a.sort((x,y)=>x[1]-y[1]); }
@@ -4203,7 +4227,10 @@ function movesOf(id){
   const o=save.owned[id]||{}, tm=o.tm, sm=o.sm, top=[sig, tm&&MOVES[tm]?tm:null, sm&&MOVES[sm]&&smS()[sm.slice(3)]?sm:null].filter(Boolean);
   /* v45: ショップの「わざのほん」でおぼえたわざ（o.ext）は、レベルでおぼえるわざより優先してわく に入る */
   const room=4-top.length, ex=(o.ext||[]).filter(k=>MOVES[k]&&!top.includes(k)).slice(-room), rest=learn.filter(k=>!ex.includes(k)), r2=room-ex.length;
-  return [...top, ...ex, ...(r2>0?rest.slice(-r2):[])];
+  const out=[...top, ...ex, ...(r2>0?rest.slice(-r2):[])];
+  /* v48: コンボなしで使えるわざが1つもないと、1問目の正解でこうげきできないので、さいごの1つをコンボなしのわざにする */
+  if(out.length && out.every(k=>MOVES[k].combo)){ const nc=[...ex, ...learn].reverse().find(k=>!MOVES[k].combo)||"tackle"; out[out.length-1]=nc; }
+  return out;
 }
 function moveType(id,k){ const M=MOVES[k]; return M.t || (M.sig ? SP[id].type : null); }
 function moveInfo(id,k){ const M=MOVES[k], t=moveType(id,k), up=((save.owned[id]||{}).mvUp||{})[k]||0; return `${M.special?'とくべつ・':''}${t?TYPES[t]:'ふつう'}・いりょく${Math.round(M.pow*10*(1+up*.1))}${up?`（+${up}）`:''}${M.combo?`・${M.combo}コンボ`:''}${effTxt(M)}`; }
@@ -4317,7 +4344,7 @@ Object.assign(ITEMS, {
   ame:{n:"ふしぎなアメ", cat:"grow", price:8, d:"なかま1ぴきのLvが1上がる（Lv300まで）。「なかま」画面で使う"},
   ink:{n:"ひかるインク", cat:"grow", price:25, d:"なかま1ぴきを色ちがいにする（見た目だけ）。「なかま」画面で使う"}
 });
-for(const t of Object.keys(TYPES)) for(const i of [1,2,3,4]){ const k=t+i, M=MOVES[k]; ITEMS["mv_"+k] = {n:`わざのほん「${M.n}」`, cat:"move", t, mv:k, tier:i, price:[0,5,8,15,10][i], d:`${TYPES[t]}タイプ（2つ目のタイプもふくむ）のなかま1ぴきが、Lvに関係なくすぐおぼえる`}; }
+for(const t of Object.keys(TYPES)) for(const i of [1,2,3,4]){ const k=t+i, M=MOVES[k]; ITEMS["mv_"+k] = {n:`わざのほん「${M.n}」`, cat:"move", t, mv:k, tier:i, price:[0,5,8,15,10][i], d:i===4?`どのタイプのなかまでも1ぴきが、すぐおぼえる（じょうたいのわざ）`:`${TYPES[t]}タイプ（2つ目のタイプもふくむ）のなかま1ぴきが、Lvに関係なくすぐおぼえる`}; }
 const SHOP_CATS = [["move","ふつうのわざ"],["tm","スペシャルわざ"],["stone","しんかの石"],["battle","バトルのどうぐ"],["grow","そだてるどうぐ"]];
 function itemSVG(k){
   const it=ITEMS[k], K="#24324a", c=it.t?TCOL[it.t]:"#ffcf3a";
@@ -4518,6 +4545,7 @@ function showPlaza(){
       h+=`<div class="dexgrps">${Object.keys(TYPES).map(t=>`<button class="${shopType===t?'on':''}" data-st="${t}">${TYPES[t]}${lt.includes(t)?'<small>せんとう</small>':''}</button>`).join("")}</div>`;
       list=list.filter(([,it])=>it.t===shopType);
       const who=Object.keys(save.owned).filter(id=>SP[id]&&[SP[id].type,SP[id].type2].includes(shopType));
+      h+=`<p class="mini" style="margin:0 0 4px"><b>「じょうたい」のわざ（どく・まひ・ねむり など）は、どのタイプのなかまでもおぼえられるよ！</b></p>`;
       h+=`<p class="mini" style="margin:0 0 8px">おぼえられるなかま：${who.length?who.slice(0,6).map(id=>esc(nameOf(id))).join("・")+(who.length>6?` ほか${who.length-6}ひき`:''):'まだいない'}</p>`;
       h+=`<div class="shopgrid">${list.map(([k,it])=>{ const M=MOVES[it.mv]; return `<div class="card sitem"><div class="sic">${itemSVG(k)}</div><div class="sin"><b>${esc(M.n)} <span class="mini" style="display:inline">${it.tier===4?'じょうたい':'●'.repeat(it.tier)}</span></b><span class="mini">いりょく${Math.round(M.pow*10)}${effTxt(M)}${M.combo?`・${M.combo}コンボで使える`:''}</span><span class="mini">もっている ${bag()[k]||0}こ</span></div><button class="btn sbuy" data-buy="${k}" ${save.balls<it.price?'disabled':''}>${flaskSVG}${it.price}</button></div>`; }).join("")}</div>`;
     } else if(shopCat==="tm"||shopCat==="stone"){
@@ -5048,7 +5076,7 @@ function finish(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261110114022";
+const APP_VER="20261110121348";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
@@ -5056,6 +5084,7 @@ function checkUpdate(){
     const d=document.createElement("button"); d.id="updbar"; d.className="updbar";
     d.innerHTML="新しい版があります。タップして更新！"; d.onclick=()=>location.replace(location.pathname+"?v="+j.v);
     document.body.appendChild(d);
+    if(!B) setTimeout(()=>{ if(!B) location.replace(location.pathname+"?v="+j.v); }, 2500);
   }).catch(()=>{});
 }
 document.addEventListener("visibilitychange",()=>{ if(!document.hidden) checkUpdate(); });
