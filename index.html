@@ -3386,8 +3386,8 @@ function showMap(){
   h += '<!--BKTOP-->';
   const rg = grantRares(), mg = grantMegas(), ug = grantUR(), umg = grantUMegas(); if(rg.length||mg.length||ug.length||umg.length) h += `<div class="gets">${umg.map(umegaCard).join("")}${ug.map(urCard).join("")}${mg.map(megaCard).join("")}${rg.map(rareCard).join("")}</div>`;
   { const rc=rewardCards(); if(rc) h += `<div class="gets">${rc}</div>`; }
-  h += weekNote();
-  const evoId = [...DEX_ORDER,...RARE_ORDER,...QD_ORDER,...MEGA_ORDER,...UR_ORDER].find(id=>canEvo(id));
+  h += weekNote() + dayNote();
+  const evoId = [...DEX_ORDER,...RARE_ORDER,...QD_ORDER,...MEGA_ORDER,...UR_ORDER,...dayIds()].find(id=>canEvo(id));
   if(evoId) h += `<button class="card prof gift" id="evoNote"><div class="mon" style="width:52px;height:52px;flex:none">${artMine(evoId)}</div><div style="text-align:left"><p>しんかできるなかまがいるよ！</p><p style="font-weight:500">${esc(nameOf(evoId))}をしんかさせよう。タップで「なかま」へ。</p></div></button>`;
   const giftReady = !save.owned.toratch && save.cleared["rika-11|s1"];
   if(giftReady) h += `<button class="card prof gift" id="gift"><div class="face">${profFace}</div><div style="text-align:left"><p>ソラノはかせからプレゼント！</p><p style="font-weight:500">ルート1クリアおめでとう。タップしてうけとろう。</p></div></button>`;
@@ -3507,7 +3507,7 @@ function showBackup(){
   };
   g("bkout").onfocus=e=>e.target.select();
   g("bkload").onclick=()=>{ const o=parseBackup(g("bkin").value); if(!o){ bkPending=null; bkMsg="コードが読みとれなかったよ。さいしょの「RQ1-」から最後まで、全部はりつけてね。"; } else { bkPending=o; bkMsg=""; } showBackup(); };
-  if(bkPending){ g("bkyes").onclick=()=>{ save=bkPending; bkPending=null; for(const [id,o] of Object.entries(save.owned)) if(o.form==null && SP[id]) o.form=formIdx(id,o.lv); persist(); bkMsg="きろくをもどしたよ！"; showBackup(); };
+  if(bkPending){ g("bkyes").onclick=()=>{ save=bkPending; bkPending=null; regDays(save); for(const [id,o] of Object.entries(save.owned)) if(o.form==null && SP[id]) o.form=formIdx(id,o.lv); persist(); bkMsg="きろくをもどしたよ！"; showBackup(); };
     g("bkno").onclick=()=>{ bkPending=null; bkMsg=""; showBackup(); }; }
   g("bkback").onclick=()=>{ bkMsg=""; bkPending=null; tab="adv"; home(); };
 }
@@ -3517,7 +3517,7 @@ let partySel = null;
 function showParty(){
   const lead = save.party[0], o = save.owned[lead], s = SP[lead];
   const nf = s.forms[curF(lead)+1];
-  const ids = [...UR_ORDER, ...UMEGA_ORDER, ...DEX_ORDER, ...WEEK_ORDER, ...RARE_ORDER, ...QD_ORDER, ...MEGA_ORDER].filter(id=>save.owned[id]);
+  const ids = [...UR_ORDER, ...UMEGA_ORDER, ...DEX_ORDER, ...WEEK_ORDER, ...dayIds(), ...RARE_ORDER, ...QD_ORDER, ...MEGA_ORDER].filter(id=>save.owned[id]);
   if(!partySel || !save.owned[partySel]) partySel = lead;
   const d = partySel, dO = save.owned[d], inP = save.party.includes(d);
   app.innerHTML = `<h2 class="sec-h">なかま</h2>
@@ -3562,13 +3562,13 @@ function showDex(){
   const DEXO = DEX_ORDER.filter(monOpen), caught = DEXO.filter(id=>save.owned[id]).length, seen = DEXO.filter(id=>save.seen[id]).length;
   const UMO = UMEGA_ORDER.filter(id=>unitOpen(UNITS.find(u=>u.id===UMEGA[id].unit))), MGO = MEGA_ORDER.filter(id=>!MEGA[id].where.unit || unitOpen(UNITS.find(u=>u.id===MEGA[id].where.unit)));
   const cnt = ids => `${ids.filter(id=>save.owned[id]).length}/${ids.length}`;
-  const CATS = [["main","ずかん",cnt(DEXO)],["rare","都道府県",cnt(RARE_ORDER)],["mega","メガ",cnt(MGO)],["umega","ウルトラメガ",cnt(UMO)],["week","曜日",cnt(WEEK_ORDER)],["qd","ダンジョン",cnt(QD_ORDER)],["ur","ウルトラレア",cnt(UR_ORDER)]];
+  const CATS = [["main","ずかん",cnt(DEXO)],["rare","都道府県",cnt(RARE_ORDER)],["mega","メガ",cnt(MGO)],["umega","ウルトラメガ",cnt(UMO)],["week","曜日",cnt(WEEK_ORDER)],["day","日替わり",String(dayIds().length)],["qd","ダンジョン",cnt(QD_ORDER)],["ur","ウルトラレア",cnt(UR_ORDER)]];
   if(!CATS.some(c=>c[0]===dexCat)) dexCat="main";
   let h = `<h2 class="sec-h">モンスターずかん</h2><p class="dexcount">つかまえた ${caught}・見つけた ${seen}・ぜんぶで ${DEXO.length}</p>`;
   h += `<div class="dexcats">${CATS.map(([k,n,c])=>`<button class="${dexCat===k?'on':''}" data-cat="${k}">${n}<small>${c}</small></button>`).join("")}</div>`;
   if(dexSel && save.seen[dexSel]){
     const s=SP[dexSel], own=save.owned[dexSel];
-    h += `<div class="dexpop" id="dexpop"><div class="card detail"><button class="dexclose" id="dexclose" aria-label="とじる">×</button><div class="row"><div class="mon">${(own?artMine(dexSel):art(dexSel,1,{sil:true}))}</div><div style="min-width:0"><span class="mini">${s.umega?'ウルトラメガモンスター':s.week?`${WDAY[s.day]}曜日のモンスター`:s.ur?'ウルトラレアモンスター':s.mega?'メガモンスター（'+esc(megaWhere(dexSel))+'を克服）':s.qd?'クイズダンジョンの伝説のドラゴン':s.egg?'たまごから生まれるモンスター':s.rare?`${MAPD[s.pref][0]}のレアモンスター`:`No.${String(DEX_ORDER.indexOf(dexSel)+1).padStart(3,"0")}`}</span><h3>${esc(own?nameOf(dexSel):s.forms[0].n)}</h3>${typesChip(dexSel)}</div></div>
+    h += `<div class="dexpop" id="dexpop"><div class="card detail"><button class="dexclose" id="dexclose" aria-label="とじる">×</button><div class="row"><div class="mon">${(own?artMine(dexSel):art(dexSel,1,{sil:true}))}</div><div style="min-width:0"><span class="mini">${s.umega?'ウルトラメガモンスター':s.week?`${WDAY[s.day]}曜日のモンスター`:s.daily?`${s.ymd[1]}月${s.ymd[2]}日の日替わりモンスター`:s.ur?'ウルトラレアモンスター':s.mega?'メガモンスター（'+esc(megaWhere(dexSel))+'を克服）':s.qd?'クイズダンジョンの伝説のドラゴン':s.egg?'たまごから生まれるモンスター':s.rare?`${MAPD[s.pref][0]}のレアモンスター`:`No.${String(DEX_ORDER.indexOf(dexSel)+1).padStart(3,"0")}`}</span><h3>${esc(own?nameOf(dexSel):s.forms[0].n)}</h3>${typesChip(dexSel)}</div></div>
       <p>${own?esc(s.dex):'まだつかまえていない。つかまえると、くわしいことがわかるよ。'}</p>${own&&s.forms.length>1?`<p class="mini">しんか：${s.forms.map(f=>f.n+(f.lv?`（Lv.${f.lv}）`:'')).join(" → ")}</p>`:''}</div></div></div>`;
   }
   if(dexCat==="main"){
@@ -3588,6 +3588,9 @@ function showDex(){
   const uc = UMO.filter(id=>save.owned[id]).length, wc = WEEK_ORDER.filter(id=>save.owned[id]).length;
   if(dexCat==="umega") h += `<h2 class="sec-h" style="margin-top:14px">ウルトラメガモンスター</h2><p class="dexcount">なかまにした ${uc} / ${UMO.length}　（単元のルートとでんせつを全部クリアして、ニガテの森を0問にすると手に入る）</p><div class="grid3 dexgrid">${UMO.map(id=>{ const lb=unitLabel(UNITS.find(u=>u.id===UMEGA[id].unit));
     return save.owned[id]?`<button class="card mcard urcell" data-id="${id}"><span class="no">${esc(lb)}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typesChip(id)}</button>`:`<div class="card mcard unseen"><span class="no">${esc(lb)}</span><div class="mon">${art(id,1,{sil:true})}</div><b>？？？</b></div>`; }).join("")}</div>`;
+  if(dexCat==="day"){ const tid=dayToday(), ts=SP[tid], lst=dayIds().filter(x=>x!==tid);
+    const cell=(id,lb)=>save.owned[id]?`<button class="card mcard rarecell" data-id="${id}"><span class="no">${lb}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typesChip(id)}</button>`:save.seen[id]?`<button class="card mcard" data-id="${id}"><span class="no">${lb}</span><div class="mon">${art(id,1,{sil:true})}</div><b>${esc(SP[id].forms[0].n)}</b><span class="mini">見つけた</span></button>`:`<div class="card mcard unseen"><span class="no">${lb}</span><div class="mon">？</div><b>？？？</b></div>`;
+    h += `<h2 class="sec-h" style="margin-top:14px">日替わりモンスター</h2><p class="dexcount">なかまにした ${dayIds().length}ひき　（毎日ちがうモンスターが、その日だけ ぼうけん・ダンジョンで出やすい）</p><div class="grid3 dexgrid">${cell(tid,"きょう")}${lst.map(id=>cell(id,`${SP[id].ymd[1]}/${SP[id].ymd[2]}`)).join("")}</div>`; }
   if(dexCat==="week") h += `<h2 class="sec-h" style="margin-top:14px">曜日のモンスター</h2><p class="dexcount">なかまにした ${wc} / 7　（その曜日だけ、ぼうけん・ダンジョンで出やすい）</p><div class="grid3 dexgrid">${WEEK_ORDER.map(id=>{ const lb=WDAY[SP[id].day]+"曜日";
     if(save.owned[id]) return `<button class="card mcard rarecell" data-id="${id}"><span class="no">${lb}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typesChip(id)}</button>`;
     if(save.seen[id]) return `<button class="card mcard" data-id="${id}"><span class="no">${lb}</span><div class="mon">${art(id,1,{sil:true})}</div><b>${esc(SP[id].forms[0].n)}</b><span class="mini">見つけた</span></button>`;
@@ -4031,6 +4034,49 @@ function umegaNote(u){
 }
 
 /* ============================================================
+   日替わりモンスター（v46）：毎日ちがう新種を日付から自動生成。ぼうけん・ダンジョンで 20%（曜日のモンスターとは別に）
+   ユーザーの要望「毎日のモンスターが曜日ごとで7種類しかないので毎日発生してほしい」→ 選択: 毎日ちがう新種を自動生成／曜日と同じ20%ずつ
+   id: day_YYYYMMDD（端末の日付。変更しない）。見た目・名前・タイプは id から毎回同じものが作られるので、保存は owned の id だけでよい
+   ============================================================ */
+const DAY_RATE = 0.2;
+const DAY_ARCH = ["beast","tiger","dragon","bird","golem","serpent","bat","turtle","beetle","fox","slime","fish","jelly"];
+const DAY_PRE = {mizu:["アクア","シズ","ナミ","ミナ","マリ"],hono:["ヒノ","ホムラ","カエン","アカ","ボウ"],kusa:["リーフ","モリ","ハナ","ツタ","メブ"],iwa:["ガン","イシ","ロック","ゴツ","ザク"],denki:["ビリ","ピカ","ライ","ボルト","バチ"],koori:["ヒョウ","ユキ","フロ","ツララ","シモ"],kaze:["フウ","ソヨ","ハヤテ","カゼ","ヒュル"],hikari:["キラ","ルミ","テラ","ヒカ","ピカリ"]};
+const DAY_MID = ["ロ","ピ","モ","ル","キ","ポ","ラ","ニ","チ","パ","ミ","ト","マ","ク","ノ","ヤ","リ","ム"];
+const DAY_SUF = {beast:"ガルー",tiger:"タイガ",dragon:"ドラ",bird:"バード",golem:"ゴーレ",serpent:"ジャ",bat:"バット",turtle:"ガメ",beetle:"ムシ",fox:"コン",slime:"プル",fish:"ギョ",jelly:"クラゲ"};
+const DAY_COL = {mizu:["#7cc8ff","#3d8bff","#3dd6c6","#5fa8e8"],hono:["#ff7a2f","#ffb84d","#e8475a","#ff5a3d"],kusa:["#74c94f","#9fd36a","#2f9e7a","#6cc46a"],iwa:["#a0784b","#c9d3e0","#d9b27a","#8c6a4a"],denki:["#ffd23f","#ffe28a","#f5b800","#fff06a"],koori:["#e8f1ff","#bfe6ff","#9ad8ff","#d6f4ff"],kaze:["#d9d2ff","#bfe6c8","#c8f0e8","#b9c8ff"],hikari:["#fff4d6","#ffe28a","#ff8fc8","#ffd6f0"]};
+const DAY_ACC = ["#e8475a","#ffcf3a","#3d8bff","#24a865","#b06ad9","#ffffff","#24324a","#ff7a2f"];
+const DAY_FL = {mizu:"水の中をすいすい泳ぐのがとくい。",hono:"体があたたかく、さわるとぽかぽかする。",kusa:"日光をあびると元気になる。",iwa:"体がとてもかたく、ころんでもへっちゃら。",denki:"体の中に電気をためている。",koori:"はく息がつめたく、まわりがひんやりする。",kaze:"風にのって空高くまでいける。",hikari:"暗いところで体が光る。"};
+const DAY_EVO = ["キング","オー","ロード","マックス","スター"];
+function dayRng(seed){ let a=seed>>>0; return ()=>{ a=(a+0x6D2B79F5)>>>0; let t=a; t=Math.imul(t^(t>>>15),t|1); t^=t+Math.imul(t^(t>>>7),t|61); return ((t^(t>>>14))>>>0)/4294967296; }; }
+function regDay(id){
+  if(SP[id]) return id;
+  const ds=id.slice(4), y=+ds.slice(0,4), m=+ds.slice(4,6), d=+ds.slice(6,8);
+  const R=dayRng(y*10000+m*100+d+7919), P=a=>a[Math.floor(R()*a.length)];
+  for(let i=0;i<3;i++) R();
+  const types=Object.keys(TYPES), type=P(types), t2=R()<.55?P(types):null, type2=t2&&t2!==type?t2:null;
+  const arch=P(DAY_ARCH), n=P(DAY_PRE[type])+P(DAY_MID)+DAY_SUF[arch];
+  const parts={};
+  if(R()<.6) parts.horn=P(["uni","twin","antler","crown","crest"]);
+  if(R()<.5) parts.pat=P(["spots","stars","stripes","zigzag"]);
+  if(R()<.45){ parts.acc=P(["bell","gem","scarf"]); parts.accColor=P(DAY_ACC); }
+  if(["bird","dragon","bat","beetle"].includes(arch) && R()<.6) parts.wing=P(["bat","bug","crystal","feather"]);
+  const sp={arch, type, color:P(DAY_COL[type]), accent:P(DAY_ACC), skill:P(["power","heal","hint","luck"]), parts, size:Math.round((.8+R()*.45)*100)/100,
+    numMark:`${m}/${d}`, daily:true, ymd:[y,m,d], forms:[{n},{n:n+P(DAY_EVO),lv:20}],
+    dex:`${y}年${m}月${d}日にだけあらわれた、日替わりのモンスター。${DAY_FL[type]}${type2?`${TYPES[type2]}の力ももっている。`:''}この日をのがすと、もう出会えない。`};
+  if(arch==="golem") sp.body=P(["round","cube","crystal"]);
+  if(type2) sp.type2=type2;
+  SP[id]=sp; return id;
+}
+const dayToday = () => regDay("day_"+today().replace(/-/g,""));
+const dayIds = () => Object.keys(save.owned).filter(id=>id.startsWith("day_")).sort().reverse();
+function regDays(s){ for(const box of [s.owned||{}, s.seen||{}]) for(const id of Object.keys(box)) if(id.startsWith("day_") && /^day_\d{8}$/.test(id)) regDay(id); for(const [id,o] of Object.entries(s.owned||{})) if(id.startsWith("day_") && o.form==null && SP[id]) o.form=formIdx(id,o.lv); }
+regDays(save);
+function dayNote(){
+  const id=dayToday(), own=save.owned[id], s=SP[id], [y,m,d]=s.ymd;
+  return `<div class="card weekcard"><div class="mon">${own?artMine(id):save.seen[id]?art(id):art(id,1,{sil:true})}</div><div><b>${m}月${d}日の日替わりモンスター</b><span class="mini">${own?`<b>${esc(nameOf(id))}</b>をなかまにした！`:save.seen[id]?`<b>${esc(s.forms[0].n)}</b>が出ている！ きょうだけ（ぼうけん・ダンジョンで出会える）`:'きょうだけのモンスターが出ている！（ぼうけん・ダンジョンで出会える）'}<br>日替わりモンスター ${dayIds().length}ひき</span></div></div>`;
+}
+
+/* ============================================================
    曜日のモンスター（v31）：その曜日だけ、ぼうけん・ダンジョンで出やすくなる（でんせつ・ボスいがいの戦いで 20%）
    id: week_<0〜6>（0=日曜。変更しない）
    ============================================================ */
@@ -4247,6 +4293,7 @@ const BADGES = [
   ["nigate","ニガテこくふく","メガかウルトラメガのモンスターをなかまにする",8,()=>[...MEGA_ORDER,...UMEGA_ORDER].some(id=>save.owned[id])],
   ["stone","石のちから","しんかの石でしんかさせる",5,()=>Object.entries(save.owned).some(([id,o])=>SP[id]&&o.form!=null&&SP[id].forms[o.form]&&SP[id].forms[o.form].item)],
   ["week7","曜日コンプリート","曜日のモンスターを7ひき全部なかまに",15,()=>WEEK_ORDER.every(id=>save.owned[id])],
+  ["day10","日替わりコレクター","日替わりモンスターを10ぴきなかまに",10,()=>dayIds().length>=10],
   ["dex1","ずかんコンプリート","1つの単元のモンスターを全部なかまに",8,()=>Object.keys(save.dexDone||{}).length>=1],
   ["tower3","タワー3勝","バトルタワーで3人目のトレーナーに勝つ",8,()=>((save.btower||{}).best||0)>=3],
   ["tower9","タワーチャンピオン","バトルタワーで9人目（チャンピオン）に勝つ",20,()=>((save.btower||{}).best||0)>=9],
@@ -4532,7 +4579,7 @@ function startBattle(uid, sid){
 function spawn(){
   const boss = B.sid==="boss";
   let id = pick(B.pool);
-  if(!boss && !B.trainer && Math.random()<WEEK_RATE) id = weekToday();
+  if(!boss && !B.trainer){ const rw=Math.random(); if(rw<WEEK_RATE) id = weekToday(); else if(rw<WEEK_RATE+DAY_RATE) id = dayToday(); }
   if(B.mitsu && !boss && !B.trainer){ const un=B.pool.filter(x=>!save.owned[x]); if(un.length) id=pick(un); B.mitsu=false; }
   if(B.trainer){ const t=B.trainer, st2=Math.random()<STRONG_RATE, lv2=Math.min(MAX_LV, Math.max(1, Math.round(t.lv*(st2?1.25+Math.random()*.15:.85+Math.random()*.35)))), mx=Math.round(30+lv2*4); id=t.team[t.idx]; B.wild={id, lv:lv2, hp:mx, max:mx, sz:1, strong:st2}; save.seen[id]=1; persist(); return; }
   const EL = enemyLv(boss ? B.lvBase : B.lvBase + Math.floor(Math.random()*2), boss), lv = EL.lv;
@@ -4579,7 +4626,7 @@ function renderBattle(enter){
   if(enter && B.trainer) logMsg = `<b>${esc(B.trainer.nm)}</b>は <b>${esc(nameOf(B.wild.id,B.wild.lv))}</b> をくりだした！`+(B.wild.strong?' <b class="hasty">つよそうだ！</b>':'');
   else if(enter && B.wild.strong) logMsg = `<b class="hasty">つよそうだ！</b> やせいの <b>${esc(nameOf(B.wild.id,B.wild.lv))}</b> があらわれた！ たおすとEXPが多いよ。`;
   else if(enter && B.wild.shiny) logMsg = `<b class="hasty">きらきら…！</b> 色ちがいの <b>${esc(nameOf(B.wild.id,B.wild.lv))}</b> があらわれた！ とても強いぞ！`;
-  else if(enter) logMsg = (SP[B.wild.id].week?`きょうは${WDAY[SP[B.wild.id].day]}曜日！ 曜日のモンスター `:sizeLabel(B.wild.sz||1)==='でかい！'?'でかい！ ':sizeLabel(B.wild.sz||1)?'ちびっこの ':'') + `やせいの <b>${esc(nameOf(B.wild.id,B.wild.lv))}</b> があらわれた！` + (bestMult(B.lead,B.wild.id)===2?' あいしょうはばつぐん！':bestMult(B.lead,B.wild.id)===.5?' あいしょうが悪いかも…':'');
+  else if(enter) logMsg = (SP[B.wild.id].week?`きょうは${WDAY[SP[B.wild.id].day]}曜日！ 曜日のモンスター `:SP[B.wild.id].daily?'きょうだけの日替わりモンスター！ ':sizeLabel(B.wild.sz||1)==='でかい！'?'でかい！ ':sizeLabel(B.wild.sz||1)?'ちびっこの ':'') + `やせいの <b>${esc(nameOf(B.wild.id,B.wild.lv))}</b> があらわれた！` + (bestMult(B.lead,B.wild.id)===2?' あいしょうはばつぐん！':bestMult(B.lead,B.wild.id)===.5?' あいしょうが悪いかも…':'');
   const me=B.lead, sk=SKILLS[SP[me].skill];
   app.innerHTML = `
   <div class="btop"><button class="back" id="back">← にげる</button><span class="pill">${flaskSVG} ×${save.balls}</span>${useHP()?hpMiniHTML():`<div class="hearts">${Array.from({length:B.maxHearts||MAX_HP},(_,i)=>heart(i<B.hearts)).join("")}</div>`}</div>
@@ -4919,7 +4966,7 @@ function finish(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261105074507";
+const APP_VER="20261110112735";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
