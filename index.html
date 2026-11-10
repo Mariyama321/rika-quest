@@ -210,6 +210,8 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .shophead{display:flex;gap:10px;align-items:center;padding:8px 12px;flex-wrap:wrap}
 .shopmsg{font-weight:800;color:var(--good);margin:10px 0 0}
 .shopcat{font-size:16px;margin:14px 0 8px}
+.sttag{display:inline-block;font-size:10px;font-weight:800;border-radius:6px;padding:0 4px;margin-left:3px;color:#fff;vertical-align:middle;line-height:1.5}
+.sttag.psn{background:#9b4fd0}.sttag.par{background:#e0a800}.sttag.slp{background:#5b7bd5}.sttag.dn{background:#6b7a90}.sttag.up{background:#e8475a}
 .ptabs{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin:14px 0 10px;position:sticky;top:0;z-index:5;background:var(--bg);padding:6px 0}
 .ptabs button{border:2px solid var(--ink);border-radius:10px;background:var(--panel);padding:6px 2px;font-weight:800;font-size:11.5px;line-height:1.2}
 .ptabs button.on{background:var(--sun);box-shadow:0 2px 0 var(--ink)}
@@ -3507,7 +3509,7 @@ function showBackup(){
   };
   g("bkout").onfocus=e=>e.target.select();
   g("bkload").onclick=()=>{ const o=parseBackup(g("bkin").value); if(!o){ bkPending=null; bkMsg="コードが読みとれなかったよ。さいしょの「RQ1-」から最後まで、全部はりつけてね。"; } else { bkPending=o; bkMsg=""; } showBackup(); };
-  if(bkPending){ g("bkyes").onclick=()=>{ save=bkPending; bkPending=null; regDays(save); for(const [id,o] of Object.entries(save.owned)) if(o.form==null && SP[id]) o.form=formIdx(id,o.lv); persist(); bkMsg="きろくをもどしたよ！"; showBackup(); };
+  if(bkPending){ g("bkyes").onclick=()=>{ save=bkPending; bkPending=null; regDays(save); migSig(save); for(const [id,o] of Object.entries(save.owned)) if(o.form==null && SP[id]) o.form=formIdx(id,o.lv); persist(); bkMsg="きろくをもどしたよ！"; showBackup(); };
     g("bkno").onclick=()=>{ bkPending=null; bkMsg=""; showBackup(); }; }
   g("bkback").onclick=()=>{ bkMsg=""; bkPending=null; tab="adv"; home(); };
 }
@@ -3532,7 +3534,7 @@ function showParty(){
     ${(()=>{ const bb=bag(), o=dO, ts=[SP[d].type,SP[d].type2].filter(Boolean); let x="";
       if((bb.ame||0)>0 && o.lv<MAX_LV) x+=`<button class="btn alt" data-use="ame">ふしぎなアメ（${bb.ame}）<br><small>Lv.${o.lv}→${o.lv+1}</small></button>`;
       if((bb.ink||0)>0 && !o.shiny) x+=`<button class="btn alt" data-use="ink">ひかるインク（${bb.ink}）<br><small>色ちがいにする</small></button>`;
-      const cur=movesOf(d); for(const t of ts) for(const i of [1,2,3]){ const k=t+i, ik="mv_"+k; if((bb[ik]||0)>0 && !cur.includes(k)) x+=`<button class="btn alt" data-use="${ik}">「${esc(MOVES[k].n)}」をおぼえる<br><small>わざのほん（${bb[ik]}）${cur.length>=4?'・わざが4つなので1つと入れかわる':''}</small></button>`; }
+      const cur=movesOf(d); for(const t of ts) for(const i of [1,2,3,4]){ const k=t+i, ik="mv_"+k; if((bb[ik]||0)>0 && !cur.includes(k)) x+=`<button class="btn alt" data-use="${ik}">「${esc(MOVES[k].n)}」をおぼえる<br><small>わざのほん（${bb[ik]}）${cur.length>=4?'・わざが4つなので1つと入れかわる':''}</small></button>`; }
       for(const t of ts) if((bb["tm_"+t]||0)>0 && o.tm!=="sp_"+t) x+=`<button class="btn alt" data-use="tm_${t}">「${SPNAMES[t]}」をおぼえる<br><small>わざマシン（${bb["tm_"+t]}）${o.tm?'・今のスペシャルわざとこうかん':''}</small></button>`;
       return x?`<div class="itembtns">${x}</div>`:''; })()}
     <div class="btns">${save.party[0]!==d?`<button class="btn go" id="mklead">せんとうにする</button>`:''}${inP?(save.party.length>1?`<button class="btn alt" id="rm">パーティからはずす</button>`:''):`<button class="btn alt" id="add" ${save.party.length>=3?'disabled':''}>${save.party.length>=3?'パーティがいっぱい':'パーティに入れる'}</button>`}</div></div>
@@ -4113,29 +4115,37 @@ function weekNote(){
 const MOVES = {
   tackle:{n:"たいあたり", t:null, pow:1.0, lv:1},
   mizu1:{n:"みずでっぽう", t:"mizu", pow:1.3, lv:3},
-  mizu2:{n:"うずしお", t:"mizu", pow:1.0, lv:8, eff:"heal"},
-  mizu3:{n:"ハイドロキャノン", t:"mizu", pow:2.2, lv:15, combo:3},
-  hono1:{n:"ひのこ", t:"hono", pow:1.3, lv:3},
-  hono2:{n:"ほのおのキバ", t:"hono", pow:1.0, lv:8, eff:"catch"},
-  hono3:{n:"だいもんじ", t:"hono", pow:2.2, lv:15, combo:3},
-  kusa1:{n:"はっぱカッター", t:"kusa", pow:1.3, lv:3},
-  kusa2:{n:"やどりぎのタネ", t:"kusa", pow:1.0, lv:8, eff:"heal"},
+  mizu2:{n:"うずしお", t:"mizu", pow:1.1, lv:8, eff:"heal"},
+  mizu3:{n:"ハイドロキャノン", t:"mizu", pow:2.3, lv:15, combo:3},
+  hono1:{n:"ひのこ", t:"hono", pow:1.45, lv:3},
+  hono2:{n:"ほのおのキバ", t:"hono", pow:1.2, lv:8, eff:"catch"},
+  hono3:{n:"だいもんじ", t:"hono", pow:2.5, lv:15, combo:3},
+  kusa1:{n:"はっぱカッター", t:"kusa", pow:1.35, lv:3},
+  kusa2:{n:"やどりぎのタネ", t:"kusa", pow:0.9, lv:8, eff:"heal"},
   kusa3:{n:"ソーラービーム", t:"kusa", pow:2.2, lv:15, combo:3},
-  iwa1:{n:"いわおとし", t:"iwa", pow:1.3, lv:3},
-  iwa2:{n:"まもるいわ", t:"iwa", pow:1.0, lv:8, eff:"guard"},
-  iwa3:{n:"ストーンエッジ", t:"iwa", pow:2.2, lv:15, combo:3},
-  denki1:{n:"でんきショック", t:"denki", pow:1.3, lv:3},
-  denki2:{n:"ほうでん", t:"denki", pow:1.0, lv:8, eff:"catch"},
-  denki3:{n:"かみなり", t:"denki", pow:2.2, lv:15, combo:3},
-  koori1:{n:"こおりのつぶて", t:"koori", pow:1.3, lv:3},
-  koori2:{n:"こおりのかべ", t:"koori", pow:1.0, lv:8, eff:"guard"},
+  iwa1:{n:"いわおとし", t:"iwa", pow:1.5, lv:3},
+  iwa2:{n:"まもるいわ", t:"iwa", pow:0.8, lv:8, eff:"guard"},
+  iwa3:{n:"ストーンエッジ", t:"iwa", pow:2.4, lv:15, combo:3},
+  denki1:{n:"でんきショック", t:"denki", pow:1.2, lv:3, st:"par", stp:.2},
+  denki2:{n:"ほうでん", t:"denki", pow:1.1, lv:8, eff:"catch"},
+  denki3:{n:"かみなり", t:"denki", pow:2.3, lv:15, combo:3, st:"par", stp:.3},
+  koori1:{n:"こおりのつぶて", t:"koori", pow:1.25, lv:3},
+  koori2:{n:"こおりのかべ", t:"koori", pow:0.9, lv:8, eff:"guard"},
   koori3:{n:"ふぶき", t:"koori", pow:2.2, lv:15, combo:3},
-  kaze1:{n:"かぜおこし", t:"kaze", pow:1.3, lv:3},
+  kaze1:{n:"かぜおこし", t:"kaze", pow:1.15, lv:3, st:"ddn", stp:.3},
   kaze2:{n:"おいかぜ", t:"kaze", pow:1.0, lv:8, eff:"heal"},
-  kaze3:{n:"たつまき", t:"kaze", pow:2.2, lv:15, combo:3},
-  hikari1:{n:"フラッシュ", t:"hikari", pow:1.3, lv:3},
-  hikari2:{n:"いやしのひかり", t:"hikari", pow:1.0, lv:8, eff:"heal"},
-  hikari3:{n:"プリズムレーザー", t:"hikari", pow:2.2, lv:15, combo:3},
+  kaze3:{n:"たつまき", t:"kaze", pow:2.1, lv:15, combo:3},
+  hikari1:{n:"フラッシュ", t:"hikari", pow:1.1, lv:3, st:"adn", stp:.5},
+  hikari2:{n:"いやしのひかり", t:"hikari", pow:0.8, lv:8, eff:"heal"},
+  hikari3:{n:"プリズムレーザー", t:"hikari", pow:2.0, lv:15, combo:3},
+  mizu4:{n:"あくびのあわ", t:"mizu", pow:.6, shop:true, st:"slp"},
+  hono4:{n:"ほのおのまい", t:"hono", pow:1.0, shop:true, st:"aup"},
+  kusa4:{n:"どくのこな", t:"kusa", pow:.6, shop:true, st:"psn"},
+  iwa4:{n:"てっぺき", t:"iwa", pow:.5, shop:true, st:"dup"},
+  denki4:{n:"でんじは", t:"denki", pow:.5, shop:true, st:"par"},
+  koori4:{n:"こごえるかぜ", t:"koori", pow:.9, shop:true, st:"adn"},
+  kaze4:{n:"つむじかぜ", t:"kaze", pow:.9, shop:true, st:"ddn"},
+  hikari4:{n:"さいみんこうせん", t:"hikari", pow:.5, shop:true, st:"slp"},
   sig_legend:{n:"でんせつのいぶき", sig:true, pow:1.8, combo:2},
   sig_mega:{n:"メガバースト", sig:true, pow:2.5, combo:2},
   sig_umega:{n:"ウルトラメガバースト", sig:true, pow:3.0, combo:2},
@@ -4143,7 +4153,46 @@ const MOVES = {
   sig_week:{n:"ようびパワー", sig:true, pow:1.5, eff:"week"}
 };
 const EFF = {heal:"HPも回復", catch:"フラスコが入りやすく", guard:"次のダメージ半分", week:"その曜日は2倍"};
-function sigOf(id){ const s=SP[id]; return s.umega?"sig_umega":s.mega?"sig_mega":s.ur?"sig_ur":s.week?"sig_week":s.legend?"sig_legend":null; }
+/* v47: じょうたい（自分だけが使える）。st: psn=どく・par=まひ・slp=ねむり・aup=こうげきアップ・dup=ぼうぎょアップ・adn=あいてのこうげきダウン・ddn=あいてのぼうぎょダウン。stp=かかる確率（なしは100%） */
+const ST = {psn:"どくにする", par:"まひさせる", slp:"ねむらせる", aup:"こうげきアップ", dup:"ぼうぎょアップ", adn:"あいてのこうげきダウン", ddn:"あいてのぼうぎょダウン"};
+const effTxt = M => (M.eff?'・'+EFF[M.eff]:'')+(M.st?'・'+(M.stp&&M.stp<1?`${Math.round(M.stp*100)}%で`:'')+ST[M.st]:'');
+/* v47: そのモンスターだけのわざ（でんせつ・メガ・ウルトラメガ・ウルトラレア・曜日）。メガは「メガ〜」（いりょく+7）、ウルトラメガは「ウルトラ〜」（+12） */
+const UNIQ = {
+  tokerudon:["ヨウカイスプラッシュ","ddn",1.9], crystalos:["ケッショウバリア","dup",1.7], mizuhodra:["イナホのめぐみ","heal",1.8], num_pi:["エンシュウリツスパイラル","par",1.8],
+  num_prime:["ソスウブレイク","ddn",2.0], num_keisan:["センイチレンダ","aup",1.9], kanshodra:["カンショウウェーブ","slp",1.7], num_bunsuuou:["ブンスウスラッシュ","ddn",1.9],
+  alpsdra:["アルプスおろし","adn",1.9], miyakoryu:["ミヤコのかぜ","heal",1.8], kenshodra:["ケンショウフラッシュ","par",1.8], vegedra:["ベジタブルストーム","aup",1.8],
+  wintarion:["ふゆごもりのいぶき","slp",1.7], kazanryuou:["かざんガスブレス","psn",1.9], matomegaron:["まとめのいちげき","aup",2.0], balansion:["てんびんバランス","adn",1.8],
+  springer:["バネはじき","par",1.8], forcedrago:["ちからのモーメント","ddn",2.0], thermalion:["たいりゅうブレス","heal",1.9], dendouryu:["ねつでんどうクロー","aup",1.9],
+  soramoyodra:["きせつふうストーム","adn",1.9], bonedrago:["ほねくだき","ddn",2.0], matomecross:["ふりかえりクロス","dup",1.9],
+  rare_hokkaido:["ミルクのめぐみ","heal",1.7], rare_aomori:["りんごばくだん","aup",1.8], rare_iwate:["てっきハンマー","ddn",1.9], rare_miyagi:["しまめぐりのなみ","adn",1.7],
+  rare_akita:["かんとうあかり","par",1.7], rare_yamagata:["さくらんぼツイン","aup",1.7], rare_fukushima:["みずうみのしずけさ","slp",1.7], rare_ibaraki:["うめぼしショット","adn",1.7],
+  rare_tochigi:["いちごシャワー","heal",1.7], rare_gunma:["こんにゃくゆらし","par",1.7], rare_saitama:["ねぎのしげき","ddn",1.8], rare_chiba:["からわりラッシュ","aup",1.8],
+  rare_tokyo:["こうそうビルプレス","ddn",1.9], rare_kanagawa:["みなとのしおかぜ","adn",1.7], rare_niigata:["ときのはばたき","heal",1.7], rare_toyama:["チューリップのかふん","slp",1.7],
+  rare_ishikawa:["きんぱくフラッシュ","par",1.8], rare_fukui:["メガネビーム","ddn",1.8], rare_yamanashi:["ぶどうつぶて","aup",1.7], rare_nagano:["こうげんのつのづき","ddn",1.8],
+  rare_gifu:["うかいのなわ","par",1.7], rare_shizuoka:["ふじさんおろし","adn",1.9], rare_aichi:["フルスロットル","aup",1.9], rare_mie:["しんじゅのかがやき","heal",1.7],
+  rare_shiga:["びわこのおおなみ","ddn",1.8], rare_kyoto:["にしじんおりのいと","par",1.7], rare_osaka:["こなもんアタック","aup",1.8], rare_hyogo:["しごせんスラッシュ","ddn",1.8],
+  rare_nara:["しかせんべいダッシュ","aup",1.7], rare_wakayama:["みかんのしぶき","adn",1.7], rare_tottori:["さきゅうのすなあらし","adn",1.8], rare_shimane:["しじみのからまもり","dup",1.7],
+  rare_okayama:["マスカットボム","heal",1.7], rare_hiroshima:["かきがらガード","dup",1.7], rare_yamaguchi:["フグのどく","psn",1.8], rare_tokushima:["すだちスプラッシュ","adn",1.7],
+  rare_kagawa:["うどんウィップ","par",1.7], rare_ehime:["いよかんビーム","heal",1.7], rare_kochi:["いっぽんづりアタック","aup",1.8], rare_fukuoka:["てっこうプレス","ddn",1.9],
+  rare_saga:["のりまきしめつけ","par",1.7], rare_nagasaki:["しまかげのまもり","dup",1.7], rare_kumamoto:["トマトのしぶき","adn",1.7], rare_oita:["ゆけむりのいやし","slp",1.7],
+  rare_miyazaki:["ピーマンのにがみ","psn",1.7], rare_kagoshima:["かざんばいストーム","adn",1.9], rare_okinawa:["シーサーのまもり","dup",1.8],
+  qd_dou:["どうくつのこだま","slp",2.0], qd_gin:["じしゃくパルス","par",2.0], qd_kin:["ほしくずメテオ","ddn",2.1], qd_tro:["サイエンスポイズン","psn",2.0],
+  qd_sho:["ちずのめいろ","slp",2.0], qd_chu:["ぜんこくせいは","aup",2.0], qd_jo:["れきしのおもみ","ddn",2.1],
+  ur_frac:["ぶんすうスパーク","ddn",3.0],
+  week_0:["サンシャインロア","aup",1.6], week_1:["つきのこもりうた","slp",1.5], week_2:["かえんのおうけん","ddn",1.6], week_3:["すいりゅうのうず","adn",1.5],
+  week_4:["きのみのどくばり","psn",1.5], week_5:["きんぴかフラッシュ","par",1.5], week_6:["つちのよろい","dup",1.5]
+};
+const uMove = (n,e,pow,combo,extra) => Object.assign({n, sig:true, pow, combo}, e==="heal"?{eff:"heal"}:{st:e, stp:["psn","par","slp"].includes(e)?.6:1}, extra||{});
+for(const [id,[n,e,p]] of Object.entries(UNIQ)){
+  if(!SP[id]) continue;
+  MOVES["u_"+id] = SP[id].week ? uMove(n,e,p,0,{eff:"week"}) : uMove(n,e,p,2);
+  if(SP["mega_"+id]) MOVES["u_mega_"+id] = uMove("メガ"+n,e,p+.7,2);
+  if(SP["umega_"+id]) MOVES["u_umega_"+id] = uMove("ウルトラ"+n,e,p+1.2,2);
+}
+function migSig(s){ for(const [id,o] of Object.entries(s.owned||{})){ const u=MOVES["u_"+id]; if(!u||!o.mvUp) continue; for(const g of ["sig_legend","sig_mega","sig_umega","sig_week","sig_ur"]) if(o.mvUp[g]&&!o.mvUp["u_"+id]){ o.mvUp["u_"+id]=o.mvUp[g]; delete o.mvUp[g]; } } }
+migSig(save);
+
+function sigOf(id){ if(MOVES["u_"+id]) return "u_"+id; const s=SP[id]; return s.umega?"sig_umega":s.mega?"sig_mega":s.ur?"sig_ur":s.week?"sig_week":s.legend?"sig_legend":null; }
 function learnSet(id){ const s=SP[id], a=[["tackle",1],[s.type+"1",3],[s.type+"2",8],[s.type+"3",15]];
   if(s.type2 && s.type2!==s.type) a.push([s.type2+"1",5],[s.type2+"2",11],[s.type2+"3",18]);
   return a.sort((x,y)=>x[1]-y[1]); }
@@ -4157,7 +4206,7 @@ function movesOf(id){
   return [...top, ...ex, ...(r2>0?rest.slice(-r2):[])];
 }
 function moveType(id,k){ const M=MOVES[k]; return M.t || (M.sig ? SP[id].type : null); }
-function moveInfo(id,k){ const M=MOVES[k], t=moveType(id,k), up=((save.owned[id]||{}).mvUp||{})[k]||0; return `${M.special?'とくべつ・':''}${t?TYPES[t]:'ふつう'}・いりょく${Math.round(M.pow*10*(1+up*.1))}${up?`（+${up}）`:''}${M.combo?`・${M.combo}コンボ`:''}${M.eff?'・'+EFF[M.eff]:''}`; }
+function moveInfo(id,k){ const M=MOVES[k], t=moveType(id,k), up=((save.owned[id]||{}).mvUp||{})[k]||0; return `${M.special?'とくべつ・':''}${t?TYPES[t]:'ふつう'}・いりょく${Math.round(M.pow*10*(1+up*.1))}${up?`（+${up}）`:''}${M.combo?`・${M.combo}コンボ`:''}${effTxt(M)}`; }
 /* 色ちがい（v36）: 野生でまれに出る（SHINY_RATE）。Lv+5・HP1.5倍・たおすとEXP2倍。でんせつ戦・トレーナー戦では出ない
    つかまえると owned.shiny と owned.shinyWild。本物の色ちがい（shinyWild）は こうげき・最大HP 1.2倍（ひかるインクの色ちがいは見た目だけ） */
 const SHINY_RATE = 1/30;
@@ -4169,9 +4218,33 @@ function aliveIds(){ return save.party.filter(id=>save.owned[id] && hpOf(id)>0);
 /* v39: こうげきの威力にばらつき。きゅうしょ（1/8、1.5倍）・かすった（1/10、0.5倍）・ふつうは 0.85〜1.15倍 */
 function dmgRoll(){ const r=Math.random(); if(r<.125) return {k:1.5, t:"crit"}; if(r<.225) return {k:.5, t:"graze"}; return {k:.85+Math.random()*.3, t:""}; }
 const rollText = t => t==="crit"?'<b class="hasty">きゅうしょにあたった！</b> ':t==="graze"?'かすっただけ… ':'';
+/* v47: じょうたいの計算。あいて=B.wild.st {psn,par,slp,atk,def}、自分=B.buff {atk,def}（バトルごと） */
+const wst = () => B.wild.st || (B.wild.st = {});
+const myb = () => B.buff || (B.buff = {atk:0, def:0});
+function applySt(M){
+  if(!M.st || !B.wild || B.wild.hp<=0) return "";
+  if(M.stp && Math.random()>=M.stp) return "";
+  const w=wst(), b=myb(), wn=`<b>${esc(nameOf(B.wild.id,B.wild.lv))}</b>`, mn=`<b>${esc(nameOf(B.lead))}</b>`;
+  if(M.st==="psn"){ if(w.psn) return ""; w.psn=true; return ` ${wn}は どくに なった！`; }
+  if(M.st==="par"){ if(w.par||w.slp) return ""; w.par=true; return ` ${wn}は まひして うごきにくくなった！`; }
+  if(M.st==="slp"){ if(w.slp||w.par) return ""; w.slp=2; return ` ${wn}は ねむってしまった！`; }
+  if(M.st==="aup"){ if(b.atk>=2) return ` ${mn}の こうげきは もう上がらない！`; b.atk++; return ` ${mn}の こうげきが 上がった！`; }
+  if(M.st==="dup"){ if(b.def>=2) return ` ${mn}の ぼうぎょは もう上がらない！`; b.def++; return ` ${mn}の ぼうぎょが 上がった！`; }
+  if(M.st==="adn"){ if((w.atk||0)<=-2) return ` ${wn}の こうげきは もう下がらない！`; w.atk=(w.atk||0)-1; return ` ${wn}の こうげきが 下がった！`; }
+  if(M.st==="ddn"){ if((w.def||0)<=-2) return ` ${wn}の ぼうぎょは もう下がらない！`; w.def=(w.def||0)-1; return ` ${wn}の ぼうぎょが 下がった！`; }
+  return "";
+}
+function psnTick(canKO){ const w=B.wild; if(!w||!w.st||!w.st.psn||w.hp<=0) return ""; const d=Math.max(1, Math.round(w.max*.08)); const h=canKO?Math.max(0,w.hp-d):Math.max(1,w.hp-d); const got=w.hp-h; if(got<=0) return ""; w.hp=h; return ` ${esc(nameOf(w.id,w.lv))}は どくで ${got}ダメージ！`; }
+/* まちがえたときに、あいてがこうげきできないか（まひ35%・ねむり2回） */
+function stBlock(){ const w=B.wild, st=w&&w.st; if(!st) return ""; const wn=`<b>${esc(nameOf(w.id,w.lv))}</b>`;
+  if(st.slp>0){ st.slp--; return st.slp>0?`${wn}は ぐうぐう ねむっている。こうげきしてこない！`:`${wn}は ねむっていて こうげきできなかった！（目をさましそうだ）`; }
+  if(st.par && Math.random()<.35) return `${wn}は からだが しびれて うごけない！`;
+  return ""; }
+function stChips(w){ const st=w.st||{}; let x=""; if(st.psn) x+='<span class="sttag psn">どく</span>'; if(st.par) x+='<span class="sttag par">まひ</span>'; if(st.slp>0) x+='<span class="sttag slp">ねむり</span>'; if(st.atk) x+=`<span class="sttag dn">こうげき${st.atk}</span>`; if(st.def) x+=`<span class="sttag dn">ぼうぎょ${st.def}</span>`; return x; }
+function myChips(){ const b=B.buff||{}; let x=""; if(b.atk) x+=`<span class="sttag up">こうげき+${b.atk}</span>`; if(b.def) x+=`<span class="sttag up">ぼうぎょ+${b.def}</span>`; return x; }
 function hurtLead(x=1){
   const me=B.lead, w=B.wild, mm=defMult(SP[w.id].type, me), dm=mm===2?1.5:mm===.5?.7:1;
-  const rl=dmgRoll(); let d=Math.max(2, Math.round((5+w.lv*0.8)*dm*rl.k))*x, guarded=false;
+  const rl=dmgRoll(), sk=(1+.25*((w.st&&w.st.atk)||0))*(1-.2*myb().def); let d=Math.max(2, Math.round((5+w.lv*0.8)*dm*rl.k*sk))*x, guarded=false;
   if(B.guard){ d=Math.ceil(d/2); B.guard=false; guarded=true; }
   B.hp[me]=Math.max(0, hpOf(me)-d);
   return {d, mm, guarded, roll:rl.t};
@@ -4231,7 +4304,8 @@ function parentLogHTML(){
 const bag = () => save.items || (save.items = {});
 const stat = () => save.stat || (save.stat = {});
 const SPNAMES = {mizu:"タイダルウェーブ", hono:"フレアバースト", kusa:"フォレストストーム", iwa:"メテオロック", denki:"サンダーボルテージ", koori:"ダイヤモンドダスト", kaze:"スカイハリケーン", hikari:"シャイニングノヴァ"};
-for(const [t,n] of Object.entries(SPNAMES)) MOVES["sp_"+t] = {n, t, pow:2.4, combo:2, sp:true};
+const SPPOW = {mizu:2.4, hono:2.6, kusa:2.3, iwa:2.5, denki:2.4, koori:2.3, kaze:2.2, hikari:2.2}, SPST = {mizu:["adn",1], kusa:["psn",.5], denki:["par",.4], koori:["slp",.3], kaze:["ddn",1], hikari:["aup",1]};
+for(const [t,n] of Object.entries(SPNAMES)) MOVES["sp_"+t] = Object.assign({n, t, pow:SPPOW[t], combo:2, sp:true}, SPST[t]?{st:SPST[t][0], stp:SPST[t][1]}:{});
 const ITEMS = {};
 for(const t of Object.keys(TYPES)) ITEMS["stone_"+t] = {n:`${TYPES[t]}の石`, cat:"stone", t, price:12, d:`${TYPES[t]}タイプの一部のモンスターを、Lv15 でさいごのすがたにしんかさせる（1回で1こ使う）`};
 for(const t of Object.keys(TYPES)) ITEMS["tm_"+t] = {n:`わざマシン「${SPNAMES[t]}」`, cat:"tm", t, price:20, d:`${TYPES[t]}タイプ（2つ目のタイプもふくむ）のなかま1ぴきに、スペシャルわざ（いりょく24・2コンボ）をおぼえさせる`};
@@ -4243,7 +4317,7 @@ Object.assign(ITEMS, {
   ame:{n:"ふしぎなアメ", cat:"grow", price:8, d:"なかま1ぴきのLvが1上がる（Lv300まで）。「なかま」画面で使う"},
   ink:{n:"ひかるインク", cat:"grow", price:25, d:"なかま1ぴきを色ちがいにする（見た目だけ）。「なかま」画面で使う"}
 });
-for(const t of Object.keys(TYPES)) for(const i of [1,2,3]){ const k=t+i, M=MOVES[k]; ITEMS["mv_"+k] = {n:`わざのほん「${M.n}」`, cat:"move", t, mv:k, tier:i, price:[0,5,8,15][i], d:`${TYPES[t]}タイプ（2つ目のタイプもふくむ）のなかま1ぴきが、Lvに関係なくすぐおぼえる`}; }
+for(const t of Object.keys(TYPES)) for(const i of [1,2,3,4]){ const k=t+i, M=MOVES[k]; ITEMS["mv_"+k] = {n:`わざのほん「${M.n}」`, cat:"move", t, mv:k, tier:i, price:[0,5,8,15,10][i], d:`${TYPES[t]}タイプ（2つ目のタイプもふくむ）のなかま1ぴきが、Lvに関係なくすぐおぼえる`}; }
 const SHOP_CATS = [["move","ふつうのわざ"],["tm","スペシャルわざ"],["stone","しんかの石"],["battle","バトルのどうぐ"],["grow","そだてるどうぐ"]];
 function itemSVG(k){
   const it=ITEMS[k], K="#24324a", c=it.t?TCOL[it.t]:"#ffcf3a";
@@ -4331,7 +4405,7 @@ const STAMP_SM = [[5,"ミッションスター","hikari"],[10,"がんばりス�
 for(const [n,nm,t] of STAMP_SM) SMV["st_"+n] = {n:nm, t, src:`毎日のミッションを全部クリアした日が ${n}日`};
 const BADGE_SM = {perfect:["パーフェクトショット","hikari"], combo10:["コンボラッシュ","kaze"], calm:["おちつきのいぶき","kusa"], days7:["まいにちパワー","hono"], q500:["ごひゃくもんキャノン","mizu"], tower9:["チャンピオンブレイク","iwa"], shiny:["きらきらスター","hikari"]};
 for(const [b,[n,t]] of Object.entries(BADGE_SM)) SMV["b_"+b] = {n, t, src:`バッジ「${(BADGES.find(x=>x[0]===b)||[0,b])[1]}」`};
-for(const [k,v] of Object.entries(SMV)) MOVES["sm_"+k] = {n:v.n, t:v.t, pow:2.6, combo:2, sp:true, special:true};
+Object.keys(SMV).forEach((k,i)=>{ const v=SMV[k]; MOVES["sm_"+k] = {n:v.n, t:v.t, pow:[2.6,2.4,2.8,2.5,2.7,2.3,2.9][i%7], combo:2, sp:true, special:true}; });
 const smS = () => save.smoves || (save.smoves = {});
 function grantSM(k){ if(!SMV[k] || smS()[k]) return null; smS()[k]=today(); return k; }
 const smCard = k => `<div class="card get urcard"><div class="mon">${itemSVG("tm_"+SMV[k].t)}</div><div style="text-align:left"><b>とくべつわざ「${esc(SMV[k].n)}」をてにいれた！</b><span>${esc(SMV[k].src)}。「なかま」画面で、どのなかまにもおぼえさせられるよ</span></div></div>`;
@@ -4431,7 +4505,7 @@ function showPlaza(){
   const PT=[["shop","ショップ"],["mission","ミッション"],["tower","タワー"],["badge","バッジ"],["dex","コンプ"]];
   h+=`<div class="ptabs">${PT.map(([k,n])=>`<button class="${plazaTab===k?'on':''}" data-pt="${k}">${n}</button>`).join("")}</div>`;
   if(plazaTab==="shop"){
-    const CATD={move:"なかまのタイプ（2つ目のタイプもふくむ）のわざを、Lvに関係なくおぼえられる。●の数が多いほどつよい（●●●は3コンボで使える）。「なかま」画面で使う",
+    const CATD={move:"なかまのタイプ（2つ目のタイプもふくむ）のわざを、Lvに関係なくおぼえられる。●の数が多いほどつよい（●●●は3コンボで使える）。「じょうたい」はどく・まひ・ねむりや、こうげき・ぼうぎょのアップダウン。「なかま」画面で使う",
       tm:"そのタイプのなかま1ぴきに、スペシャルわざ（いりょく24・2コンボ）をおぼえさせる。「なかま」画面で使う",
       stone:"そのタイプの一部のモンスターを、Lv15 でさいごのすがたにしんかさせる（1回で1こ使う）。「なかま」画面でしんか",
       battle:"バトル中に使う道具", grow:"なかまをそだてる道具。「なかま」画面で使う"};
@@ -4445,7 +4519,7 @@ function showPlaza(){
       list=list.filter(([,it])=>it.t===shopType);
       const who=Object.keys(save.owned).filter(id=>SP[id]&&[SP[id].type,SP[id].type2].includes(shopType));
       h+=`<p class="mini" style="margin:0 0 8px">おぼえられるなかま：${who.length?who.slice(0,6).map(id=>esc(nameOf(id))).join("・")+(who.length>6?` ほか${who.length-6}ひき`:''):'まだいない'}</p>`;
-      h+=`<div class="shopgrid">${list.map(([k,it])=>{ const M=MOVES[it.mv]; return `<div class="card sitem"><div class="sic">${itemSVG(k)}</div><div class="sin"><b>${esc(M.n)} <span class="mini" style="display:inline">${'●'.repeat(it.tier)}</span></b><span class="mini">いりょく${Math.round(M.pow*10)}${M.eff?'・'+EFF[M.eff]:''}${M.combo?`・${M.combo}コンボで使える`:''}</span><span class="mini">もっている ${bag()[k]||0}こ</span></div><button class="btn sbuy" data-buy="${k}" ${save.balls<it.price?'disabled':''}>${flaskSVG}${it.price}</button></div>`; }).join("")}</div>`;
+      h+=`<div class="shopgrid">${list.map(([k,it])=>{ const M=MOVES[it.mv]; return `<div class="card sitem"><div class="sic">${itemSVG(k)}</div><div class="sin"><b>${esc(M.n)} <span class="mini" style="display:inline">${it.tier===4?'じょうたい':'●'.repeat(it.tier)}</span></b><span class="mini">いりょく${Math.round(M.pow*10)}${effTxt(M)}${M.combo?`・${M.combo}コンボで使える`:''}</span><span class="mini">もっている ${bag()[k]||0}こ</span></div><button class="btn sbuy" data-buy="${k}" ${save.balls<it.price?'disabled':''}>${flaskSVG}${it.price}</button></div>`; }).join("")}</div>`;
     } else if(shopCat==="tm"||shopCat==="stone"){
       h+=`<div class="shopgrid2">${list.map(([k,it])=>`<div class="card sitem2"><div class="sic">${itemSVG(k)}</div><div class="sin"><b>${esc(shopCat==="tm"?SPNAMES[it.t]:it.n)}</b><span class="mini">${shopCat==="tm"?TYPES[it.t]+'・':''}もっている ${bag()[k]||0}</span></div><button class="btn sbuy" data-buy="${k}" ${save.balls<it.price?'disabled':''}>${flaskSVG}${it.price}</button></div>`).join("")}</div>`;
     } else {
@@ -4602,15 +4676,16 @@ function addExp(id, n){
 function dmgOf(k){
   const me = B.lead, lv = save.owned[me].lv, M = MOVES[k||"tackle"], t = moveType(me, k||"tackle"), m = t ? defMult(t, B.wild.id) : 1;
   let pow = M.pow * (1 + 0.1*(((save.owned[me]||{}).mvUp||{})[k||"tackle"]||0)); if(M.eff==="week" && SP[me].day===new Date().getDay()) pow *= 2;
-  return {m, d: Math.max(2, Math.round(8*m*pow*(1+lv*0.1)*(B.power?2:1)*shinyPow(me)))};
+  const sk=(1+.25*myb().atk)*(1-.25*((B.wild.st&&B.wild.st.def)||0));
+  return {m, d: Math.max(2, Math.round(8*m*pow*(1+lv*0.1)*(B.power?2:1)*shinyPow(me)*sk))};
 }
 function fieldHTML(enter){
   const w=B.wild, me=B.lead, o=save.owned[me], r=w.hp/w.max, ws=SP[w.id];
   return `<div class="field" id="field"><div class="plat w"></div><div class="plat m"></div>
-    <div class="info w"><div class="nm"><span class="nmt">${esc(nameOf(w.id,w.lv))}</span> ${typesChip(w.id)}${w.shiny?'<span class="sztag shinytag">色ちがい</span>':''}${w.strong?'<span class="sztag strongtag">つよい</span>':''}${sizeLabel(w.sz||1)?`<span class="sztag">${sizeLabel(w.sz)}</span>`:''}<span class="lv">Lv.${w.lv}</span></div><div class="bar hpbar ${hpClass(r)}" id="whp"><i style="width:${r*100}%"></i></div></div>
+    <div class="info w"><div class="nm"><span class="nmt">${esc(nameOf(w.id,w.lv))}</span> ${typesChip(w.id)}${w.shiny?'<span class="sztag shinytag">色ちがい</span>':''}${w.strong?'<span class="sztag strongtag">つよい</span>':''}${sizeLabel(w.sz||1)?`<span class="sztag">${sizeLabel(w.sz)}</span>`:''}${stChips(w)}<span class="lv">Lv.${w.lv}</span></div><div class="bar hpbar ${hpClass(r)}" id="whp"><i style="width:${r*100}%"></i></div></div>
     <div class="mon ${enter?'enter':''}" id="wildMon">${art(w.id,w.lv,{sz:w.sz,shiny:w.shiny})}</div>
     <div class="mon" id="meMon">${artMine(me)}</div>
-    <div class="info m"><div class="nm"><span class="nmt">${esc(nameOf(me))}</span> ${typesChip(me)}<span class="lv">Lv.${o.lv}</span></div>${useHP()?(()=>{ const h=hpOf(me), mx=maxHPOf(me), r2=h/mx; return `<div class="bar hpbar ${hpClass(r2)}" id="mhp"><i style="width:${r2*100}%"></i></div><div class="hpn" id="mhpn">HP ${h}/${mx}</div>`; })():''}<div class="bar expbar${useHP()?' thin':''}"><i style="width:${o.exp/need(o.lv)*100}%"></i></div></div>
+    <div class="info m"><div class="nm"><span class="nmt">${esc(nameOf(me))}</span> ${typesChip(me)}${myChips()}<span class="lv">Lv.${o.lv}</span></div>${useHP()?(()=>{ const h=hpOf(me), mx=maxHPOf(me), r2=h/mx; return `<div class="bar hpbar ${hpClass(r2)}" id="mhp"><i style="width:${r2*100}%"></i></div><div class="hpn" id="mhpn">HP ${h}/${mx}</div>`; })():''}<div class="bar expbar${useHP()?' thin':''}"><i style="width:${o.exp/need(o.lv)*100}%"></i></div></div>
   </div>`;
 }
 let logMsg = "";
@@ -4814,7 +4889,7 @@ function judge(picked){
     let firstMv=true;
     const mvh = movesOf(B.lead).map(k=>{ const M=MOVES[k], lock=!!M.combo&&B.combo<M.combo, {m}=dmgOf(k), t=moveType(B.lead,k);
       const ida = (!lock&&firstMv) ? (firstMv=false, ' id="atk"') : '';
-      return `<button class="btn mv mt-${t||'none'}" data-mv="${k}"${ida} ${lock?'disabled':''}>${esc(M.n)}<small>${lock?`${M.combo}コンボで使える（いま${B.combo}）`:(m===2?'こうかばつぐん':m===.5?'いまひとつ':t?TYPES[t]:'ふつう')+(M.eff?'・'+EFF[M.eff]:'')+(B.power?'・2倍':'')}</small></button>`; }).join("");
+      return `<button class="btn mv mt-${t||'none'}" data-mv="${k}"${ida} ${lock?'disabled':''}>${esc(M.n)}<small>${lock?`${M.combo}コンボで使える（いま${B.combo}）`:(m===2?'こうかばつぐん':m===.5?'いまひとつ':t?TYPES[t]:'ふつう')+effTxt(M)+(B.power?'・2倍':'')}</small></button>`; }).join("");
     fb.innerHTML = `<div class="fb ok"><h3>せいかい！</h3>${q.e?`<p>${esc(q.e)}</p>`:""}${qm}${bonus}</div>
       <div class="acts mvs">${mvh}</div><div class="acts ${(bag().superflask||0)>0&&!B.trainer&&!(B.qd&&B.qd.mode==="boss")?'':'one'}">
       ${B.trainer?`<button class="btn alt" id="ball" disabled>フラスコ<small>トレーナーのモンスターはつかまえられない</small></button>`:B.qd&&B.qd.mode==="boss"?`<button class="btn alt" id="ball" disabled>フラスコ<small>マスターでなかまになる</small></button>`:`<button class="btn alt" id="ball" ${save.balls?'':'disabled'}>フラスコ<small>${save.balls?'のこり '+save.balls+'こ':'もっていない'}</small></button>`}</div>`;
@@ -4826,10 +4901,14 @@ function judge(picked){
     B.combo=0; B.mistakes++;
     let hurt="", down=false;
     const hasty = fast && !B.tower;
-    if(useHP()){ const r=hurtLead(hasty?2:1); down=hpOf(B.lead)<=0;
+    const blk=stBlock(), pz=psnTick(false);
+    if(blk){ hurt=blk+pz; B.lastHurt=null; }
+    else if(useHP()){ const r=hurtLead(hasty?2:1); down=hpOf(B.lead)<=0;
       hurt=(hasty?'<span class="hasty">あわてんぼう！</span> ':'')+`やせいの <b>${esc(nameOf(B.wild.id,B.wild.lv))}</b>のこうげき！ ${r.mm===2?'こうかはばつぐんだ！ ':r.mm===.5?'こうかはいまひとつ。 ':''}${r.guarded?'まもりでダメージが半分！ ':''}${rollText(r.roll)}<b>${esc(nameOf(B.lead))}</b>に ${r.d}ダメージ！`+(down?` <b>${esc(nameOf(B.lead))}</b>はたおれてしまった…`:'');
       B.lastHurt=r.d; }
     else { B.hearts--; hurt=`やせいの <b>${esc(nameOf(B.wild.id,B.wild.lv))}</b>のこうげき！ ハートが1つへった。`; }
+    if(!blk && pz) hurt+=pz;
+    if(pz){ const bar=document.getElementById("whp"), r3=B.wild.hp/B.wild.max; if(bar){ bar.className="bar hpbar "+hpClass(r3); bar.firstElementChild.style.width=(r3*100)+"%"; } }
     const lost = useHP() ? !aliveIds().length : B.hearts<=0;
     item.missed=true;
     if(!B.qd){ save.wrong[item.key]=(save.wrong[item.key]||0)+1; (save.wrongEver=save.wrongEver||{})[item.key]=1; }
@@ -4837,12 +4916,12 @@ function judge(picked){
     if(B.tower){ B.queue.shift(); B.queue.push(towerNext()); } else B.queue.push(B.queue.shift());
     persist();
     const wm=document.getElementById("wildMon"), mm=document.getElementById("meMon");
-    wm.classList.add("lunge2"); setTimeout(()=>{ mm.classList.add("hit");
+    if(!blk) wm.classList.add("lunge2"); setTimeout(()=>{ if(blk) return; mm.classList.add("hit");
       if(useHP()){ const t=document.createElement("div"); t.className="dmg me"; t.textContent=B.lastHurt; const fd=document.getElementById("field"); if(fd) fd.appendChild(t); updMyHP(); if(down) setTimeout(()=>mm.classList.add("faint"),350);
         const pt=app.querySelector(".ptm"); if(pt) pt.outerHTML=hpMiniHTML(); } },200);
-    if(!useHP()){ const hs=app.querySelectorAll(".hearts svg path"); if(hs[B.hearts]) hs[B.hearts].setAttribute("fill","#dfe6ee"); }
+    if(!useHP() && !blk){ const hs=app.querySelectorAll(".hearts svg path"); if(hs[B.hearts]) hs[B.hearts].setAttribute("fill","#dfe6ee"); }
     setLog(hurt);
-    fb.innerHTML = `<div class="fb ng">${ansText.length>18?`<h3>ざんねん…</h3><p><b>正解：${esc(ansText)}</b></p>`:`<h3>ざんねん… 正解は「${esc(ansText)}」</h3>`}${q.e?`<p>${esc(q.e)}</p>`:""}${qm}${hasty&&useHP()?'<p class="mini hasty">すぐに答えてまちがえたので、ダメージが2倍になった！ 問題をよく読んでから答えよう。</p>':''}<p class="mini">解説を読んでから「わかった！」をおそう。</p><p class="mini">${B.tower?'ハートが0になると塔からおりるよ。':lost?'なかまが全員たおれてしまった…':down?'つぎのなかまにこうたいするよ。この問題は、あとでもう一度出てくるよ。':'この問題は、あとでもう一度出てくるよ。'}</p></div><button class="btn" id="next" style="margin-top:12px" disabled>${lost?'わかった！ …':down?'わかった！ つぎのなかまを出す':'わかった！'}</button>`;
+    fb.innerHTML = `<div class="fb ng">${ansText.length>18?`<h3>ざんねん…</h3><p><b>正解：${esc(ansText)}</b></p>`:`<h3>ざんねん… 正解は「${esc(ansText)}」</h3>`}${q.e?`<p>${esc(q.e)}</p>`:""}${qm}${hasty&&useHP()&&!blk?'<p class="mini hasty">すぐに答えてまちがえたので、ダメージが2倍になった！ 問題をよく読んでから答えよう。</p>':''}<p class="mini">解説を読んでから「わかった！」をおそう。</p><p class="mini">${B.tower?'ハートが0になると塔からおりるよ。':lost?'なかまが全員たおれてしまった…':down?'つぎのなかまにこうたいするよ。この問題は、あとでもう一度出てくるよ。':'この問題は、あとでもう一度出てくるよ。'}</p></div><button class="btn" id="next" style="margin-top:12px" disabled>${lost?'わかった！ …':down?'わかった！ つぎのなかまを出す':'わかった！'}</button>`;
     document.getElementById("next").onclick=()=>{ B.busy=false; if(lost) return finish(false);
       if(useHP() && hpOf(B.lead)<=0){ B.lead=aliveIds()[0]; B.swapOpen=false; const m2=bestMult(B.lead,B.wild.id); logMsg=`いけっ！ <b>${esc(nameOf(B.lead))}</b>！`+(m2===2?' あいしょうはばつぐん！':m2===.5?' あいしょうが悪いかも…':''); }
       renderBattle(); };
@@ -4872,6 +4951,9 @@ function doAttack(k){
     if(M.eff==="heal" && useHP()){ const g=healLead(.25); if(g){ msg+=` HPが${g}回復した！`; updMyHP(); } }
     if(M.eff==="guard"){ B.guard=true; msg+=' 次にうけるダメージが半分になる！'; }
     if(M.eff==="catch" && w.hp>0){ B.lure=true; msg+=' フラスコが入りやすくなった！'; }
+    msg+=applySt(M);
+    if(w.hp>0){ const pt=psnTick(true); if(pt){ msg+=pt; const r3=w.hp/w.max; bar.className="bar hpbar "+hpClass(r3); bar.firstElementChild.style.width=(r3*100)+"%"; } }
+    { const nm=document.querySelector(".info.w .nm"); if(nm){ nm.querySelectorAll(".sttag").forEach(x=>x.remove()); nm.querySelector(".lv").insertAdjacentHTML("beforebegin", stChips(w)); } }
     if(w.hp<=0){ msg+=` <b>${esc(nameOf(w.id,w.lv))}</b>をたおした！`; B.defeated++; { const k2=w.shiny?2:w.strong?1.5:1; addExp(B.lead,xp(12)*k2); save.party.forEach(id=>{ if(id!==B.lead) addExp(id,xp(6)*k2); }); } setTimeout(()=>wm.classList.add("faint"),350); }
     else if(r<=.3) msg+=` よわっている！ フラスコのチャンス！`;
     setLog(msg);
@@ -4882,7 +4964,7 @@ function doBall(sup){
   lockActs();
   const w=B.wild, boss=B.sid==="boss";
   if(sup===true) bag().superflask=Math.max(0,(bag().superflask||0)-1); else save.balls--; persist();
-  const p = Math.min(.97, (boss?.08:.3) + (1-w.hp/w.max)*(boss?.55:.55) + Math.min(B.combo,5)*.04 + (B.luck?.3:0) + (B.lure?.2:0) + (sup===true?(boss?.3:.35):0));
+  const p = Math.min(.97, (boss?.08:.3) + (1-w.hp/w.max)*(boss?.55:.55) + Math.min(B.combo,5)*.04 + (B.luck?.3:0) + (B.lure?.2:0) + (w.st&&w.st.slp>0?.15:w.st&&w.st.par?.1:0) + (sup===true?(boss?.3:.35):0));
   B.luck=false; B.lure=false;
   const got = Math.random()<p, shakes = got?3:Math.floor(Math.random()*3);
   const f=document.getElementById("field"), fl=document.createElement("div");
@@ -4966,7 +5048,7 @@ function finish(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261110112735";
+const APP_VER="20261110114022";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
