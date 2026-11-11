@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated": "2026-11-11T16:54+09:00",
+ "updated": "2026-11-12T05:53+09:00",
  "week": {
   "0": "テニス",
   "1": "",
@@ -139,19 +139,6 @@
    "assigned": "2026-11-03",
    "due": "2026-11-10",
    "suggest": "2026-11-08",
-   "doneInNotebook": false
-  },
-  {
-   "id": "h_rmvd9jjaq_20261104",
-   "kind": "habit",
-   "subj": "算数",
-   "src": "塾",
-   "title": "計算",
-   "lesson": "",
-   "detail": "",
-   "assigned": "2026-11-04",
-   "due": "",
-   "suggest": "2026-11-04",
    "doneInNotebook": false
   },
   {
@@ -776,6 +763,45 @@
    "assigned": "2026-11-25",
    "due": "",
    "suggest": "2026-11-25",
+   "doneInNotebook": false
+  },
+  {
+   "id": "h_hmvd9w2ye_20261126",
+   "kind": "habit",
+   "subj": "国語",
+   "src": "学校",
+   "title": "学校の漢字",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-11-26",
+   "due": "",
+   "suggest": "2026-11-26",
+   "doneInNotebook": false
+  },
+  {
+   "id": "h_hmvheencv_20261126",
+   "kind": "habit",
+   "subj": "理科",
+   "src": "学校",
+   "title": "理科ノート整理",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-11-26",
+   "due": "",
+   "suggest": "2026-11-26",
+   "doneInNotebook": false
+  },
+  {
+   "id": "h_rmvd9jjaq_20261126",
+   "kind": "habit",
+   "subj": "算数",
+   "src": "塾",
+   "title": "計算",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-11-26",
+   "due": "",
+   "suggest": "2026-11-26",
    "doneInNotebook": false
   }
  ],
