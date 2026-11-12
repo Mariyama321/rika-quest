@@ -81,6 +81,19 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .ordrow{display:grid;grid-template-columns:1fr 2fr;gap:10px;margin-top:12px}
 .ordrow .btn{font-size:16px;padding:9px 6px;white-space:nowrap}
 .match{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.sortq{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.srow{border:2px solid var(--ink);border-radius:12px;background:var(--soft);padding:8px;display:flex;flex-direction:column;gap:6px}
+.srow.ok{background:#e3f7ea;border-color:var(--good)}.srow.ng{background:#ffe6ea;border-color:#e8475a}
+.stx{font-weight:800;font-size:15px;line-height:1.35}
+.sbins{display:flex;gap:6px;flex-wrap:wrap}
+.sbin{flex:1 1 0;min-width:72px;border:2px solid var(--bc);border-radius:999px;background:#fff;color:var(--ink);font-weight:800;font-size:13px;padding:6px 4px}
+.sbin.on{background:var(--bc);color:#fff}.sbin.ans{box-shadow:0 0 0 3px #24a865}
+.qpic{margin:6px auto 8px;max-width:320px;border:3px solid var(--ink);border-radius:12px;overflow:hidden;background:#fff}.qpic svg{display:block;width:100%;height:auto}
+.qband{display:flex;flex-direction:column;gap:4px;margin-top:6px}
+.qbd-h{display:flex;justify-content:space-between;font-size:12px}.qbd-h span{color:var(--muted);font-weight:700}
+.qbd{display:flex;border:2px solid var(--ink);border-radius:6px;overflow:hidden;min-height:40px;margin-bottom:6px}
+.qbd>div{display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1px solid var(--ink);min-width:0;font-size:11px;line-height:1.2;text-align:center;padding:2px 1px;overflow:hidden}
+.qbd>div:last-child{border-right:none}.qbd span{font-weight:800;white-space:nowrap}.qbd small{font-size:10px}
 .mcol{display:flex;flex-direction:column;gap:8px;min-width:0}
 .mbtn{display:flex;align-items:center;gap:6px;text-align:left;border:2px solid var(--ink);border-radius:12px;background:var(--soft);padding:8px;font-size:14px;font-weight:500;min-height:48px;line-height:1.3;overflow-wrap:anywhere}
 .mbtn .k{flex:none;width:24px;height:24px;border-radius:50%;color:#fff;font-size:12px;display:grid;place-items:center;font-weight:800}
@@ -3261,23 +3274,32 @@ const UNITS = [
     nihonichidra:{arch:"dragon", type:"hikari", type2:"hono", color:"#ffd23f", accent:"#e8475a", skill:"power", legend:true, parts:{horn:"crown", pat:"stars", acc:"gem", accColor:"#3d8bff"}, forms:[{n:"ニホンイチドラ"}], dex:"にほんいち街道のでんせつのドラゴン。中部・近畿・中国・四国・九州の「日本一」の力を1つにまとめている。"}
   },
   stages:[
-  { id:"s1", name:"観光地めぐり", note:"写真A〜Iの観光地と府県の特色", wild:["kankoubird","wajuun","katachin"], qs:[
-      {q:"手のひらを合わせたような形の屋根の建物が集まる、世界文化遺産の集落（白川郷）。この建物のつくりを何という？", c:["合掌造り","書院造り","寝殿造り","高床式"], a:0, e:"合掌造りです。白川郷は岐阜県にあります。"},
-      {q:"白川郷（合掌造り）のある中部地方で、世界文化遺産の登録地となっている山は？", c:["富士山","阿蘇山","白神山地","宮之浦岳"], a:0, e:"富士山です（山梨県・静岡県）。"},
-      {q:"「白鷺城」ともよばれる姫路城がある都市は？", c:["姫路市","神戸市","大阪市","広島市"], a:0, e:"兵庫県の姫路市です。"},
-      {q:"奈良にある大仏がある寺は？", c:["東大寺","法隆寺","延暦寺","清水寺"], a:0, e:"東大寺です。"},
-      {q:"天橋立は「日本三景」のひとつ。写真A〜Iの中にあるもう1つの「日本三景」は？", c:["宮島（厳島神社）","鳥取砂丘","秋吉台","姫路城"], a:0, e:"日本三景は、松島・天橋立・宮島です。"},
+  { id:"s1", name:"観光地めぐり", note:"観光地の絵（教材の写真A〜I）と府県の特色", wild:["kankoubird","wajuun","katachin"], qs:[
+      {pic:"gassho", q:"絵A：手のひらを合わせたような形の屋根の家が集まる集落。この観光地は？", c:["白川郷","萩城下町","石見銀山","首里城"], a:0, e:"岐阜県の白川郷で、世界文化遺産です。"},
+      {pic:"gassho", q:"絵Aの建物のつくりを何という？", c:["合掌造り","書院造り","寝殿造り","高床式"], a:0, e:"合掌造りです。"},
+      {pic:"gassho", q:"絵Aの観光地がある府県の特色は？", c:["輪中が見られる","かき（貝）の養殖がさかん","しじみ漁がさかん","さとうきびの生産がさかん"], a:0, e:"岐阜県です。木曽三川の下流に輪中が見られます。"},
+      {q:"白川郷のある中部地方で、世界文化遺産の登録地となっている山は？", c:["富士山","阿蘇山","白神山地","宮之浦岳"], a:0, e:"富士山です（山梨県・静岡県）。"},
+      {pic:"himeji", q:"絵B：白くて美しく「白鷺城」ともよばれる城。この城がある都市は？", c:["姫路市","神戸市","大阪市","広島市"], a:0, e:"兵庫県の姫路市です。"},
+      {pic:"himeji", q:"絵Bの観光地がある府県の特色は？", c:["阪神・淡路大震災の発生","西陣織の生産","本州で最も西にある","全国で最も人口が少ない"], a:0, e:"兵庫県です。"},
+      {pic:"daibutsu", q:"絵C：奈良にある大仏。この大仏がある寺は？", c:["東大寺","法隆寺","延暦寺","清水寺"], a:0, e:"東大寺です。"},
+      {pic:"daibutsu", q:"絵Cの観光地がある府県の特色は？", c:["きんぎょの養殖がさかん","かき（貝）の養殖がさかん","西陣織の生産","輪中が見られる"], a:0, e:"奈良県です（大和郡山市の金魚）。"},
+      {pic:"hashidate", q:"絵D：海に細長くのびる松の砂州。日本三景のひとつのこの観光地は？", c:["天橋立","松島","宮島","鳥取砂丘"], a:0, e:"京都府の天橋立です。"},
+      {pic:"hashidate", q:"絵Dの観光地がある府県の特色は？", c:["西陣織の生産","きんぎょの養殖がさかん","しじみ漁がさかん","阪神・淡路大震災の発生"], a:0, e:"京都府です。"},
+      {pic:"itsukushima", q:"絵E：海の中に大きな鳥居が立つ神社。この神社は？", c:["厳島神社","出雲大社","伊勢神宮","太宰府天満宮"], a:0, e:"広島県の宮島にある厳島神社です。"},
+      {pic:"itsukushima", q:"絵Dが日本三景のとき、絵A〜Iの中のもう1つの日本三景は？", c:["絵E（宮島）","絵H（砂丘）","絵G（秋吉台）","絵B（姫路城）"], a:0, e:"日本三景は、松島・天橋立・宮島です。"},
+      {pic:"itsukushima", q:"絵Eの観光地がある府県の特色は？", c:["かき（貝）の養殖がさかん","しじみ漁がさかん","さとうきびの生産がさかん","本州で最も西にある"], a:0, e:"広島県です。"},
       {q:"日本三名園のうち、瀬戸内海に面した都道府県にあるものは？", c:["後楽園","偕楽園","兼六園","栗林公園"], a:0, e:"岡山県の後楽園です。"},
-      {q:"海の中に鳥居が立つ、広島県の宮島にある神社は？", c:["厳島神社","出雲大社","伊勢神宮","太宰府天満宮"], a:0, e:"厳島神社です。"},
-      {q:"石見銀山遺跡は、かつて何を産出していた鉱山の遺跡？", c:["銀","金","銅","石炭"], a:0, e:"銀です。"},
-      {q:"秋吉台のように、石灰岩が雨水にとかされてできた地形を何という？", c:["カルスト地形","砂丘","カルデラ","リアス海岸"], a:0, e:"カルスト地形です。"},
-      {q:"鳥取砂丘のように、砂が風にふき飛ばされて積もってできた地形を何という？", c:["砂丘","三角州","扇状地","台地"], a:0, e:"砂丘です。"},
-      {q:"守礼門がある城（首里城）は、かつてあった何という王国の中心？", c:["琉球王国","薩摩藩","邪馬台国","アイヌ"], a:0, e:"琉球王国です。"},
-      {type:"match", q:"観光地と、その府県の特色を線でつなごう。", pairs:[["白川郷（岐阜県）","輪中が見られる"],["姫路城（兵庫県）","阪神・淡路大震災の発生"],["東大寺の大仏（奈良県）","きんぎょの養殖がさかん"]], e:"写真A・B・Cです。"},
-      {type:"match", q:"観光地と、その府県の特色を線でつなごう。", pairs:[["天橋立（京都府）","西陣織の生産"],["厳島神社（広島県）","かき（貝）の養殖がさかん"],["石見銀山（島根県）","しじみ漁がさかん"]], e:"写真D・E・Fです。"},
-      {type:"match", q:"観光地と、その県の特色を線でつなごう。", pairs:[["秋吉台（山口県）","本州で最も西にある"],["鳥取砂丘（鳥取県）","全国で最も人口が少ない"],["首里城の守礼門（沖縄県）","さとうきびの生産がさかん"]], e:"写真G・H・Iです。"},
-      {q:"白川郷・姫路城・東大寺・天橋立・厳島神社・石見銀山・秋吉台・鳥取砂丘・首里城のうち、最も面積が小さい府県にあるものは？", c:["首里城（沖縄県）","東大寺（奈良県）","鳥取砂丘（鳥取県）","天橋立（京都府）"], a:0, e:"沖縄県（約2300km²）です。奈良県は約3700km²です（発展）。"},
-      {q:"同じ観光地の中で、付近で「日本なし」の栽培がさかんな場所は？", c:["鳥取砂丘","秋吉台","石見銀山","白川郷"], a:0, e:"鳥取砂丘のまわりの台地で日本なしの栽培がさかんです。"}
+      {pic:"ginzan", q:"絵F：かつての鉱山の坑道の入り口。この鉱山は、かつて何を産出していた？", c:["銀","金","銅","石炭"], a:0, e:"島根県の石見銀山遺跡です。"},
+      {pic:"ginzan", q:"絵Fの観光地がある府県の特色は？", c:["しじみ漁がさかん","全国で最も人口が少ない","本州で最も西にある","きんぎょの養殖がさかん"], a:0, e:"島根県です（宍道湖のしじみ）。"},
+      {pic:"akiyoshi", q:"絵G：草原に白い石灰岩がたくさん顔を出す台地。このような地形を何という？", c:["カルスト地形","砂丘","カルデラ","リアス海岸"], a:0, e:"山口県の秋吉台。石灰岩が雨水にとかされてできたカルスト地形です。"},
+      {pic:"akiyoshi", q:"絵Gの観光地がある県の特色は？", c:["本州で最も西にある","全国で最も人口が少ない","輪中が見られる","西陣織の生産"], a:0, e:"山口県です。"},
+      {pic:"sakyu", q:"絵H：砂が風にふき飛ばされて積もってできた地形。このような地形を何という？", c:["砂丘","三角州","扇状地","台地"], a:0, e:"鳥取砂丘です。"},
+      {pic:"sakyu", q:"絵Hの観光地がある県の特色は？", c:["全国で最も人口が少ない","本州で最も西にある","しじみ漁がさかん","かき（貝）の養殖がさかん"], a:0, e:"鳥取県です。"},
+      {pic:"shureimon", q:"絵I：かつての王国の城にある門（守礼門）。この王国は？", c:["琉球王国","薩摩藩","邪馬台国","大和朝廷"], a:0, e:"沖縄県の首里城にある守礼門です。"},
+      {pic:"shureimon", q:"絵Iの観光地がある県の特色は？", c:["さとうきびの生産がさかん","かき（貝）の養殖がさかん","阪神・淡路大震災の発生","輪中が見られる"], a:0, e:"沖縄県です。"},
+      {type:"sort", q:"観光地を、ある地方で仕分けよう。", bins:["中部・近畿","中国・四国","九州・沖縄"], items:[["白川郷",0],["姫路城",0],["東大寺",0],["天橋立",0],["厳島神社",1],["石見銀山",1],["秋吉台",1],["鳥取砂丘",1],["首里城",2]], e:"首里城だけが九州・沖縄地方です。"},
+      {q:"絵A〜I（白川郷・姫路城・東大寺・天橋立・厳島神社・石見銀山・秋吉台・鳥取砂丘・首里城）のうち、最も面積が小さい府県にあるものは？", c:["首里城（沖縄県）","東大寺（奈良県）","鳥取砂丘（鳥取県）","天橋立（京都府）"], a:0, e:"沖縄県（約2300km²）です（発展）。"},
+      {q:"絵A〜Iのうち、付近で「日本なし」の栽培がさかんな場所は？", c:["絵H（鳥取砂丘）","絵G（秋吉台）","絵F（石見銀山）","絵A（白川郷）"], a:0, e:"鳥取砂丘のまわりの台地で日本なしの栽培がさかんです。"}
   ]},
   { id:"s2", name:"かたちと地図", note:"県の形・地図の位置", wild:["katachin","kankoubird","nihonichin"], qs:[
       {shape:"hiroshima", q:"この形の県にある観光地は？（縮尺は一定ではありません）", c:["厳島神社","秋吉台","鳥取砂丘","石見銀山"], a:0, e:"広島県です。瀬戸内海に島が多くうかんでいます。"},
@@ -3325,6 +3347,113 @@ const UNITS = [
       {q:"長崎県の海岸線が長い（全国2位）のはなぜ？", c:["複雑な海岸線に加え、対馬や壱岐、五島列島など多くの島があるから","面積が日本一大きいから","まっすぐな砂浜が続くから","大きな湖があるから"], a:0, e:"リアス海岸などの複雑な海岸線と、多くの島々があるためです。"},
       {q:"香川県で昔からため池がつくられてきたのはなぜ？", c:["瀬戸内の気候で降水量が少なく、干害が起こりやすいから","雪どけ水が多すぎるから","台風が多いから","海水を利用するため"], a:0, e:"降水量が少なく水不足になりやすいからです。"},
       {q:"岐阜県の輪中とは何？", c:["水害から集落を守るため、まわりを堤防でかこんだ地いき","山のしゃ面を切り開いた畑","石灰岩の台地","火山灰の台地"], a:0, e:"木曽三川の下流で、洪水から家や田畑を守るためにつくられました。"}
+  ]}
+  ]
+},
+{
+  id:"shakai-14", no:14, title:"くだものづくり", subject:"社会", added:"2026-11-12",
+  region:"かじゅえんの丘",
+  legend:"kajuryu",
+  prefs:["aomori","wakayama","ehime","yamanashi","nagano","yamagata","okinawa"], prefW:1, mapColor:"#ff7a2f",
+  monsters:{
+    tsugarupp:{arch:"golem", body:"round", type:"kusa", type2:"hikari", color:"#e8475a", accent:"#6cc46a", skill:"heal", parts:{horn:"crest"}, forms:[{n:"ツガルップ"},{n:"キセキノリンゴン",lv:9}], dex:"青森県の津軽平野でそだった、りんごのゴーレム。無農薬でそだった「奇跡のリンゴ」にあこがれている。"},
+    omoteuran:{arch:"fox", type:"hono", type2:"kusa", color:"#ff9a2f", accent:"#3d8bff", skill:"luck", forms:[{n:"オモテウラン"},{n:"ウラドシギツネ",lv:9}], dex:"たくさんとれる「表年」ととれない「裏年」が1年おきにくるみかんのキツネ。"},
+    senjouchi:{arch:"serpent", type:"iwa", type2:"mizu", color:"#c9a27a", accent:"#ff8fc8", skill:"hint", forms:[{n:"センジョウチ"},{n:"オウギリュウ",lv:10}], dex:"川が山地から平地に出るところに土砂が積もってできた扇状地のような、おうぎ形のしっぽの竜。ももの果樹園が大好き。"},
+    wainarin:{arch:"bat", type:"kusa", type2:"kaze", color:"#7a4fbf", accent:"#9fd36a", skill:"power", forms:[{n:"ワイナリン"},{n:"コウフバット",lv:10}], dex:"甲府盆地のぶどう畑を飛ぶコウモリ。昼と夜の気温の差が大きい盆地の気候を好む。"},
+    akaihouseki:{arch:"bird", type:"hikari", type2:"hono", color:"#e8475a", accent:"#6cc46a", skill:"luck", forms:[{n:"アカイホウセキ"},{n:"オウトウバード",lv:10}], dex:"「赤い宝石」とよばれるおうとう（さくらんぼ）の鳥。山形県で全国の70％以上がつくられる。"},
+    paingame:{arch:"turtle", type:"hono", type2:"kusa", color:"#ffd23f", accent:"#24a865", skill:"heal", parts:{horn:"crest"}, forms:[{n:"パインガメ"},{n:"アネッタイガメ",lv:10}], dex:"亜熱帯性の気候の沖縄県でそだった、パイナップルのこうらのカメ。"},
+    toresan:{arch:"jelly", type:"denki", type2:"hikari", color:"#e9f5ff", accent:"#24324a", skill:"hint", forms:[{n:"トレーサン"},{n:"キューアールクラゲ",lv:11}], dex:"QRコードの模様のクラゲ。くだものがどこでつくられ、どう運ばれたかを教えてくれる（トレーサビリティ）。"},
+    kajuryu:{arch:"dragon", type:"kusa", type2:"hikari", color:"#ff7a2f", accent:"#6cc46a", skill:"power", legend:true, parts:{horn:"crown", pat:"spots", acc:"gem", accColor:"#e8475a"}, forms:[{n:"カジュリュウ"}], dex:"かじゅえんの丘のでんせつのドラゴン。日本各地のくだものの力をもち、品種改良で毎年新しいすがたになる。"}
+  },
+  stages:[
+  { id:"s1", name:"りんごの丘", note:"奇跡のリンゴ・日本のくだもの・産地の地図", wild:["tsugarupp","omoteuran","akaihouseki"], qs:[
+      {q:"日本を代表するりんごの産地として知られる、青森県の平野は？", c:["津軽平野","庄内平野","石狩平野","筑紫平野"], a:0, e:"津軽平野です。中心都市は弘前市です。"},
+      {q:"津軽平野の中心都市は？", c:["弘前市","青森市","八戸市","盛岡市"], a:0, e:"弘前市です。"},
+      {q:"弘前市の木村秋則さんが、世界で初めて成功したといわれる栽培は？", c:["無農薬のりんご栽培","ハウスでのみかん栽培","水田でのぶどう栽培","砂丘でのなし栽培"], a:0, e:"無農薬のりんご栽培に成功し、「奇跡のリンゴ」として映画にもなりました。"},
+      {q:"農薬や化学肥料を使わない農業を何という？", c:["有機農業（有機栽培）","促成栽培","抑制栽培","近郊農業"], a:0, e:"有機農業（有機栽培）です。"},
+      {type:"sort", q:"りんご農家の工夫を、目的ごとに仕分けよう。", bins:["しゅうかくしやすく","色づきをよく","安全・おいしく"], items:[["低木で育てる",0],["銀色の反射シートをしく",1],["実にふくろをかける",1],["農薬を使わない有機栽培",2]], e:"低木＝しゅうかくしやすい、反射シート・ふくろかけ＝色づき、有機栽培＝安全でおいしい。"},
+      {q:"りんごにシールをはって文字をうかび上がらせた、消費者を喜ばせるりんごは？", c:["文字入りりんご","ふじりんご","奇跡のリンゴ","無袋りんご"], a:0, e:"「文字入りりんご」です。"},
+      {q:"日本の農作物の作付面積のうち、果樹（くだものの木）の割合は約何％？", c:["約5%","約20%","約50%","約1%"], a:0, e:"約5%（2020年）です。"},
+      {q:"生産額にしめるくだものの割合（約10％）は、何に次いでいる？", c:["畜産・野菜・米","米・小麦・大豆","花・茶・たばこ","魚・貝・海そう"], a:0, e:"畜産・野菜・米に次いで約10％（2022年）です。"},
+      {q:"日本で各地にさまざまな種類のくだものがつくられているのはなぜ？", c:["南北に長く気候に差があり、気候や地形の特色をいかしているから","どこでも同じ気候だから","すべて輸入しているから","山がないから"], a:0, e:"日本は南北に長く、気候に差があるためです。"},
+      {type:"pref", q:"りんごの生産量日本一の県を、地図でタップしよう。", a:"aomori", e:"青森県（全国の62%）です。"},
+      {type:"pref", q:"みかんの生産量日本一（2023年）の県を、地図でタップしよう。", a:"wakayama", e:"和歌山県です。"},
+      {type:"pref", q:"もも・ぶどうの生産量日本一（2023年）の県を、地図でタップしよう。", a:"yamanashi", e:"山梨県（甲府盆地）です。"},
+      {type:"pref", q:"おうとう（さくらんぼ）の生産量日本一の県を、地図でタップしよう。", a:"yamagata", e:"山形県です（山形盆地）。"},
+      {type:"pref", q:"びわの生産量日本一の県を、地図でタップしよう。", a:"nagasaki", e:"長崎県です。"},
+      {type:"pref", q:"日本なしの生産量日本一（2023年）の県を、地図でタップしよう。", a:"chiba", e:"千葉県です（茨城県も日本有数）。"}
+  ]},
+  { id:"s2", name:"帯グラフの谷", note:"くだもの別の産地（帯グラフ）", wild:["omoteuran","wainarin","senjouchi","paingame"], qs:[
+      {q:"この帯グラフは、何のくだものの生産地？", band:[{t:"？の生産地（2023年）", total:"生産量68万トン", parts:[["和歌山",21],["愛媛",16],["静岡",15],["熊本",12],["その他",36]]}], c:["みかん","りんご","もも","ぶどう"], a:0, e:"和歌山・愛媛・静岡・熊本など、あたたかい地いきなのでみかんです。"},
+      {q:"この帯グラフは、何のくだものの生産地？", band:[{t:"？の生産地（2023年）", total:"生産量60万トン", parts:[["青森",62],["長野",18],["岩手",5],["その他",15]]}], c:["りんご","みかん","日本なし","おうとう"], a:0, e:"青森が62%をしめるのはりんごです。"},
+      {q:"この帯グラフは、何のくだものの生産地？", band:[{t:"？の生産地（2023年）", total:"生産量17万トン", parts:[["山梨",25],["長野",19],["岡山",9],["山形",8],["その他",39]]}], c:["ぶどう","もも","りんご","みかん"], a:0, e:"山梨・長野・岡山（マスカット）・山形なのでぶどうです。"},
+      {q:"この帯グラフは、何のくだものの生産地？", band:[{t:"？の生産地（2023年）", total:"生産量11万トン", parts:[["山梨",31],["福島",26],["長野",9],["その他",34]]}], c:["もも","ぶどう","日本なし","うめ"], a:0, e:"山梨・福島・長野なのでももです。"},
+      {q:"この帯グラフは、何のくだものの生産地？", band:[{t:"？の生産地（2023年）", total:"生産量18万トン", parts:[["千葉",12],["茨城",11],["栃木",9],["福島",8],["鳥取",6],["その他",54]]}], c:["日本なし","りんご","もも","かき"], a:0, e:"千葉・茨城・栃木・福島・鳥取なので日本なしです。"},
+      {q:"みかんは、どのような気候にてきしたくだもの？", c:["あたたかい気候","すずしい気候","雪の多い気候","昼夜の気温差が小さい気候"], a:0, e:"あたたかい気候にてきし、主に関東地方より南で生産されています。"},
+      {q:"みかんがたくさんとれる年を「表年」というのに対し、とれない年を何という？", c:["裏年","不作年","休年","下年"], a:0, e:"表年と裏年が1年おきになることが多いため、生産量のグラフは2年をひとつとして考えます。"},
+      {q:"りんごは、どのような気候にてきしたくだもの？", c:["すずしい気候","あたたかい気候","亜熱帯性の気候","雨の少ない気候"], a:0, e:"すずしい気候にてきし、青森県の津軽平野や長野県の盆地でさかんです。"},
+      {q:"ふくろをかけずにあまみを強くするため、ふくろをかけないで生産することを何という？", c:["無袋","有袋","無農薬","低木"], a:0, e:"無袋（ふくろをかけないこと）です。"},
+      {q:"鳥取県で生産が知られる日本なしの品種で、千葉県松戸市のごみすて場で偶然発見されたものは？", c:["二十世紀","幸水","豊水","ラ・フランス"], a:0, e:"「二十世紀」です。発見された場所の地名は品種名にちなんでいます。"},
+      {q:"西洋なしの生産量が日本一の県は？", c:["山形県","千葉県","鳥取県","青森県"], a:0, e:"山形県です。"},
+      {q:"もものの栽培にてきしているのは、どのような気候？", c:["昼と夜の気温の差が大きい盆地の気候","一年中あたたかい気候","雪が多い気候","海に近い気候"], a:0, e:"昼と夜の気温の差が大きい盆地の気候です。"},
+      {q:"川が山地から平地に出るとき、運ばれた土砂が積もってできた扇形のゆるやかなしゃ面を持つ地形は？", c:["扇状地","三角州","砂丘","カルデラ"], a:0, e:"扇状地です。甲府盆地の扇状地には果樹園が多くつくられています。"},
+      {q:"ぶどうを原料としたお酒で、山梨県で生産が知られているものは？", c:["ワイン","日本酒","梅酒","ビール"], a:0, e:"ワインです。"},
+      {q:"岡山県で生産がさかんな、ぶどうの品種は？", c:["マスカット","巨峰","デラウェア","シャインマスカット"], a:0, e:"「マスカット」です。"},
+      {q:"高価なくだものであるため「赤い宝石」とよばれるのは？", c:["おうとう（さくらんぼ）","いちご","りんご","トマト"], a:0, e:"おうとう（さくらんぼ）です。山形県で全国の70％以上（75％）が生産されています。"},
+      {q:"和歌山県で、特産のうめを利用して生産されているものは？", c:["梅干しや梅酒","ワイン","缶詰みかん","干ししいたけ"], a:0, e:"梅干しや梅酒です。"},
+      {q:"沖縄県で生産される、亜熱帯性の気候にてきしたくだものは？", c:["パイナップル","りんご","おうとう","日本なし"], a:0, e:"パイナップルです（沖縄100%）。ほかにパパイヤやマンゴーも生産されています。"}
+  ]},
+  { id:"s3", name:"輸入の港", note:"くだものの輸入・これからのくだものづくり", wild:["toresan","paingame","omoteuran"], qs:[
+      {q:"国内のとれ高と輸入のグラフを見て、正しいものは？", graph:{x:[2009,2023,2], y:[0,600,100], xl:"年", yl:"（万t）", aria:"くだもののとれ高と輸入", straight:true, lines:[{n:"輸入",c:"#e8475a",pts:[[2009,485],[2011,480],[2012,495],[2013,470],[2015,430],[2017,420],[2018,455],[2019,430],[2021,400],[2022,415],[2023,405]],lab:[2010,530]},{n:"国内とれ高",c:"#3d8bff",pts:[[2009,340],[2010,295],[2013,300],[2015,285],[2017,275],[2019,265],[2021,260],[2022,265],[2023,250]],lab:[2017,230]}]}, c:["ずっと輸入のほうが国内のとれ高より多い","ずっと国内のとれ高のほうが多い","輸入はふえつづけている","国内のとれ高はふえつづけている"], a:0, e:"日本産のくだものは外国産の安いくだものにおされ、生産量がのびなやんでいます。"},
+      {q:"国が外国からのくだものの輸入を進めたことを何という？", c:["輸入の自由化","輸入の禁止","関税の引き上げ","地産地消"], a:0, e:"輸入の自由化です。輸入するときの量の制限や税金などをなくすことです。"},
+      {q:"くだものの自給率は約何％（2023年度）？", c:["約38%","約80%","約60%","約10%"], a:0, e:"約38％です。"},
+      {q:"日本のくだものの輸入先の第1位の国（2023年）は？", c:["フィリピン","アメリカ合衆国","中国","オーストラリア"], a:0, e:"フィリピンです。"},
+      {q:"日本が最も多く輸入しているくだものは？", c:["バナナ","オレンジ","キウイフルーツ","パイナップル"], a:0, e:"バナナです。バナナは日本で最も消費量が多いくだものです（2位はりんご）。"},
+      {q:"輸入先第3位のアメリカ合衆国から輸入されている主なくだものは？", c:["グレープフルーツやオレンジ","バナナやパイナップル","りんごやもも","マンゴーやパパイヤ"], a:0, e:"グレープフルーツやオレンジです。"},
+      {q:"日本のくだものの輸入先（金額順）の組み合わせとして正しいもの（2023年）は？", c:["フィリピン・中国・アメリカ合衆国","アメリカ合衆国・カナダ・オーストラリア","中国・アメリカ合衆国・韓国","中国・チリ・アメリカ合衆国"], a:0, e:"1位フィリピン、2位中国、3位アメリカ合衆国です（練習問題）。"},
+      {q:"輸入されるくだものの割合（金額）で、最も多いのは？", bars:{items:[["バナナ",19.3],["キウイフルーツ",9.0],["かんきつ類",6.1],["パイナップル",3.0],["オレンジ",2.4]], unit:"%"}, c:["バナナ","キウイフルーツ","パイナップル","オレンジ"], a:0, e:"バナナが19.3%で最も多くなっています（2021年）。"},
+      {type:"all", q:"外国産のくだものに対して、日本の農家がおこなっている工夫を全部えらぼう。", c:["品種改良","有機農業（有機栽培）","インターネットで直接販売","輸入の自由化","農薬を多く使う"], a:[0,1,2], e:"品種改良・有機農業・インターネットでの直接販売などの工夫があります。"},
+      {q:"農家が生産したくだものを、インターネットを使ってどのように売る？", c:["消費者に直接販売する","すべて外国に売る","市場だけで売る","売らずに自分で食べる"], a:0, e:"インターネットで直接販売するところもあります。"}
+  ]},
+  { id:"s4", name:"トレーニングの果樹園", note:"トレーニング・基本問題・練習問題", wild:["tsugarupp","senjouchi","wainarin","akaihouseki"], qs:[
+      {q:"みかんの生産量日本一（2023年）の都道府県は（　）である。", c:["和歌山県","愛媛県","静岡県","熊本県"], a:0, e:"和歌山県です。"},
+      {q:"りんごの生産量日本一の都道府県は（　）である。", c:["青森県","長野県","岩手県","山形県"], a:0, e:"青森県です。"},
+      {q:"青森県でりんごの生産がさかんなのは、（　）平野である。", c:["津軽","庄内","仙台","越後"], a:0, e:"津軽平野です。"},
+      {q:"日本なしの生産量日本一（2023年）の都道府県は（　）である。", c:["千葉県","茨城県","鳥取県","栃木県"], a:0, e:"千葉県です。"},
+      {q:"西洋なしの生産量日本一の都道府県は（　）である。", c:["山形県","千葉県","青森県","長野県"], a:0, e:"山形県です。"},
+      {q:"もも・ぶどうの生産量日本一（2023年）の都道府県は（　）である。", c:["山梨県","長野県","福島県","岡山県"], a:0, e:"山梨県です。"},
+      {q:"山梨県には、川が山地から平地に出るときに土砂が積もってできた（　）という地形が見られ、果樹園が多くつくられている。", c:["扇状地","三角州","台地","砂丘"], a:0, e:"扇状地です。"},
+      {q:"山梨県では、ぶどうを原料とした（　）というお酒の生産がおこなわれている。", c:["ワイン","梅酒","日本酒","しょうちゅう"], a:0, e:"ワインです。"},
+      {q:"岡山県では、（　）という品種のぶどうの生産がさかんにおこなわれている。", c:["マスカット","デラウェア","巨峰","ピオーネ"], a:0, e:"マスカットです。"},
+      {q:"おうとうの生産量日本一の都道府県は（　）である。", c:["山形県","山梨県","青森県","長野県"], a:0, e:"山形県です。"},
+      {q:"うめ・かきの生産量日本一（2023年）の都道府県は（　）である。", c:["和歌山県","奈良県","群馬県","福岡県"], a:0, e:"和歌山県です。"},
+      {q:"びわの生産量日本一の都道府県は（　）である。", c:["長崎県","千葉県","香川県","和歌山県"], a:0, e:"長崎県です。"},
+      {q:"パイナップルの生産量日本一の都道府県は（　）である。", c:["沖縄県","鹿児島県","宮崎県","高知県"], a:0, e:"沖縄県です。"},
+      {q:"日本のくだものの輸入先の第3位の国（2023年）は（　）で、グレープフルーツやオレンジが輸入されている。", c:["アメリカ合衆国","中国","フィリピン","ブラジル"], a:0, e:"アメリカ合衆国です。"},
+      {q:"日本が最も多く輸入しているくだものは（　）で、フィリピンが主な輸入先である。", c:["バナナ","パイナップル","マンゴー","オレンジ"], a:0, e:"バナナです。"},
+      {q:"主なくだものの生産量のうつりかわり。ア〜エのうち、1年おきに上下する（表年・裏年）みかんはどれ？", graph:{x:[2009,2023,2], y:[0,150,50], xl:"年", yl:"（万t）", aria:"主なくだものの生産量", straight:true, circle:true, lines:[{n:"ア",c:"#e8475a",pts:[[2009,104],[2010,90],[2011,103],[2012,85],[2013,97],[2014,87],[2015,78],[2016,81],[2017,74],[2018,77],[2019,75],[2020,77],[2021,75],[2022,68],[2023,68]],lab:[2010,120]},{n:"イ",c:"#24324a",dash:true,pts:[[2009,85],[2010,79],[2011,66],[2012,79],[2013,74],[2014,82],[2015,81],[2016,77],[2017,74],[2018,76],[2019,70],[2020,76],[2021,66],[2022,74],[2023,60]],lab:[2013,58]},{n:"ウ",c:"#3d8bff",pts:[[2009,32],[2011,26],[2013,25],[2015,25],[2017,25],[2019,21],[2021,18],[2023,18]],lab:[2011,40]},{n:"エ",c:"#7a4fbf",pts:[[2009,20],[2011,17],[2013,19],[2015,18],[2017,18],[2019,17],[2021,17],[2023,17]],lab:[2014,9]}]}, c:["ア","イ","ウ","エ"], a:0, fixed:true, e:"アがみかん、イがりんご（点線）です。ウ・エは日本なし・ぶどうです。"},
+      {q:"同じグラフで、みかんと同じくらいの生産量があるりんごはどれ？", graph:{x:[2009,2023,2], y:[0,150,50], xl:"年", yl:"（万t）", aria:"主なくだものの生産量", straight:true, circle:true, lines:[{n:"ア",c:"#e8475a",pts:[[2009,104],[2010,90],[2011,103],[2012,85],[2013,97],[2014,87],[2015,78],[2016,81],[2017,74],[2018,77],[2019,75],[2020,77],[2021,75],[2022,68],[2023,68]],lab:[2010,120]},{n:"イ",c:"#24324a",dash:true,pts:[[2009,85],[2010,79],[2011,66],[2012,79],[2013,74],[2014,82],[2015,81],[2016,77],[2017,74],[2018,76],[2019,70],[2020,76],[2021,66],[2022,74],[2023,60]],lab:[2013,58]},{n:"ウ",c:"#3d8bff",pts:[[2009,32],[2011,26],[2013,25],[2015,25],[2017,25],[2019,21],[2021,18],[2023,18]],lab:[2011,40]},{n:"エ",c:"#7a4fbf",pts:[[2009,20],[2011,17],[2013,19],[2015,18],[2017,18],[2019,17],[2021,17],[2023,17]],lab:[2014,9]}]}, c:["イ","ア","ウ","エ"], a:0, fixed:true, e:"イ（点線）がりんごです。"},
+      {q:"りんごの色づきをよくするため、農家が木の下にしくものは？", c:["反射シート","ビニールハウス","わら","ネット"], a:0, e:"銀色の反射シートです。光を反射させて、実の下側まで色づきをよくします。"},
+      {q:"りんごの木の下に銀色のシートをしくのは何のため？", c:["光を反射させて、実の色づきをよくするため","雑草が生えないようにするため","雨水をためるため","虫を集めるため"], a:0, e:"実の下側にも日光が当たり、あざやかな赤い色になります（練習問題）。"},
+      {q:"もも・ぶどうの生産量が多い、山梨県の盆地は？", c:["甲府盆地","山形盆地","長野盆地","福島盆地"], a:0, e:"甲府盆地です。"},
+      {type:"match", q:"県と、生産量日本一（2023年）のくだものを線でつなごう。", pairs:[["山形県","おうとう"],["千葉県","日本なし"],["和歌山県","うめ"],["長崎県","びわ"],["沖縄県","パイナップル"]], e:"基本問題(6)です。"},
+      {q:"くだものの自給率（約38％）に最も近い数字は？", c:["40","20","60","80"], a:0, fixed:true, n:"40", e:"約38％なので40が最も近い数字です（練習問題）。"},
+      {q:"山梨県が、ぶどう以外で生産量日本一（2023年）のくだものは？", c:["もも","りんご","みかん","おうとう"], a:0, e:"ももです。"},
+      {q:"日本産のくだものは、どのような点が世界にみとめられている？", c:["品質が高く、「安心」「安全」であること","値段がとても安いこと","量がとても多いこと","1年中とれること"], a:0, e:"品質は世界でもトップクラスで、「安心」「安全」が日本のブランドになっています（練習問題・発展）。"}
+  ]},
+  { id:"s5", name:"しわけの森（発展）", note:"気候の仕分け・品種改良・トレーサビリティ", wild:["toresan","paingame","akaihouseki"], qs:[
+      {type:"sort", q:"くだものを、てきした気候で仕分けよう。", bins:["あたたかい","すずしい","昼夜の差が大きい盆地"], items:[["みかん",0],["りんご",1],["もも",2],["ぶどう",2],["パイナップル",0]], e:"みかん・パイナップル＝あたたかい、りんご＝すずしい、もも・ぶどう＝盆地。"},
+      {type:"sort", q:"それぞれの県で生産量日本一（2023年）のくだものを仕分けよう。", bins:["和歌山県","山梨県","山形県"], items:[["みかん",0],["うめ",0],["かき",0],["もも",1],["ぶどう",1],["おうとう",2],["西洋なし",2]], e:"和歌山＝みかん・うめ・かき、山梨＝もも・ぶどう、山形＝おうとう・西洋なし。"},
+      {type:"order", q:"りんごの生産量が多い順にならべよう（2023年）。", c:["青森","長野","岩手"], e:"青森62%・長野18%・岩手5%です。"},
+      {type:"order", q:"みかんの生産量が多い順にならべよう（2023年）。", c:["和歌山","愛媛","静岡","熊本"], e:"和歌山21%・愛媛16%・静岡15%・熊本12%です。"},
+      {q:"1991年に輸入が自由化され、みかん農家に大きなえいきょうをあたえたくだものは？", c:["オレンジ","バナナ","グレープフルーツ","キウイフルーツ"], a:0, e:"オレンジです。1991年にはオレンジと牛肉が輸入自由化されました。"},
+      {q:"安い輸入オレンジとの競争をさけて、愛媛県などのみかん農家が転作し、愛媛県が現在生産量日本一（2023年）のくだものは？", c:["キウイフルーツ","西洋なし","パイナップル","びわ"], a:0, e:"キウイフルーツです（愛媛21%・福岡17%・和歌山15%）。"},
+      {q:"オレンジの輸入自由化に対して、みかん農家がおこなった「転作」以外の取り組みは？", c:["品種改良に取り組み、おいしいみかんをつくる","みかんの値段を上げる","みかんの生産をやめる","オレンジの輸入を止める"], a:0, e:"品種改良に取り組み、おいしいみかんを日本各地の人々にとどけようとしています。"},
+      {q:"人気の「デコポン」は、何と何をかけ合わせてできた「しらぬい」の中で特にあまいもの？", c:["清見（タンゴール）とポンカン","みかんとレモン","オレンジとグレープフルーツ","はるみとせとか"], a:0, e:"清見タンゴールとポンカンです。"},
+      {q:"「清見」は、何と何をかけ合わせてできた品種？", c:["みかんとオレンジ","みかんとレモン","ポンカンとはっさく","いよかんとオレンジ"], a:0, e:"みかんとオレンジをかけ合わせてできた品種です。"},
+      {q:"消費者が農水産物の生産から運ばれるまでの情報を知ることができるしくみを何という？", c:["トレーサビリティ","フードマイレージ","地産地消","スマート農業"], a:0, e:"トレーサビリティです。食品につけられた2次元バーコード（QRコード）をスマホで読み取ると情報がわかります。"},
+      {type:"all", q:"日本産のくだものが食料品店にならんでいる国として教材にあるものを全部えらぼう。", c:["中国","タイ","フィリピン","ブラジル"], a:[0,1], e:"中国やタイでは日本産のくだものが食料品店にならんでいます。国も輸出を応援しています。"},
+      {type:"match", q:"くだものと生産量1位の県を線でつなごう（2023年）。", pairs:[["かき","和歌山"],["キウイフルーツ","愛媛"],["びわ","長崎"],["うめ","和歌山（64％）"]], e:"そのほかのくだものの生産地です。"}
   ]}
   ]
 }
@@ -3476,7 +3605,7 @@ function wildLv(base, boss){ return enemyLv(base, boss).lv; }
 /* 強い相手ほど EXP が多い */
 const xp = n => Math.round(n*(1+((B&&B.wild)?B.wild.lv:1)/15));
 
-const APP_NO = "v52";
+const APP_NO = "v53";
 let save = load();
 function load(){
   try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && s.v===2){ for(const [id,o] of Object.entries(s.owned)) if(o.form==null && SP[id]) o.form = formIdx(id,o.lv); if(!s.wrongEver) s.wrongEver=Object.fromEntries(Object.keys(s.wrong||{}).map(k=>[k,1])); cleanGone(s); return s; } }catch(e){}
@@ -3895,23 +4024,35 @@ function art(id, lv=1, opt={}){
   return `<svg viewBox="0 0 120 120" aria-hidden="true"><ellipse cx="60" cy="108" rx="${34*sc}" ry="5" fill="${K}" opacity=".12"/><g transform="translate(60 108) scale(${sc}) translate(-60 -108)">${g}</g></svg>`;
 }
 /* ---------- ほそくのグラフ ---------- */
+/* v53: 観光地のイラスト（q.pic）。教材の写真のかわりに、特徴がわかるように描いた絵 */
+const PICS = {
+ gassho:`<svg viewBox="0 0 200 120"><rect width="200" height="120" fill="#cfe9ff"/><path d="M0 70 Q50 40 100 60 T200 55 V120 H0Z" fill="#5f9b4a"/><rect y="88" width="200" height="32" fill="#a8d07a"/><path d="M20 98 L55 40 L90 98Z" fill="#8a6b3f" stroke="#24324a" stroke-width="2"/><rect x="30" y="80" width="50" height="22" fill="#e9dcc0" stroke="#24324a" stroke-width="2"/><rect x="46" y="88" width="10" height="14" fill="#5d4630"/><path d="M110 100 L140 52 L170 100Z" fill="#9c7a48" stroke="#24324a" stroke-width="2"/><rect x="118" y="86" width="44" height="18" fill="#e9dcc0" stroke="#24324a" stroke-width="2"/><path d="M45 55 L65 55 M38 68 L72 68 M128 70 L152 70" stroke="#6b4f2c" stroke-width="2"/></svg>`,
+ himeji:`<svg viewBox="0 0 200 120"><rect width="200" height="120" fill="#cfe9ff"/><rect y="98" width="200" height="22" fill="#9aa6b8"/><path d="M50 98 L60 80 H140 L150 98Z" fill="#8a96a8" stroke="#24324a" stroke-width="2"/><rect x="66" y="64" width="68" height="18" fill="#fff" stroke="#24324a" stroke-width="2"/><path d="M58 66 L100 52 L142 66Z" fill="#5d6c86" stroke="#24324a" stroke-width="2"/><rect x="76" y="40" width="48" height="14" fill="#fff" stroke="#24324a" stroke-width="2"/><path d="M68 42 L100 30 L132 42Z" fill="#5d6c86" stroke="#24324a" stroke-width="2"/><rect x="86" y="20" width="28" height="12" fill="#fff" stroke="#24324a" stroke-width="2"/><path d="M80 22 L100 10 L120 22Z" fill="#5d6c86" stroke="#24324a" stroke-width="2"/><text x="100" y="116" text-anchor="middle" font-size="9" fill="#fff">白い城</text></svg>`,
+ daibutsu:`<svg viewBox="0 0 200 120"><rect width="200" height="120" fill="#5a4636"/><rect x="0" y="0" width="200" height="12" fill="#3a2c22"/><circle cx="100" cy="42" r="20" fill="#7c6a4a" stroke="#24324a" stroke-width="2"/><circle cx="100" cy="30" r="10" fill="#6b5a3e"/><ellipse cx="100" cy="92" rx="52" ry="30" fill="#7c6a4a" stroke="#24324a" stroke-width="2"/><path d="M70 80 Q100 60 130 80" fill="none" stroke="#24324a" stroke-width="2"/><path d="M120 70 L134 52" stroke="#7c6a4a" stroke-width="8" stroke-linecap="round"/><path d="M92 44 h6 M102 44 h6" stroke="#24324a" stroke-width="1.5"/><rect x="0" y="112" width="200" height="8" fill="#3a2c22"/></svg>`,
+ hashidate:`<svg viewBox="0 0 200 120"><rect width="200" height="120" fill="#cfe9ff"/><path d="M0 40 Q60 20 120 36 T200 30 V60 H0Z" fill="#6b8f4a"/><rect y="50" width="200" height="70" fill="#3d8bff"/><path d="M10 112 C60 100 110 70 190 52 L192 58 C120 76 70 104 14 118Z" fill="#e9d9a8" stroke="#24324a" stroke-width="1.5"/><g fill="#2f6b3a">${[20,40,60,80,100,120,140,160,180].map((x,i)=>`<circle cx="${x}" cy="${112-i*7}" r="4"/>`).join("")}</g></svg>`,
+ itsukushima:`<svg viewBox="0 0 200 120"><rect width="200" height="120" fill="#cfe9ff"/><path d="M0 50 Q50 20 100 40 T200 30 V70 H0Z" fill="#3f6b3a"/><rect y="68" width="200" height="52" fill="#3d8bff"/><g fill="#e8472f" stroke="#24324a" stroke-width="1.5"><rect x="70" y="40" width="7" height="60"/><rect x="123" y="40" width="7" height="60"/><path d="M56 36 Q100 28 144 36 V42 Q100 34 56 42Z"/><rect x="64" y="50" width="72" height="5"/></g><path d="M0 104 Q100 98 200 104" stroke="#cfe9ff" stroke-width="2" fill="none"/></svg>`,
+ ginzan:`<svg viewBox="0 0 200 120"><rect width="200" height="120" fill="#2f5a2a"/><circle cx="40" cy="30" r="30" fill="#3f7a35"/><circle cx="170" cy="25" r="35" fill="#3f7a35"/><path d="M70 120 V70 Q100 45 130 70 V120Z" fill="#7c6a4a" stroke="#24324a" stroke-width="2"/><path d="M84 120 V78 Q100 62 116 78 V120Z" fill="#111"/><rect x="40" y="40" width="14" height="70" fill="#9aa6b8" stroke="#24324a" stroke-width="1.5"/></svg>`,
+ akiyoshi:`<svg viewBox="0 0 200 120"><rect width="200" height="120" fill="#cfe9ff"/><path d="M0 60 Q60 40 120 55 T200 50 V120 H0Z" fill="#8fbf6a"/><g fill="#e9ecef" stroke="#8a96a8" stroke-width="1">${[[20,80],[45,95],[70,75],[95,100],[120,82],[145,96],[170,78],[30,108],[110,110],[160,110],[60,112],[185,98]].map(([x,y])=>`<path d="M${x-7} ${y+6} L${x-3} ${y-6} L${x+4} ${y-4} L${x+8} ${y+6}Z"/>`).join("")}</g></svg>`,
+ sakyu:`<svg viewBox="0 0 200 120"><rect width="200" height="120" fill="#cfe9ff"/><path d="M0 70 Q60 40 110 62 Q150 78 200 58 V120 H0Z" fill="#e9d29a"/><path d="M0 90 Q80 70 200 92 V120 H0Z" fill="#dcc07e"/><path d="M20 80 Q50 76 80 82 M110 96 Q140 92 170 98" stroke="#c9a96a" stroke-width="1.5" fill="none"/><path d="M150 40 h50 v18 h-50Z" fill="#3d8bff"/></svg>`,
+ shureimon:`<svg viewBox="0 0 200 120"><rect width="200" height="120" fill="#cfe9ff"/><rect y="104" width="200" height="16" fill="#d9c9a0"/><g stroke="#24324a" stroke-width="1.5"><rect x="58" y="62" width="8" height="44" fill="#c0392b"/><rect x="134" y="62" width="8" height="44" fill="#c0392b"/><rect x="92" y="62" width="6" height="44" fill="#c0392b"/><rect x="102" y="62" width="6" height="44" fill="#c0392b"/><path d="M40 62 Q100 50 160 62 V68 H40Z" fill="#b5651d"/><rect x="62" y="40" width="76" height="14" fill="#c0392b"/><path d="M48 44 Q100 26 152 44 V48 H48Z" fill="#b5651d"/><rect x="88" y="42" width="24" height="10" fill="#1a1a1a"/></g><text x="100" y="50" font-size="7" text-anchor="middle" fill="#ffd23f">守礼之邦</text></svg>`
+};
 function graphSVG(g){
   const W=300,H=222,ml=34,mr=12,mt=20,mb=36, pw=W-ml-mr, ph=H-mt-mb;
   const [x0,x1,xs]=g.x, [y0,y1,ys]=g.y;
   const X=v=>ml+(v-x0)/(x1-x0)*pw, Y=v=>mt+ph-(v-y0)/(y1-y0)*ph;
   const id="gc"+Math.random().toString(36).slice(2,8);
-  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="とける限度量のグラフ"><defs><clipPath id="${id}"><rect x="${ml}" y="${mt}" width="${pw}" height="${ph}"/></clipPath></defs>`;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${g.aria||'グラフ'}"><defs><clipPath id="${id}"><rect x="${ml}" y="${mt}" width="${pw}" height="${ph}"/></clipPath></defs>`;
   s+=`<rect x="${ml}" y="${mt}" width="${pw}" height="${ph}" fill="#ffffff"/>`;
   for(let v=x0; v<=x1+1e-9; v+=xs) s+=`<line x1="${X(v)}" y1="${mt}" x2="${X(v)}" y2="${mt+ph}" stroke="#c9d6e6" stroke-width="1"/><text x="${X(v)}" y="${mt+ph+13}" text-anchor="middle" font-size="10" fill="#5d6c86">${v}</text>`;
   for(let v=y0; v<=y1+1e-9; v+=ys) s+=`<line x1="${ml}" y1="${Y(v)}" x2="${ml+pw}" y2="${Y(v)}" stroke="#c9d6e6" stroke-width="1"/><text x="${ml-4}" y="${Y(v)+3.5}" text-anchor="end" font-size="10" fill="#5d6c86">${v}</text>`;
   s+=`<rect x="${ml}" y="${mt}" width="${pw}" height="${ph}" fill="none" stroke="#24324a" stroke-width="1.5"/>`;
-  s+=`<text x="${ml+pw/2}" y="${H-4}" text-anchor="middle" font-size="10.5" font-weight="800" fill="#24324a">水の温度（℃）</text>`;
-  s+=`<text x="${ml-4}" y="${mt-9}" text-anchor="end" font-size="10" font-weight="800" fill="#24324a">（g）</text>`;
+  s+=`<text x="${ml+pw/2}" y="${H-4}" text-anchor="middle" font-size="10.5" font-weight="800" fill="#24324a">${g.xl||'水の温度（℃）'}</text>`;
+  s+=`<text x="${ml-4}" y="${mt-9}" text-anchor="end" font-size="10" font-weight="800" fill="#24324a">${g.yl||'（g）'}</text>`;
   for(const L of g.lines){
     const P=L.pts.map(([a,b])=>[X(a),Y(b)]); let d=`M${P[0][0]} ${P[0][1]}`;
-    for(let i=0;i<P.length-1;i++){ const p0=P[i-1]||P[i], p1=P[i], p2=P[i+1], p3=P[i+2]||P[i+1];
+    if(g.straight){ for(let i=1;i<P.length;i++) d+=` L${P[i][0]} ${P[i][1]}`; } else for(let i=0;i<P.length-1;i++){ const p0=P[i-1]||P[i], p1=P[i], p2=P[i+1], p3=P[i+2]||P[i+1];
       d+=` C${p1[0]+(p2[0]-p0[0])/6} ${p1[1]+(p2[1]-p0[1])/6} ${p2[0]-(p3[0]-p1[0])/6} ${p2[1]-(p3[1]-p1[1])/6} ${p2[0]} ${p2[1]}`; }
-    s+=`<path d="${d}" fill="none" stroke="${L.c||'#24324a'}" stroke-width="2.2" stroke-linecap="round" clip-path="url(#${id})"/>`;
+    s+=`<path d="${d}" fill="none" stroke="${L.c||'#24324a'}" stroke-width="2.2" stroke-linecap="round" ${L.dash?'stroke-dasharray="5 4"':''} clip-path="url(#${id})"/>`;
   }
   for(const L of g.lines){
     const [lx,ly]=[X(L.lab[0]),Y(L.lab[1])];
@@ -3920,6 +4061,9 @@ function graphSVG(g){
   }
   return s+`</svg>`;
 }
+/* v53: 帯グラフ（生産地の割合など）。q.band=[{t:"A", total:"生産量68万トン", parts:[["和歌山",21],...]}] */
+const BCOL=["#9fd0ff","#ffcf8a","#b8e6a0","#ffb3c0","#d6c8ff","#ffe28a","#c9d3e0"];
+function bandHTML(bs){ return `<div class="qband">${bs.map(b=>`<div class="qbd-h"><b>${esc(b.t||'')}</b><span>${esc(b.total||'')}</span></div><div class="qbd">${b.parts.map(([n,v],i)=>`<div style="flex:${v};background:${n.startsWith('その他')?'#fff6b8':BCOL[i%BCOL.length]}"><span>${esc(n)}</span><small>${v}${i===0?'%':''}</small></div>`).join("")}</div>`).join("")}</div>`; }
 function barsHTML(b){
   const mx=Math.max(...b.items.map(x=>x[1]));
   return `<div class="qbars">${b.items.map(([l,v])=>`<div class="qb-l">${esc(l)}</div><div class="qb-t"><i style="width:${(v/mx*100).toFixed(1)}%"></i></div><div class="qb-v">${v}${b.unit||''}</div>`).join("")}</div>`;
@@ -4969,7 +5113,7 @@ function sizeText(id){ const o=save.owned[id]||{}, f=SP[id].legend?2:curF(id), l
    ============================================================ */
 const FAST_MS = 1200;
 function readSecs(q){
-  const c=(q.q||"").length + (q.note?q.note.length*.4:0) + (Array.isArray(q.c)?q.c.join("").length*.3:0) + (q.pairs?q.pairs.flat().join("").length*.3:0) + (q.table||q.graph||q.bars||q.map||q.img?8:0);
+  const c=(q.q||"").length + (q.note?q.note.length*.4:0) + (Array.isArray(q.c)?q.c.join("").length*.3:0) + (q.pairs?q.pairs.flat().join("").length*.3:0) + (q.table||q.graph||q.bars||q.map||q.img||q.band?8:0)+(q.items?q.items.length*1.5:0);
   return Math.min(6, Math.max(1.5, 1+c*.05));
 }
 function applyReadLock(item, q){
@@ -5099,7 +5243,7 @@ const dexDoneCard = uid => { const u=UNITS.find(x=>x.id===uid); return `<div cla
 const SMV = {};
 const UNIT_SM = {"rika-11":["とけかたスプラッシュ","mizu"],"rika-12":["けっしょうレイン","koori"],"shakai-11":["いなほスラッシュ","kusa"],"sansu-1":["パイサークル","hikari"],
   "sansu-2":["プライムアロー","iwa"],"sansu-3":["バイバイボム","denki"],"shakai-12":["かんしょパワー","hono"],"sansu-4":["ぶんすうカッター","kaze"],
-  "shakai-6":["アルプスおろし","kaze"],"rika-13":["ふゆごもりブリザード","koori"],"rika-14":["マグマバースト","hono"],"rika-15":["ふりかえりフラッシュ","hikari"],"rika-16":["バランスブレイク","iwa"],"rika-17":["スプリングショット","denki"],"rika-18":["フォースクラッシュ","iwa"],"rika-6":["ボリュームアップ","hono"],"rika-7":["ネツデンドウ","iwa"],"rika-8":["キセツフウストーム","kaze"],"rika-9":["ボーンナックル","iwa"],"rika-10":["クロスリコール","hikari"],"kokugo-1":["ことわざスラッシュ","hikari"],"kokugo-2":["かんようくストーム","kaze"],"kokugo-3":["けいごのいかずち","denki"],"kokugo-4":["よじじゅくごブレイク","iwa"],"kokugo-5":["はんたいミラー","mizu"],"shakai-7":["みやこのいかずち","denki"],"shakai-mark":["マークシュート","iwa"],"shakai-8":["せとうちブリッジ","mizu"],"shakai-9":["ひのくにバースト","hono"],"shakai-10":["にほんいちスター","hikari"],"shakai-13":["ベジタブルストーム","kusa"]};
+  "shakai-6":["アルプスおろし","kaze"],"rika-13":["ふゆごもりブリザード","koori"],"rika-14":["マグマバースト","hono"],"rika-15":["ふりかえりフラッシュ","hikari"],"rika-16":["バランスブレイク","iwa"],"rika-17":["スプリングショット","denki"],"rika-18":["フォースクラッシュ","iwa"],"rika-6":["ボリュームアップ","hono"],"rika-7":["ネツデンドウ","iwa"],"rika-8":["キセツフウストーム","kaze"],"rika-9":["ボーンナックル","iwa"],"rika-10":["クロスリコール","hikari"],"kokugo-1":["ことわざスラッシュ","hikari"],"kokugo-2":["かんようくストーム","kaze"],"kokugo-3":["けいごのいかずち","denki"],"kokugo-4":["よじじゅくごブレイク","iwa"],"kokugo-5":["はんたいミラー","mizu"],"shakai-7":["みやこのいかずち","denki"],"shakai-mark":["マークシュート","iwa"],"shakai-8":["せとうちブリッジ","mizu"],"shakai-9":["ひのくにバースト","hono"],"shakai-10":["にほんいちスター","hikari"],"shakai-13":["ベジタブルストーム","kusa"],"shakai-14":["フルーツシャワー","kusa"]};
 for(const u of UNITS){ const [n,t] = UNIT_SM[u.id] || [`${u.title}のちから`, (SP[u.legend]||{}).type||"hikari"]; SMV["u_"+u.id] = {n, t, src:`${unitLabel(u)}「${u.title}」のルートとでんせつを全部クリア`}; }
 const STAMP_SM = [[5,"ミッションスター","hikari"],[10,"がんばりストライク","hono"],[20,"まいにちメテオ","iwa"],[30,"レジェンドウィング","kaze"]];
 for(const [n,nm,t] of STAMP_SM) SMV["st_"+n] = {n:nm, t, src:`毎日のミッションを全部クリアした日が ${n}日`};
@@ -5391,8 +5535,9 @@ function fieldHTML(enter){
 }
 let logMsg = "";
 function renderBattle(enter){
-  const item = B.queue[0], q = item.q, isAll = q.type==="all", multi = q.type==="multi"||isAll, isOrd = q.type==="order", isMat = q.type==="match", isPref = q.type==="pref", isTile = q.type==="tile";
-  if(isMat){ if(!item.ro) item.ro = shuffle(q.pairs.map((_,i)=>i)); item.pairs = item.pairs || {}; }
+  const item = B.queue[0], q = item.q, isAll = q.type==="all", multi = q.type==="multi"||isAll, isOrd = q.type==="order", isMat = q.type==="match", isPref = q.type==="pref", isTile = q.type==="tile", isSort = q.type==="sort";
+  if(isSort){ if(!item.ro) item.ro = shuffle(q.items.map((_,i)=>i)); item.sel = item.sel || {}; }
+  else if(isMat){ if(!item.ro) item.ro = shuffle(q.pairs.map((_,i)=>i)); item.pairs = item.pairs || {}; }
   else if(isPref||isTile){}
   else if(!item.order) item.order = (q.fixed && !isOrd) ? q.c.map((_,i)=>i) : shuffle(q.c.map((_,i)=>i));
   if(isOrd||isTile) item.seq = item.seq || [];
@@ -5410,11 +5555,11 @@ function renderBattle(enter){
   <div class="log" id="log">${logMsg}</div>
   <div class="card qpanel">
     <div class="qmeta"><span>${esc(B.name)}</span><span>${B.tower?`${B.tower.floor}階・さいこう ${qdS().tower.best}階`:B.trainer?`あいて ${B.trainer.idx+1} / ${B.trainer.team.length}ひき目`:`のこり ${B.queue.length}問`}</span></div>
-    ${q.note||q.table||q.graph||q.bars||q.map?`<div class="qnote"><span class="qnote-h">ほそく</span>${q.note?`<p>${esc(q.note)}</p>`:''}${q.table?`<div class="qtbl"><table>${q.table.map((r,ri)=>`<tr>${r.map((c,ci)=>ri===0||ci===0?`<th>${esc(c)}</th>`:`<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</table></div>`:''}${q.graph?`<div class="qgraph">${graphSVG(q.graph)}</div>`:''}${q.bars?barsHTML(q.bars):''}${q.map?`<div class="qmap">${mapSVG({view:q.map.view, pts:q.map.pts})}${MAPCREDIT}</div>`:''}</div>`:''}
-    ${q.img&&MARKS[q.img]?`<div class="qimg"><img src="${MARKS[q.img]}" alt="都道府県のマーク" width="180" height="180"></div>`:''}${q.shape&&MAPD[q.shape]?`<div class="pgbox">${prefShapeSVG(q.shape)}</div>`:''}<p class="qtext">${esc(q.q)}</p>${isAll?'<div class="hint">あてはまるものを全部えらんで「けってい」</div>':multi?'<div class="hint">2つえらんで「けってい」</div>':''}${isNum?'<div class="hint">なれてきた問題！ 数字キーで答えよう</div>':''}${isOrd?'<div class="hint">はじめのものから順にタップしよう</div>':''}${isMat?'<div class="hint">左をタップしてから、右をタップしてつなごう</div>':''}${isPref?'<div class="hint">地図をタップしてえらび、「けってい」</div>':''}${isTile?`<div class="hint">文字をタップして答えをつくろう（${[...q.ans].length}文字）</div>`:''}
-    ${isNum?`<div class="cans" id="nans">${item.input?esc(item.input):'&nbsp;'}</div><div class="keypad">${["7","8","9","4","5","6","1","2","3",".","0","⌫"].map(k=>`<button class="key" data-k="${k}">${k}</button>`).join("")}</div><button class="btn" id="dec" style="margin-top:10px" ${item.input?'':'disabled'}>けってい</button>`:isTile?tileHTML(item,q)+`<div class="ordrow"><button class="btn alt" id="redo">1文字もどす</button><button class="btn" id="dec" ${item.seq.length===[...q.ans].length-q.pre?'':'disabled'}>けってい</button></div>`:isPref?`<div class="qmap big">${mapSVG({view:q.view, sel:item.selP, tap:true})}${MAPCREDIT}</div><button class="btn" id="dec" style="margin-top:10px" ${item.selP?'':'disabled'}>けってい</button>`:isOrd?orderHTML(item,q):isMat?matchHTML(item,q):`<div class="choices${isAll?' allgrid':''}">${item.order.filter(ci=>!item.hidden.includes(ci)).map((ci,k)=>`<button class="choice" data-i="${ci}">${isAll||q.c[ci]===KANA[k]?'':`<span class="k">${KANA[k]}</span>`}<span>${esc(q.c[ci])}</span></button>`).join("")}</div>`}
+    ${q.note||q.table||q.graph||q.bars||q.map||q.band?`<div class="qnote"><span class="qnote-h">ほそく</span>${q.note?`<p>${esc(q.note)}</p>`:''}${q.table?`<div class="qtbl"><table>${q.table.map((r,ri)=>`<tr>${r.map((c,ci)=>ri===0||ci===0?`<th>${esc(c)}</th>`:`<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</table></div>`:''}${q.graph?`<div class="qgraph">${graphSVG(q.graph)}</div>`:''}${q.bars?barsHTML(q.bars):''}${q.band?bandHTML(q.band):''}${q.map?`<div class="qmap">${mapSVG({view:q.map.view, pts:q.map.pts})}${MAPCREDIT}</div>`:''}</div>`:''}
+    ${q.img&&MARKS[q.img]?`<div class="qimg"><img src="${MARKS[q.img]}" alt="都道府県のマーク" width="180" height="180"></div>`:''}${q.shape&&MAPD[q.shape]?`<div class="pgbox">${prefShapeSVG(q.shape)}</div>`:''}${q.pic&&PICS[q.pic]?`<div class="qpic">${PICS[q.pic]}</div>`:''}<p class="qtext">${esc(q.q)}</p>${isAll?'<div class="hint">あてはまるものを全部えらんで「けってい」</div>':multi?'<div class="hint">2つえらんで「けってい」</div>':''}${isNum?'<div class="hint">なれてきた問題！ 数字キーで答えよう</div>':''}${isOrd?'<div class="hint">はじめのものから順にタップしよう</div>':''}${isMat?'<div class="hint">左をタップしてから、右をタップしてつなごう</div>':''}${isPref?'<div class="hint">地図をタップしてえらび、「けってい」</div>':''}${isTile?`<div class="hint">文字をタップして答えをつくろう（${[...q.ans].length}文字）</div>`:''}
+    ${isNum?`<div class="cans" id="nans">${item.input?esc(item.input):'&nbsp;'}</div><div class="keypad">${["7","8","9","4","5","6","1","2","3",".","0","⌫"].map(k=>`<button class="key" data-k="${k}">${k}</button>`).join("")}</div><button class="btn" id="dec" style="margin-top:10px" ${item.input?'':'disabled'}>けってい</button>`:isTile?tileHTML(item,q)+`<div class="ordrow"><button class="btn alt" id="redo">1文字もどす</button><button class="btn" id="dec" ${item.seq.length===[...q.ans].length-q.pre?'':'disabled'}>けってい</button></div>`:isPref?`<div class="qmap big">${mapSVG({view:q.view, sel:item.selP, tap:true})}${MAPCREDIT}</div><button class="btn" id="dec" style="margin-top:10px" ${item.selP?'':'disabled'}>けってい</button>`:isOrd?orderHTML(item,q):isMat?matchHTML(item,q):isSort?sortHTML(item,q):`<div class="choices${isAll?' allgrid':''}">${item.order.filter(ci=>!item.hidden.includes(ci)).map((ci,k)=>`<button class="choice" data-i="${ci}">${isAll||q.c[ci]===KANA[k]?'':`<span class="k">${KANA[k]}</span>`}<span>${esc(q.c[ci])}</span></button>`).join("")}</div>`}
     ${multi?'<button class="btn" id="dec" style="margin-top:12px" disabled>けってい</button>':''}
-    ${isOrd||isMat?`<div class="ordrow"><button class="btn alt" id="redo">やりなおし</button><button class="btn" id="dec" ${(isOrd?item.seq.length===q.c.length:Object.keys(item.pairs).length===q.pairs.length)?'':'disabled'}>けってい</button></div>`:''}
+    ${isOrd||isMat||isSort?`<div class="ordrow"><button class="btn alt" id="redo">やりなおし</button><button class="btn" id="dec" ${(isOrd?item.seq.length===q.c.length:isSort?Object.keys(item.sel).length===q.items.length:Object.keys(item.pairs).length===q.pairs.length)?'':'disabled'}>けってい</button></div>`:''}
     <div id="sub"><div class="subrow"><button id="skill" ${B.used[me]?'disabled':''}>${sk.n}${B.used[me]?'（使った）':''}<small>${sk.d}</small></button><button id="swapBtn" ${save.party.length<2?'disabled':''}>こうたい<small>${save.party.length<2?'なかまをふやそう':'なかまを入れかえる'}</small></button>${bagCount()?`<button id="bagBtn">どうぐ<small>${bagCount()}こ</small></button>`:''}</div>
     ${B.bagOpen?bagHTML():''}
     ${B.swapOpen?`<div class="swap">${save.party.map(id=>`<button class="${id===me?'cur':''}" data-id="${id}" ${useHP()&&hpOf(id)<=0?'disabled':''}><div class="mon">${artMine(id)}</div>${esc(nameOf(id))}${useHP()?`<small>HP ${hpOf(id)}/${maxHPOf(id)}</small>`:''}</button>`).join("")}</div>`:''}</div>
@@ -5453,6 +5598,11 @@ function renderBattle(enter){
       item.selP=p.dataset.p; p.setAttribute("fill","#ffcf3a"); document.getElementById("dec").disabled=false; });
     document.getElementById("dec").onclick=()=>judge([item.selP]);
   }
+  if(isSort){
+    app.querySelectorAll("[data-sb]").forEach(b=>b.onclick=()=>{ if(B.busy) return; item.sel[+b.dataset.si]=+b.dataset.sb; renderBattle(); });
+    document.getElementById("redo").onclick=()=>{ if(B.busy) return; item.sel={}; renderBattle(); };
+    document.getElementById("dec").onclick=()=>judge(q.items.map((_,i)=>item.sel[i]));
+  }
   if(isMat){
     app.querySelectorAll(".mbtn.L").forEach(b=>b.onclick=()=>{ if(B.busy) return; const l=+b.dataset.l; item.selL = item.selL===l?null:l; renderBattle(); });
     app.querySelectorAll(".mbtn.R").forEach(b=>b.onclick=()=>{ if(B.busy||item.selL==null) return; const r=+b.dataset.r;
@@ -5481,6 +5631,10 @@ function orderHTML(item,q){
   return `<div class="choices">${item.order.map(ci=>{ const n=item.seq.indexOf(ci);
     return `<button class="choice ${n>=0?'sel':''}" data-i="${ci}"><span class="k" ${n<0?'style="background:#dfe6ee"':''}>${n>=0?n+1:''}</span><span>${esc(q.c[ci])}</span></button>`; }).join("")}</div>`;
 }
+/* v53: 仕分け（sort）。q.bins=["グループ名",...], q.items=[["ことば", 正しいグループ番号],...]。それぞれのことばを、どのグループに入るかボタンでえらぶ */
+function sortHTML(item,q){
+  return `<div class="sortq">${item.ro.map(i=>`<div class="srow" data-row="${i}"><span class="stx">${esc(q.items[i][0])}</span><span class="sbins">${q.bins.map((bn,b)=>`<button class="sbin ${item.sel[i]===b?'on':''}" data-si="${i}" data-sb="${b}" style="--bc:${PCOL[b%PCOL.length]}">${esc(bn)}</button>`).join("")}</span></div>`).join("")}</div>`;
+}
 function matchHTML(item,q){
   const P=item.pairs, inv={}; for(const [l,r] of Object.entries(P)) inv[r]=+l;
   const badge=l=>l==null?'<span class="k" style="background:#dfe6ee"></span>':`<span class="k" style="background:${PCOL[l%PCOL.length]}">${l+1}</span>`;
@@ -5508,6 +5662,11 @@ function useSkill(){
     let ok=0; while(ok<item.seq.length && item.seq[ok]===ok) ok++;
     if(ok>=q.c.length-1){ setLog("もう少しでできるよ！"); return; }
     item.seq=item.seq.slice(0,ok); item.seq.push(ok); logMsg = nm+`「${esc(q.c[ok])}」の順番を教えてくれた！`;
+  }
+  else if(k==="hint" && q.type==="sort"){
+    const miss=q.items.map((_,i)=>i).filter(i=>item.sel[i]!==q.items[i][1]);
+    if(miss.length<=1){ setLog("もう少しでできるよ！"); return; }
+    const i=pick(miss); item.sel[i]=q.items[i][1]; logMsg = nm+`「${esc(q.items[i][0])}」の答えを教えてくれた！`;
   }
   else if(k==="hint" && q.type==="match"){
     const miss=q.pairs.map((_,i)=>i).filter(i=>item.pairs[i]!==i);
@@ -5547,6 +5706,9 @@ function judge(picked){
     const pa=app.querySelector(`.qmap path[data-p="${q.a}"]`); if(pa) pa.setAttribute("fill","#7ed9a6");
     if(!ok && picked[0]){ const pw=app.querySelector(`.qmap path[data-p="${picked[0]}"]`); if(pw) pw.setAttribute("fill","#ff9aa8"); }
     const dd=document.getElementById("dec"); if(dd) dd.hidden=true;
+  }else if(q.type==="sort"){
+    ok = q.items.every((it,i)=>picked[i]===it[1]); ansText = q.bins.map((bn,b)=>`【${bn}】`+q.items.filter(it=>it[1]===b).map(it=>it[0]).join("・")).join(" ");
+    app.querySelectorAll(".srow").forEach(r=>{ const i=+r.dataset.row; r.classList.add(picked[i]===q.items[i][1]?"ok":"ng"); r.querySelectorAll(".sbin").forEach(b=>{ b.disabled=true; if(+b.dataset.sb===q.items[i][1]) b.classList.add("ans"); }); });
   }else if(q.type==="match"){
     ok = q.pairs.every((_,i)=>picked[i]===i); ansText = q.pairs.map(p=>p[0]+"＝"+p[1]).join("、");
     app.querySelectorAll(".mbtn").forEach(b=>{ b.disabled=true; if(b.dataset.l!=null) b.classList.add(picked[+b.dataset.l]===+b.dataset.l?"ok":"ng"); });
@@ -5613,7 +5775,7 @@ function judge(picked){
     const lost = useHP() ? !aliveIds().length : B.hearts<=0;
     item.missed=true;
     if(!B.qd){ save.wrong[item.key]=(save.wrong[item.key]||0)+1; (save.wrongEver=save.wrongEver||{})[item.key]=1; }
-    item.hidden=[]; item.seq=[]; item.pairs={}; item.selL=null; item.selP=null; item.input=""; item.readUntil=null;
+    item.hidden=[]; item.seq=[]; item.pairs={}; item.sel={}; item.selL=null; item.selP=null; item.input=""; item.readUntil=null;
     if(B.tower){ B.queue.shift(); B.queue.push(towerNext()); } else B.queue.push(B.queue.shift());
     persist();
     const wm=document.getElementById("wildMon"), mm=document.getElementById("meMon");
@@ -5749,7 +5911,7 @@ function finish(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261112095816";
+const APP_VER="20261112101940";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
