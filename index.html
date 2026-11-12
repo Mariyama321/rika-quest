@@ -191,6 +191,17 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 @keyframes pop{0%{opacity:0;transform:translateY(8px)}20%{opacity:1}100%{opacity:0;transform:translateY(-34px)}}
 .log{margin-top:8px;min-height:48px;padding:6px 12px;font-weight:800;font-size:14px;line-height:1.5;border:3px solid var(--ink);border-radius:12px;background:var(--panel)}
 .qpanel{margin-top:12px;padding:14px;position:relative}
+.hayawait .choices,.hayawait .tboxes,.hayawait .tiles,.hayawait #sub,.hayawait .qnote{display:none}
+.buzz{margin-top:12px;font-size:20px;padding:14px;animation:buzzp 1s infinite}
+@keyframes buzzp{50%{transform:scale(1.03)}}
+.mixbar{position:relative;height:16px;border:2px solid var(--ink);border-radius:999px;overflow:hidden;background:#fff;margin-top:8px}
+.mixbar i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#e8475a,#ffcf3a);transition:width .2s linear}
+.mixbar span{position:relative;display:block;text-align:center;font-size:11px;font-weight:800;line-height:12px}
+.testcard{padding:12px;display:flex;flex-direction:column;gap:6px;border-color:#e8475a;background:#fff4f4}
+.tc-h{font-size:16px}.tc-row{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.tc-s{font-weight:800;width:100%;font-size:13px}
+.tc-b{flex:1 1 calc(33% - 6px);border:2px solid var(--ink);border-radius:10px;background:#fff;font-weight:800;font-size:13px;padding:7px 2px;box-shadow:0 2px 0 var(--ink)}
+.tc-b.rv{background:#ffe28a}.tc-b:disabled{opacity:.45}
 .rlock{position:absolute;left:6px;right:6px;z-index:4;background:rgba(255,255,255,.6);border-radius:12px;display:flex;flex-direction:column;align-items:center;padding-top:14px;gap:8px}
 .rlock span{font-weight:800;background:var(--ink);color:#fff;border-radius:999px;padding:3px 14px;font-size:14px}
 .rlock i{display:block;width:60%;height:8px;border-radius:5px;background:#dfe6ee;border:2px solid var(--ink);overflow:hidden}
@@ -3605,7 +3616,7 @@ function wildLv(base, boss){ return enemyLv(base, boss).lv; }
 /* 強い相手ほど EXP が多い */
 const xp = n => Math.round(n*(1+((B&&B.wild)?B.wild.lv:1)/15));
 
-const APP_NO = "v53";
+const APP_NO = "v54";
 let save = load();
 function load(){
   try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && s.v===2){ for(const [id,o] of Object.entries(s.owned)) if(o.form==null && SP[id]) o.form = formIdx(id,o.lv); if(!s.wrongEver) s.wrongEver=Object.fromEntries(Object.keys(s.wrong||{}).map(k=>[k,1])); cleanGone(s); return s; } }catch(e){}
@@ -4205,7 +4216,7 @@ function showMap(){
   h += '<!--BKTOP-->';
   const rg = grantRares(), mg = grantMegas(), ug = grantUR(), umg = grantUMegas(); if(rg.length||mg.length||ug.length||umg.length) h += `<div class="gets">${umg.map(umegaCard).join("")}${ug.map(urCard).join("")}${mg.map(megaCard).join("")}${rg.map(rareCard).join("")}</div>`;
   { const rc=rewardCards(); if(rc) h += `<div class="gets">${rc}</div>`; }
-  h += weekNote() + dayNote();
+  h += testCardHTML() + weekNote() + dayNote();
   const evoId = [...DEX_ORDER,...RARE_ORDER,...QD_ORDER,...MEGA_ORDER,...UR_ORDER,...dayIds()].find(id=>canEvo(id));
   if(evoId) h += `<button class="card prof gift" id="evoNote"><div class="mon" style="width:52px;height:52px;flex:none">${artMine(evoId)}</div><div style="text-align:left"><p>しんかできるなかまがいるよ！</p><p style="font-weight:500">${esc(nameOf(evoId))}をしんかさせよう。タップで「なかま」へ。</p></div></button>`;
   const giftReady = !save.owned.toratch && save.cleared["rika-11|s1"];
@@ -4924,6 +4935,72 @@ for(const [d,n,arch,type,color,accent,skill,parts,dex] of WEEK_LIST)
 Object.assign(SP, WEEK);
 const WEEK_ORDER = Object.keys(WEEK);
 const weekToday = () => "week_"+new Date().getDay();
+
+/* ============================================================
+   テスト対策モード・ごちゃまぜモード（v54）
+   ユーザーの要望「テスト対策モードを入れてほしい」「6回から9回をごちゃまぜにしたモード」「4択よりも一問一答、早押し形式、何秒以内で回答しなきゃいけない…バリエーション」
+   選択：答え方＝一問一答（文字タイル）・早押し・制限時間・○×／理科と社会を別々に／対策期間はホームの入り口・デイリーミッション・バトルタワー・ふくしゅうを第6〜10回中心に
+   - TEST: アタックテスト（第6〜10回）は 11/16 まで。ごちゃまぜ（第6〜9回）は期間後も遊べる
+   - 問題は単元の4択からその場で作る（一問一答＝答えが短い問題を文字タイルに、○×＝正しい答えかまちがいの答えをしめす）。まちがいは元の問題のキーで記録＝ニガテの森にも入る
+   ============================================================ */
+const TEST = {end:"2026-11-16", name:"アタックテスト（第6〜10回）", mixNos:[6,7,8,9], testNos:[6,7,8,9,10]};
+const testOn = () => today() <= TEST.end;
+const MIX_MODES = [["tile","一問一答","文字をえらんで答えを作る"],["haya","早押し","わかったらすぐボタン！早いほどボーナス"],["time","タイムアタック","時間内に答えよう"],["ox","○×クイズ","正しいか、まちがいか"]];
+const mixUnits = (subj, nos) => UNITS.filter(u=>u.subject===subj && nos.includes(u.no) && unitOpen(u));
+function mixPlain(subj, nos){ const all=[]; for(const u of mixUnits(subj,nos)) u.stages.forEach(st=>st.qs.forEach((q,i)=>{ if(!q.type && Array.isArray(q.c) && typeof q.a==="number" && !q.band && !q.graph && !q.pic && !q.shape) all.push({q,key:qKey(u.id,st.id,i)}); })); return all; }
+const TILE_OK = /^[ぁ-ゖァ-ヺー一-龯々〆0-9０-９]{2,8}$/;
+function mixMake(subj, mode){
+  const base=shuffle(mixPlain(subj, TEST.mixNos)), out=[];
+  for(const it of base){ const q=it.q, ans=q.c[q.a];
+    if(mode==="tile"){ if(!TILE_OK.test(ans) || /どれ|は？$/.test("")) continue;
+      const chars=[...ans], pool=shuffle([...new Set(q.c.filter((_,j)=>j!==q.a).join("").split("").filter(ch=>TILE_OK.test(ch+ch)&&!chars.includes(ch)))]).slice(0, Math.max(3, 10-chars.length));
+      out.push({q:{type:"tile", q:q.q, ans, tiles:shuffle([...chars, ...pool]), pre:0, e:q.e}, key:it.key, num:false}); }
+    else if(mode==="ox"){ const right=Math.random()<.5, x=right?ans:q.c[pick(q.c.map((_,j)=>j).filter(j=>j!==q.a))];
+      out.push({q:{q:`${q.q}　→ 答え「${x}」`, c:["○（正しい）","×（まちがい）"], a:right?0:1, fixed:true, e:(right?'○です。':`×です。正しくは「${ans}」。`)+(q.e||"")}, key:it.key, num:false}); }
+    else out.push({q, key:it.key, num:false});
+    if(out.length>=12) break; }
+  return out;
+}
+function startMix(subj, mode){
+  let queue, name;
+  if(mode==="review"){ const ids=new Set(mixUnits(subj,TEST.testNos).map(u=>u.id)), all=[];
+    for(const u of mixUnits(subj,TEST.testNos)) u.stages.forEach(st=>st.qs.forEach((q,i)=>{ const k=qKey(u.id,st.id,i); if(save.wrong[k]) all.push({q,key:k}); }));
+    queue=shuffle(all).slice(0,15); name=`${subj} 第6〜10回 ふくしゅう`; if(!ids.size||!queue.length) return; }
+  else { queue=mixMake(subj, mode); name=`${subj}ごちゃまぜ（${MIX_MODES.find(m=>m[0]===mode)[1]}）`; }
+  if(!queue.length) return;
+  showTabs(false);
+  const us=mixUnits(subj, mode==="review"?TEST.testNos:TEST.mixNos), pool=us.flatMap(u=>Object.keys(u.monsters).filter(k=>k!==u.legend));
+  B = {colBefore:prefLevels(), u:{id:"mix", stages:[]}, sid:"mix", mix:{subj, mode, timed:mode==="time"||mode==="haya"}, name, queue, total:queue.length, pool, lvBase:8, hearts:MAX_HP, lead:save.party[0],
+       wild:null, combo:0, maxCombo:0, mistakes:0, n:0, used:{}, power:false, luck:false,
+       caught:[], defeated:0, evoReady:[], lvups:{}, ballsGot:0, busy:false, swapOpen:false, hp:{}, guard:false, lure:false, newMoves:[]};
+  spawn(); renderBattle(true);
+}
+const mixTime = q => Math.round(8 + Math.min(10, (q.q||"").length/10));
+function mixStop(){ if(B && B.tick){ clearInterval(B.tick); B.tick=null; } }
+/* タイムアタック・早押しのタイマー。時間切れは不正解 */
+function mixTimers(item, q){
+  mixStop(); if(B.busy) return;
+  const bar=document.getElementById("mixbar"), qt=app.querySelector(".qtext");
+  if(B.mix.mode==="haya" && !item.buzz){
+    const full=q.q; item.hpos=item.hpos||0; if(qt) qt.textContent=full.slice(0,item.hpos);
+    B.tick=setInterval(()=>{ if(!B||B.busy){ mixStop(); return; } item.hpos++; const t=app.querySelector(".qtext"); if(t) t.textContent=full.slice(0,item.hpos);
+      if(item.hpos>=full.length){ item.buzz=true; item.early=false; renderBattle(); } }, 110);
+    return;
+  }
+  const T=(B.mix.mode==="haya"?6:mixTime(q))*1000;
+  if(!item.deadline) item.deadline=Date.now()+T;
+  const upd=()=>{ if(!B||B.busy){ mixStop(); return; } const left=item.deadline-Date.now(); const b=document.getElementById("mixbar");
+    if(b){ b.firstElementChild.style.width=Math.max(0,left/T*100)+"%"; b.lastElementChild.textContent=Math.max(0,Math.ceil(left/1000))+"びょう"; }
+    if(left<=0){ mixStop(); item.timeout=true; judge([-1]); } };
+  upd(); B.tick=setInterval(upd, 200);
+}
+function testCardHTML(){
+  const on=testOn(), subs=["理科","社会"].filter(sj=>mixUnits(sj,TEST.mixNos).length);
+  if(!subs.length) return "";
+  const wrongN = sj => mixUnits(sj,TEST.testNos).reduce((n,u)=>n+Object.keys(save.wrong).filter(k=>k.startsWith(u.id+"|")).length,0);
+  return `<div class="card testcard"><b class="tc-h">${on?`📝 ${TEST.name}対策　〜${+TEST.end.slice(5,7)}/${+TEST.end.slice(8)}まで`:'第6〜9回 ごちゃまぜ'}</b><span class="mini">第6〜9回の問題がまざって出るよ。答え方をえらぼう！</span>
+    ${subs.map(sj=>`<div class="tc-row"><span class="tc-s">${sj}</span>${MIX_MODES.map(([k,n,d])=>`<button class="tc-b" data-mix="${sj}|${k}" title="${d}">${n}</button>`).join("")}<button class="tc-b rv" data-mix="${sj}|review" ${wrongN(sj)?'':'disabled'}>ふくしゅう${wrongN(sj)?`（${wrongN(sj)}）`:''}</button></div>`).join("")}</div>`;
+}
 function weekNote(){
   const id=weekToday(), own=save.owned[id];
   return `<div class="card weekcard"><div class="mon">${own||save.seen[id]?art(id):art(id,1,{sil:true})}</div><div><b>きょうは${WDAY[SP[id].day]}曜日</b><span class="mini">${own||save.seen[id]?`<b>${esc(SP[id].forms[0].n)}</b>`:'曜日のモンスター'}が出やすい日！（ぼうけん・ダンジョンで出会える）<br>曜日のモンスター ${WEEK_ORDER.filter(x=>save.owned[x]).length}/7</span></div></div>`;
@@ -5256,12 +5333,13 @@ const smCard = k => `<div class="card get urcard"><div class="mon">${itemSVG("tm
 
 /* 毎日のミッション: その日の3つ（日付で決まる）。1つクリアでフラスコ+3、3つ全部でスタンプ1こ（5・10・20・30こでとくべつわざ） */
 const DAILY = [["ok10","1回目で10問正解する","ok",10],["ok20","1回目で20問正解する","ok",20],["combo5","5コンボする","combo",5],["combo10","10コンボする","combo",10],
-  ["route","ルートを1つクリアする","route",1],["review","ニガテの森で3問正解する","review",3],["qd","ダンジョンで5問正解する","qd",5],["catch","モンスターを1ぴきつかまえる","catch",1],["tower","バトルタワーで1回勝つ","tower",1],["pg","都道府県あてゲームで8問正解する","pg",8]];
+  ["route","ルートを1つクリアする","route",1],["review","ニガテの森で3問正解する","review",3],["qd","ダンジョンで5問正解する","qd",5],["catch","モンスターを1ぴきつかまえる","catch",1],["tower","バトルタワーで1回勝つ","tower",1],["pg","都道府県あてゲームで8問正解する","pg",8],["testmix","テスト対策（ごちゃまぜ）を1回クリアする","test",1]];
 function misS(){
   const t=today(); let m=save.mis;
-  if(!m || m.d!==t){ const R=seededRand(+t.replace(/-/g,"")), pool=DAILY.filter(x=>x[0]!=="tower" || trainerQs().length>=10), ids=[], used=new Set();
+  if(!m || m.d!==t){ const R=seededRand(+t.replace(/-/g,"")), pool=DAILY.filter(x=>(x[0]!=="tower" || trainerQs().length>=10) && x[0]!=="testmix"), ids=[], used=new Set();
     while(ids.length<3 && used.size<pool.length){ const x=pool[Math.floor(R()*pool.length)]; if(!ids.includes(x[0]) && !ids.some(i=>DAILY.find(y=>y[0]===i)[2]===x[2])) ids.push(x[0]); used.add(x[0]); }
     m=save.mis={d:t, ids, prog:{}, done:{}, all:false}; }
+  if(testOn() && !m.ids.includes("testmix")) m.ids.push("testmix");
   return m; }
 function misAdd(key, n=1){ const m=misS(); m.prog[key]=(m.prog[key]||0)+n; }
 function misMax(key, v){ const m=misS(); m.prog[key]=Math.max(m.prog[key]||0, v); }
@@ -5306,7 +5384,8 @@ function trainerOf(r){
   if(r>=5) team[2]=legends[Math.floor(R()*legends.length)];
   return {r, nm, team, lv:Math.min(MAX_LV, Math.max(4+r*3, partyRef()+Math.floor(r/2))), idx:0};
 }
-function trainerQs(){ const all=[]; for(const u of UNITS) u.stages.forEach(s=>{ if(save.cleared[u.id+"|"+s.id]) s.qs.forEach((q,i)=>all.push({q,key:qKey(u.id,s.id,i)})); }); return shuffle(all); }
+function trainerQs(){ if(testOn()){ const tq=[]; for(const sj of ["理科","社会"]) for(const u of mixUnits(sj,TEST.testNos)) u.stages.forEach(s=>s.qs.forEach((q,i)=>tq.push({q,key:qKey(u.id,s.id,i)}))); if(tq.length>=10) return shuffle(tq); }
+  const all=[]; for(const u of UNITS) u.stages.forEach(s=>{ if(save.cleared[u.id+"|"+s.id]) s.qs.forEach((q,i)=>all.push({q,key:qKey(u.id,s.id,i)})); }); return shuffle(all); }
 function startTrainer(r){
   const qs=trainerQs(); if(qs.length<10) return;
   showTabs(false);
@@ -5553,10 +5632,10 @@ function renderBattle(enter){
   <div class="btop"><button class="back" id="back">← にげる</button><span class="pill">${flaskSVG} ×${save.balls}</span>${useHP()?hpMiniHTML():`<div class="hearts">${Array.from({length:B.maxHearts||MAX_HP},(_,i)=>heart(i<B.hearts)).join("")}</div>`}</div>
   ${fieldHTML(enter)}
   <div class="log" id="log">${logMsg}</div>
-  <div class="card qpanel">
+  <div class="card qpanel ${B.mix&&B.mix.mode==="haya"&&!item.buzz?"hayawait":""}">
     <div class="qmeta"><span>${esc(B.name)}</span><span>${B.tower?`${B.tower.floor}階・さいこう ${qdS().tower.best}階`:B.trainer?`あいて ${B.trainer.idx+1} / ${B.trainer.team.length}ひき目`:`のこり ${B.queue.length}問`}</span></div>
     ${q.note||q.table||q.graph||q.bars||q.map||q.band?`<div class="qnote"><span class="qnote-h">ほそく</span>${q.note?`<p>${esc(q.note)}</p>`:''}${q.table?`<div class="qtbl"><table>${q.table.map((r,ri)=>`<tr>${r.map((c,ci)=>ri===0||ci===0?`<th>${esc(c)}</th>`:`<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</table></div>`:''}${q.graph?`<div class="qgraph">${graphSVG(q.graph)}</div>`:''}${q.bars?barsHTML(q.bars):''}${q.band?bandHTML(q.band):''}${q.map?`<div class="qmap">${mapSVG({view:q.map.view, pts:q.map.pts})}${MAPCREDIT}</div>`:''}</div>`:''}
-    ${q.img&&MARKS[q.img]?`<div class="qimg"><img src="${MARKS[q.img]}" alt="都道府県のマーク" width="180" height="180"></div>`:''}${q.shape&&MAPD[q.shape]?`<div class="pgbox">${prefShapeSVG(q.shape)}</div>`:''}${q.pic&&PICS[q.pic]?`<div class="qpic">${PICS[q.pic]}</div>`:''}<p class="qtext">${esc(q.q)}</p>${isAll?'<div class="hint">あてはまるものを全部えらんで「けってい」</div>':multi?'<div class="hint">2つえらんで「けってい」</div>':''}${isNum?'<div class="hint">なれてきた問題！ 数字キーで答えよう</div>':''}${isOrd?'<div class="hint">はじめのものから順にタップしよう</div>':''}${isMat?'<div class="hint">左をタップしてから、右をタップしてつなごう</div>':''}${isPref?'<div class="hint">地図をタップしてえらび、「けってい」</div>':''}${isTile?`<div class="hint">文字をタップして答えをつくろう（${[...q.ans].length}文字）</div>`:''}
+    ${q.img&&MARKS[q.img]?`<div class="qimg"><img src="${MARKS[q.img]}" alt="都道府県のマーク" width="180" height="180"></div>`:''}${q.shape&&MAPD[q.shape]?`<div class="pgbox">${prefShapeSVG(q.shape)}</div>`:''}${q.pic&&PICS[q.pic]?`<div class="qpic">${PICS[q.pic]}</div>`:''}<p class="qtext">${esc(q.q)}</p>${B.mix&&B.mix.timed&&(B.mix.mode!=="haya"||item.buzz)?'<div class="mixbar" id="mixbar"><i></i><span></span></div>':''}${B.mix&&B.mix.mode==="haya"&&!item.buzz?'<button class="btn go buzz" id="buzz">わかった！（早押し）</button>':''}${isAll?'<div class="hint">あてはまるものを全部えらんで「けってい」</div>':multi?'<div class="hint">2つえらんで「けってい」</div>':''}${isNum?'<div class="hint">なれてきた問題！ 数字キーで答えよう</div>':''}${isOrd?'<div class="hint">はじめのものから順にタップしよう</div>':''}${isMat?'<div class="hint">左をタップしてから、右をタップしてつなごう</div>':''}${isPref?'<div class="hint">地図をタップしてえらび、「けってい」</div>':''}${isTile?`<div class="hint">文字をタップして答えをつくろう（${[...q.ans].length}文字）</div>`:''}
     ${isNum?`<div class="cans" id="nans">${item.input?esc(item.input):'&nbsp;'}</div><div class="keypad">${["7","8","9","4","5","6","1","2","3",".","0","⌫"].map(k=>`<button class="key" data-k="${k}">${k}</button>`).join("")}</div><button class="btn" id="dec" style="margin-top:10px" ${item.input?'':'disabled'}>けってい</button>`:isTile?tileHTML(item,q)+`<div class="ordrow"><button class="btn alt" id="redo">1文字もどす</button><button class="btn" id="dec" ${item.seq.length===[...q.ans].length-q.pre?'':'disabled'}>けってい</button></div>`:isPref?`<div class="qmap big">${mapSVG({view:q.view, sel:item.selP, tap:true})}${MAPCREDIT}</div><button class="btn" id="dec" style="margin-top:10px" ${item.selP?'':'disabled'}>けってい</button>`:isOrd?orderHTML(item,q):isMat?matchHTML(item,q):isSort?sortHTML(item,q):`<div class="choices${isAll?' allgrid':''}">${item.order.filter(ci=>!item.hidden.includes(ci)).map((ci,k)=>`<button class="choice" data-i="${ci}">${isAll||q.c[ci]===KANA[k]?'':`<span class="k">${KANA[k]}</span>`}<span>${esc(q.c[ci])}</span></button>`).join("")}</div>`}
     ${multi?'<button class="btn" id="dec" style="margin-top:12px" disabled>けってい</button>':''}
     ${isOrd||isMat||isSort?`<div class="ordrow"><button class="btn alt" id="redo">やりなおし</button><button class="btn" id="dec" ${(isOrd?item.seq.length===q.c.length:isSort?Object.keys(item.sel).length===q.items.length:Object.keys(item.pairs).length===q.pairs.length)?'':'disabled'}>けってい</button></div>`:''}
@@ -5624,7 +5703,9 @@ function renderBattle(enter){
     logMsg=`いけっ！ <b>${esc(nameOf(B.lead))}</b>！`+(m===2?' あいしょうはばつぐん！':m===.5?' あいしょうが悪いかも…':'');
     renderBattle();
   });
-  applyReadLock(item, q);
+  if(B.mix && B.mix.timed){ if(B.mix.mode==="haya" && !item.buzz){ const ch=app.querySelector(".qpanel"); if(ch) ch.classList.add("hayawait"); const bz=document.getElementById("buzz"); if(bz) bz.onclick=()=>{ if(B.busy) return; item.buzz=true; item.early=(item.hpos||0) < q.q.length*.6; mixStop(); renderBattle(); }; }
+    mixTimers(item, q); }
+  else applyReadLock(item, q);
 }
 const PCOL=["#3d8bff","#ff7a2f","#24a865","#b06ad9","#e8475a","#a0784b"];
 function orderHTML(item,q){
@@ -5658,6 +5739,7 @@ function useSkill(){
     logMsg = nm+`${ok+q.pre+1}文字目を教えてくれた！`;
   }
   else if(k==="hint" && q.type==="pref"){ setLog("この問題では、ヒントの光はつかえないよ。"); return; }
+  else if(k==="hint" && (B.mix && (B.mix.mode==="ox" || (B.mix.mode==="haya" && !item.buzz)))){ setLog("この問題では、ヒントの光はつかえないよ。"); return; }
   if(k==="hint" && q.type==="order"){
     let ok=0; while(ok<item.seq.length && item.seq[ok]===ok) ok++;
     if(ok>=q.c.length-1){ setLog("もう少しでできるよ！"); return; }
@@ -5687,7 +5769,7 @@ function useSkill(){
   B.used[me]=true; B.swapOpen=false; renderBattle();
 }
 function judge(picked){
-  if(B.busy) return; B.busy=true;
+  if(B.busy) return; B.busy=true; mixStop();
   const item=B.queue[0], q=item.q, ans=Array.isArray(q.a)?q.a:[q.a];
   let ok, ansText;
   if(q.type==="order"){
@@ -5744,6 +5826,7 @@ function judge(picked){
     if(first){ B.combo++; B.maxCombo=Math.max(B.maxCombo,B.combo); misMax("combo",B.combo); stat().maxCombo=Math.max(stat().maxCombo||0,B.maxCombo); }
     let bonus = first ? "" : `<p class="mini">まちがえたあとの正解なので、ごほうびは少なめ（EXP半分・コンボはふえない）。1回で正解するとたくさんもらえるよ。</p>`;
     if(first && B.combo%3===0){ save.balls++; B.ballsGot++; bonus=`<p><b>${B.combo}コンボ！ フラスコを1つひろった！</b></p>`; }
+    if(first && B.mix && item.early){ save.balls++; B.ballsGot++; bonus+=`<p><b>早押しボーナス！ フラスコを1つひろった！</b></p>`; }
     if(B.sid==="review") delete save.wrong[item.key];
     if(!B.qd) (save.okOnce=save.okOnce||{})[item.key]=1;
     if(!B.qd && q.f && !item.missed && fracMark(q.f)) B.fracUp=(B.fracUp||0)+1;
@@ -5775,7 +5858,7 @@ function judge(picked){
     const lost = useHP() ? !aliveIds().length : B.hearts<=0;
     item.missed=true;
     if(!B.qd){ save.wrong[item.key]=(save.wrong[item.key]||0)+1; (save.wrongEver=save.wrongEver||{})[item.key]=1; }
-    item.hidden=[]; item.seq=[]; item.pairs={}; item.sel={}; item.selL=null; item.selP=null; item.input=""; item.readUntil=null;
+    item.hidden=[]; item.seq=[]; item.pairs={}; item.sel={}; const wasTO=item.timeout; item.buzz=false; item.hpos=0; item.deadline=null; item.early=false; item.timeout=false; item.selL=null; item.selP=null; item.input=""; item.readUntil=null;
     if(B.tower){ B.queue.shift(); B.queue.push(towerNext()); } else B.queue.push(B.queue.shift());
     persist();
     const wm=document.getElementById("wildMon"), mm=document.getElementById("meMon");
@@ -5784,7 +5867,7 @@ function judge(picked){
         const pt=app.querySelector(".ptm"); if(pt) pt.outerHTML=hpMiniHTML(); } },200);
     if(!useHP() && !blk){ const hs=app.querySelectorAll(".hearts svg path"); if(hs[B.hearts]) hs[B.hearts].setAttribute("fill","#dfe6ee"); }
     setLog(hurt);
-    fb.innerHTML = `<div class="fb ng">${ansText.length>18?`<h3>ざんねん…</h3><p><b>正解：${esc(ansText)}</b></p>`:`<h3>ざんねん… 正解は「${esc(ansText)}」</h3>`}${q.e?`<p>${esc(q.e)}</p>`:""}${qm}${hasty&&useHP()&&!blk?'<p class="mini hasty">すぐに答えてまちがえたので、ダメージが2倍になった！ 問題をよく読んでから答えよう。</p>':''}<p class="mini">解説を読んでから「わかった！」をおそう。</p><p class="mini">${B.tower?'ハートが0になると塔からおりるよ。':lost?'なかまが全員たおれてしまった…':down?'つぎのなかまにこうたいするよ。この問題は、あとでもう一度出てくるよ。':'この問題は、あとでもう一度出てくるよ。'}</p></div><button class="btn" id="next" style="margin-top:12px" disabled>${lost?'わかった！ …':down?'わかった！ つぎのなかまを出す':'わかった！'}</button>`;
+    fb.innerHTML = `<div class="fb ng">${wasTO?'<p><b>時間切れ！</b></p>':''}${ansText.length>18?`<h3>ざんねん…</h3><p><b>正解：${esc(ansText)}</b></p>`:`<h3>ざんねん… 正解は「${esc(ansText)}」</h3>`}${q.e?`<p>${esc(q.e)}</p>`:""}${qm}${hasty&&useHP()&&!blk?'<p class="mini hasty">すぐに答えてまちがえたので、ダメージが2倍になった！ 問題をよく読んでから答えよう。</p>':''}<p class="mini">解説を読んでから「わかった！」をおそう。</p><p class="mini">${B.tower?'ハートが0になると塔からおりるよ。':lost?'なかまが全員たおれてしまった…':down?'つぎのなかまにこうたいするよ。この問題は、あとでもう一度出てくるよ。':'この問題は、あとでもう一度出てくるよ。'}</p></div><button class="btn" id="next" style="margin-top:12px" disabled>${lost?'わかった！ …':down?'わかった！ つぎのなかまを出す':'わかった！'}</button>`;
     document.getElementById("next").onclick=()=>{ B.busy=false; if(lost) return finish(false);
       if(useHP() && hpOf(B.lead)<=0){ B.lead=aliveIds()[0]; B.swapOpen=false; const m2=bestMult(B.lead,B.wild.id); logMsg=`いけっ！ <b>${esc(nameOf(B.lead))}</b>！`+(m2===2?' あいしょうはばつぐん！':m2===.5?' あいしょうが悪いかも…':''); }
       renderBattle(); };
@@ -5869,6 +5952,7 @@ function after(){
 /* ---------- result ---------- */
 function finish(win){
   if(B.qd) return finishQD(win);
+  if(B.mix) return finishMix(win);
   if(B.trainer) return finishTrainer(win);
   stat().maxCombo=Math.max(stat().maxCombo||0,B.maxCombo); B.extraBalls=0; misMax("combo",B.maxCombo); if(win && B.sid!=="review") misAdd("route");
   window.scrollTo(0,0);
@@ -5910,8 +5994,23 @@ function finish(win){
   document.getElementById("map").onclick=()=>{ B=null; tab="adv"; home(); };
 }
 
+function finishMix(win){
+  const mx=B.mix; stat().maxCombo=Math.max(stat().maxCombo||0,B.maxCombo); misMax("combo",B.maxCombo);
+  let stars=0, rw=0;
+  if(win){ stars=B.mistakes===0?3:B.mistakes<=2?2:1; rw=2+stars; save.balls+=rw; addExp(B.lead, stars*6); misAdd("test");
+    const k=mx.subj+"|"+mx.mode, tb=save.testBest||(save.testBest={}); tb[k]=Math.max(tb[k]||0, stars); }
+  persist(); window.scrollTo(0,0);
+  const gets=[rewardCards(), ...B.evoReady.map(id=>`<div class="card get evo"><div class="mon">${artMine(id)}</div><div><b>${esc(nameOf(id))} Lv.${save.owned[id].lv}</b><span>しんかできるようになった！</span></div></div>`), ...B.caught.map(c=>`<div class="card get"><div class="mon">${art(c.id,c.lv,{shiny:c.shiny})}</div><div><b>${esc(nameOf(c.id,c.lv))}</b><span>なかまになった！</span></div></div>`)].join("");
+  const ups=Object.entries(B.lvups).map(([id,lv])=>`${esc(nameOf(id))} Lv.${lv}`).join("・");
+  app.innerHTML=`<div class="result"><p class="line">${esc(B.name)}</p><h2>${win?'テスト対策クリア！':'目の前がまっくらになった…'}</h2>
+    ${win?`<div class="big">${starStr(stars)}</div><p class="line">まちがい ${B.mistakes}回・さいだい ${B.maxCombo}コンボ</p><p class="line">フラスコ +${rw+B.ballsGot}</p>`:''}${ups?`<p class="line">レベルアップ：${ups}</p>`:''}${newMovesHTML()}
+    <div class="gets">${gets}</div><button class="btn go" id="again">もう一度</button><button class="btn alt" id="map">ホームにもどる</button></div>`;
+  document.getElementById("again").onclick=()=>{ B=null; startMix(mx.subj, mx.mode); if(!B) home(); };
+  document.getElementById("map").onclick=()=>{ B=null; tab="adv"; home(); };
+}
+
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261112101940";
+const APP_VER="20261112205742";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
@@ -5923,6 +6022,7 @@ function checkUpdate(){
   }).catch(()=>{});
 }
 document.addEventListener("visibilitychange",()=>{ if(!document.hidden) checkUpdate(); });
+document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest("[data-mix]"); if(!b||B) return; const [sj,m]=b.dataset.mix.split("|"); startMix(sj,m); });
 setTimeout(checkUpdate,1500);
 
 home();
