@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated": "2026-11-13T05:53+09:00",
+ "updated": "2026-11-14T05:53+09:00",
  "week": {
   "0": "テニス",
   "1": "",
@@ -11,32 +11,6 @@
   "6": "塾（個別 算数ワーク）"
  },
  "tasks": [
-  {
-   "id": "r_r3_20261023",
-   "kind": "hw",
-   "subj": "国語",
-   "src": "塾",
-   "title": "国語の宿題",
-   "lesson": "4下第12回 実用文 資料の特徴をつかむ／敬語②",
-   "detail": "ノートワーク\n（読解のポイント発見）\n新演習・漢字日記12回語句\n漢字日記漢字13回",
-   "assigned": "2026-10-23",
-   "due": "2026-10-30",
-   "suggest": "2026-10-26",
-   "doneInNotebook": true
-  },
-  {
-   "id": "r_r4_20261023",
-   "kind": "hw",
-   "subj": "社会",
-   "src": "塾",
-   "title": "社会の宿題",
-   "lesson": "4下第12回 穀物・いも類づくり",
-   "detail": "ノートワーク\n第12回トレーニング\n第12回基本問題\n（リトライまで頑張ろう）",
-   "assigned": "2026-10-23",
-   "due": "2026-10-30",
-   "suggest": "2026-10-26",
-   "doneInNotebook": true
-  },
   {
    "id": "r_r1_20261027",
    "kind": "hw",
@@ -789,6 +763,32 @@
    "assigned": "2026-11-27",
    "due": "2026-12-04",
    "suggest": "2026-11-30",
+   "doneInNotebook": false
+  },
+  {
+   "id": "h_hmvhef369_20261128",
+   "kind": "habit",
+   "subj": "社会",
+   "src": "家",
+   "title": "社会ノート整理",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-11-28",
+   "due": "",
+   "suggest": "2026-11-28",
+   "doneInNotebook": false
+  },
+  {
+   "id": "h_rmvd9jjaq_20261128",
+   "kind": "habit",
+   "subj": "算数",
+   "src": "塾",
+   "title": "計算",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-11-28",
+   "due": "",
+   "suggest": "2026-11-28",
    "doneInNotebook": false
   }
  ],
