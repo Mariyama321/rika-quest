@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated": "2026-11-15T05:53+09:00",
+ "updated": "2026-11-16T05:54+09:00",
  "week": {
   "0": "テニス",
   "1": "",
@@ -139,32 +139,6 @@
    "assigned": "2026-11-06",
    "due": "2026-11-13",
    "suggest": "2026-11-09",
-   "doneInNotebook": false
-  },
-  {
-   "id": "h_hmvd9w2ye_20261108",
-   "kind": "habit",
-   "subj": "国語",
-   "src": "学校",
-   "title": "学校の漢字",
-   "lesson": "",
-   "detail": "",
-   "assigned": "2026-11-08",
-   "due": "",
-   "suggest": "2026-11-08",
-   "doneInNotebook": false
-  },
-  {
-   "id": "h_rmvd9jjaq_20261108",
-   "kind": "habit",
-   "subj": "算数",
-   "src": "塾",
-   "title": "計算",
-   "lesson": "",
-   "detail": "",
-   "assigned": "2026-11-08",
-   "due": "",
-   "suggest": "2026-11-08",
    "doneInNotebook": false
   },
   {
@@ -789,6 +763,58 @@
    "assigned": "2026-11-29",
    "due": "",
    "suggest": "2026-11-29",
+   "doneInNotebook": false
+  },
+  {
+   "id": "h_hmvd9w2ye_20261130",
+   "kind": "habit",
+   "subj": "国語",
+   "src": "学校",
+   "title": "学校の漢字",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-11-30",
+   "due": "",
+   "suggest": "2026-11-30",
+   "doneInNotebook": false
+  },
+  {
+   "id": "h_rmvd9jjaq_20261130",
+   "kind": "habit",
+   "subj": "算数",
+   "src": "塾",
+   "title": "計算",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-11-30",
+   "due": "",
+   "suggest": "2026-11-30",
+   "doneInNotebook": false
+  },
+  {
+   "id": "r_rmvhedklj_20261130",
+   "kind": "hw",
+   "subj": "国語",
+   "src": "学校",
+   "title": "ピラミッド2",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-11-30",
+   "due": "2026-12-07",
+   "suggest": "",
+   "doneInNotebook": false
+  },
+  {
+   "id": "r_rmvheee72_20261130",
+   "kind": "hw",
+   "subj": "国語",
+   "src": "学校",
+   "title": "ピラミッド3",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-11-30",
+   "due": "2026-12-07",
+   "suggest": "",
    "doneInNotebook": false
   }
  ],
