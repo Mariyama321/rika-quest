@@ -203,6 +203,16 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .tc-b{flex:1 1 calc(33% - 6px);border:2px solid var(--ink);border-radius:10px;background:#fff;font-weight:800;font-size:13px;padding:7px 2px;box-shadow:0 2px 0 var(--ink)}
 .tc-b.rv{background:#ffe28a}.tc-b small{display:block;font-size:10px;color:#e0a800;letter-spacing:-1px}.tc-b.s3{background:#fff4c2}
 .tc-goal{font-weight:800;color:#b5651d}
+.hyboard{display:grid;grid-template-columns:1fr auto 1fr;gap:6px;align-items:center;margin-top:10px}
+.hyp{border:3px solid var(--ink);border-radius:14px;background:#fff;display:flex;flex-direction:column;align-items:center;padding:6px}.hyp .mon{width:64px;height:64px}
+.hyp.me{background:#e4f2ff}.hyp.riv{background:#ffe9e9}.hyp.buzzed{animation:buzzp .3s 3;box-shadow:0 0 0 4px #ffd23f}
+.hysc{font-family:var(--display);font-size:30px;line-height:1}.hyvs{font-family:var(--display);font-size:20px}
+.gacha{padding:12px;display:flex;flex-direction:column;gap:6px;margin-top:10px;background:linear-gradient(160deg,#fff,#ffe9f4)}
+.gbar{position:relative;height:18px;border:2px solid var(--ink);border-radius:999px;overflow:hidden;background:#fff}.gbar i{position:absolute;inset:0 auto 0 0;background:#ff8fc8}.gbar span{position:relative;display:block;text-align:center;font-size:11px;font-weight:800;line-height:14px}
+.gres{display:flex;gap:8px;align-items:center;border:3px solid var(--ink);border-radius:12px;padding:8px;background:#fff;animation:gpop .5s}
+.gres .mon{width:64px;height:64px;flex:none}.gres b{display:block}.grk{font-size:20px;color:#e0a800}
+.gres.gSSR{background:linear-gradient(120deg,#fff3a0,#ff8fc8,#7fcbff)}.gres.gSR{background:#f0e4ff}.gres.gR{background:#e4f2ff}
+@keyframes gpop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1)}}
 .pcard{border:3px solid #24324a;border-radius:12px;background:linear-gradient(160deg,#fffbe6,#ffe9b0);padding:6px;display:flex;flex-direction:column;gap:3px;box-shadow:0 3px 0 #24324a;min-width:0}
 .pcard.r1{background:linear-gradient(160deg,#f6f8fb,#dfe6ee)}.pcard.r2{background:linear-gradient(160deg,#eef8ff,#bfe0ff)}.pcard.r3{background:linear-gradient(160deg,#fff7e0,#ffd77a)}.pcard.r4{background:linear-gradient(160deg,#f6e9ff,#d6b8ff)}.pcard.r5{background:linear-gradient(160deg,#fff,#ffd23f 40%,#ff8fc8 70%,#7fcbff)}
 .pc-top{display:flex;justify-content:space-between;gap:4px;font-size:12px;line-height:1.2}.pc-top b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pc-top span{font-weight:800;color:#e8475a;white-space:nowrap}
@@ -2895,6 +2905,7 @@ const UNITS = [
     juunin:{arch:"jelly", type:"hikari", type2:"mizu", color:"#ff8fc8", accent:"#3d8bff", skill:"heal", forms:[{n:"ジュウニン"},{n:"トイロクラゲ",lv:10}], dex:"十本の足がみんなちがう色をしている。「十人十色」＝人それぞれ考え方や好みがちがう。"},
     ishin:{arch:"fox", type:"hikari", type2:"denki", color:"#ffe28a", accent:"#ff8fc8", skill:"hint", forms:[{n:"イシン"},{n:"デンシンギツネ",lv:10}], dex:"言葉にしなくても気持ちが伝わる。「以心伝心」。"},
     shichiten:{arch:"golem", body:"round", type:"iwa", type2:"hono", color:"#e8475a", accent:"#ffffff", skill:"heal", forms:[{n:"シチテン"},{n:"ハッキダルマ",lv:10}], dex:"何度転んでもおき上がるだるま。「七転八起（ななころびやおき）」。"},
+    nanakoro:{arch:"golem", body:"round", type:"kaze", type2:"hono", color:"#ff5a3d", accent:"#ffd23f", skill:"heal", size:.85, parts:{pat:"spots"}, forms:[{n:"ナナコロビコロコロ"},{n:"ヤオキコロコロ",lv:12}], dex:"七回転んでも八回おき上がる、まんまるのモンスター。「七転び八起き（七転八起）」＝何度失敗してもくじけずに立ち上がること。"},
     denkou:{arch:"tiger", type:"denki", type2:"iwa", color:"#ffd23f", accent:"#24324a", skill:"power", forms:[{n:"デンコウ"},{n:"セッカタイガ",lv:11}], dex:"いなずまのようにすばやい。「電光石火」＝きわめて短い時間・すばやい動作。"},
     yojidragon:{arch:"dragon", type:"denki", type2:"hikari", color:"#b06ad9", accent:"#ffd23f", skill:"power", legend:true, parts:{horn:"crown", pat:"stripes"}, forms:[{n:"ヨジジュクドラ"}], dex:"よじじゅくごの塔のでんせつのドラゴン。四つの漢字の力を合わせてたたかう。"}
   },
@@ -2916,7 +2927,7 @@ const UNITS = [
       {q:"「起死回生」の意味は？", c:["だめになりそうな状態を立て直し、よい方向にもどすこと","朝早く起きること","死んでしまうこと","何度もくり返すこと"], a:0, e:"「起死回生のホームラン」のように使います。"}
     ]},
   { id:"s2", name:"かんじの階", note:"四字熟語の漢字",
-    wild:["shichiten","denkou","isseki"],
+    wild:["shichiten","denkou","isseki","nanakoro"],
     qs:[
       {q:"「ぜったいぜつめい」を正しく漢字で書いたものは？", c:["絶体絶命","絶対絶命","絶体絶名","絶対絶名"], a:0, e:"「絶対」ではなく「絶体」。体も命もきわまる、という意味です。"},
       {q:"「ききいっぱつ」を正しく漢字で書いたものは？", c:["危機一髪","危機一発","危期一髪","機危一発"], a:0, e:"かみの毛一本ほどのわずかな差、という意味で「髪」。"},
@@ -2932,7 +2943,7 @@ const UNITS = [
       {q:"「七転八（　）」（何度失敗してもくじけない）に入る漢字は？", c:["起","転","倒","立"], a:0, e:"七転八起（しちてんはっき）。「七転び八起き」ともいいます。"}
     ]},
   { id:"s3", name:"すうじの階", note:"数字の入った四字熟語・まとめ",
-    wild:["juunin","shichiten","denkou","ishin"],
+    wild:["juunin","shichiten","denkou","ishin","nanakoro"],
     qs:[
       {q:"「四苦八苦」の数字をたすといくつ？", c:["12","10","14","32"], a:0, n:"12", e:"四＋八＝12。「四苦八苦」はとても苦労すること。"},
       {q:"「一石二鳥」と「三寒四温」の数字を全部たすといくつ？", c:["10","8","12","24"], a:0, n:"10", e:"1＋2＋3＋4＝10。"},
@@ -3626,7 +3637,7 @@ function wildLv(base, boss){ return enemyLv(base, boss).lv; }
 /* 強い相手ほど EXP が多い */
 const xp = n => Math.round(n*(1+((B&&B.wild)?B.wild.lv:1)/15));
 
-const APP_NO = "v55";
+const APP_NO = "v56";
 let save = load();
 function load(){
   try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && s.v===2){ for(const [id,o] of Object.entries(s.owned)) if(o.form==null && SP[id]) o.form = formIdx(id,o.lv); if(!s.wrongEver) s.wrongEver=Object.fromEntries(Object.keys(s.wrong||{}).map(k=>[k,1])); cleanGone(s); return s; } }catch(e){}
@@ -4357,7 +4368,7 @@ let partySel = null;
 function showParty(){
   const lead = save.party[0], o = save.owned[lead], s = SP[lead];
   const nf = s.forms[curF(lead)+1];
-  const ids = [KAISER, ...UR_ORDER, ...UMEGA_ORDER, ...DEX_ORDER, ...WEEK_ORDER, ...dayIds(), ...RARE_ORDER, ...QD_ORDER, ...MEGA_ORDER].filter(id=>save.owned[id]);
+  const ids = [KAISER, ...GACHA_ORDER, ...UR_ORDER, ...UMEGA_ORDER, ...DEX_ORDER, ...WEEK_ORDER, ...dayIds(), ...RARE_ORDER, ...QD_ORDER, ...MEGA_ORDER].filter(id=>save.owned[id]);
   if(!partySel || !save.owned[partySel]) partySel = lead;
   const d = partySel, dO = save.owned[d], inP = save.party.includes(d);
   app.innerHTML = `<h2 class="sec-h">なかま</h2>
@@ -4402,7 +4413,7 @@ function showDex(){
   const DEXO = DEX_ORDER.filter(monOpen), caught = DEXO.filter(id=>save.owned[id]).length, seen = DEXO.filter(id=>save.seen[id]).length;
   const UMO = UMEGA_ORDER.filter(id=>unitOpen(UNITS.find(u=>u.id===UMEGA[id].unit))), MGO = MEGA_ORDER.filter(id=>!MEGA[id].where.unit || unitOpen(UNITS.find(u=>u.id===MEGA[id].where.unit)));
   const cnt = ids => `${ids.filter(id=>save.owned[id]).length}/${ids.length}`;
-  const CATS = [["main","ずかん",cnt(DEXO)],["rare","都道府県",cnt(RARE_ORDER)],["mega","メガ",cnt(MGO)],["umega","ウルトラメガ",cnt(UMO)],["week","曜日",cnt(WEEK_ORDER)],["day","日替わり",String(dayIds().length)],["qd","ダンジョン",cnt(QD_ORDER)],["ur","ウルトラレア",cnt([...UR_ORDER,KAISER])]];
+  const CATS = [["main","ずかん",cnt(DEXO)],["rare","都道府県",cnt(RARE_ORDER)],["mega","メガ",cnt(MGO)],["umega","ウルトラメガ",cnt(UMO)],["week","曜日",cnt(WEEK_ORDER)],["day","日替わり",String(dayIds().length)],["qd","ダンジョン",cnt(QD_ORDER)],["ur","ウルトラレア",cnt([...UR_ORDER,KAISER])],["gacha","ガチャ",cnt(GACHA_ORDER)]];
   if(!CATS.some(c=>c[0]===dexCat)) dexCat="main";
   let h = `<h2 class="sec-h">モンスターずかん</h2><p class="dexcount">つかまえた ${caught}・見つけた ${seen}・ぜんぶで ${DEXO.length}</p>`;
   h += `<label class="dexown"><input type="checkbox" id="dexown" ${dexOwn?"checked":""}> なかまにしたモンスターだけ見る</label>`;
@@ -4430,6 +4441,7 @@ function showDex(){
     return `<button class="card mcard ${own?'':'seenonly'}" data-id="${id}"><span class="no">${no}</span><div class="mon">${(own?artMine(id):art(id,1,{sil:true}))}</div><b>${esc(own?nameOf(id):SP[id].forms[0].n)}</b>${own?typesChip(id):'<span class="mini">見つけた</span>'}</button>`;
   }).join("")}</div>`;
   }
+  if(dexCat==="gacha") h += `<h2 class="sec-h" style="margin-top:14px">ガチャのモンスター</h2><p class="dexcount">カードバトルのガチャで出る、ガチャ限定のモンスター</p><div class="grid3 dexgrid">${GACHA_ORDER.map(id=>save.owned[id]?`<button class="card mcard rarecell" data-id="${id}"><span class="no">${GACHA_MON[id].gacha===3?'SSR':'SR'}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typesChip(id)}</button>`:`<div class="card mcard unseen"><span class="no">${GACHA_MON[id].gacha===3?'SSR':'SR'}</span><div class="mon">${art(id,1,{sil:true})}</div><b>？？？</b></div>`).join("")}</div>`;
   if(dexCat==="ur") h += `<h2 class="sec-h" style="margin-top:14px">ウルトラレア</h2><p class="dexcount">算数4「ぶんすうの城」の分数カードを全部★3にすると…</p><div class="grid3 dexgrid">${UR_ORDER.map(id=>save.owned[id]?`<button class="card mcard urcell" data-id="${id}"><span class="no">ウルトラレア</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typesChip(id)}</button>`:`<div class="card mcard unseen"><span class="no">ウルトラレア</span><div class="mon">${art(id,1,{sil:true})}</div><b>？？？</b></div>`).join("")}</div>`;
   const uc = UMO.filter(id=>save.owned[id]).length, wc = WEEK_ORDER.filter(id=>save.owned[id]).length;
   if(dexCat==="umega") h += `<h2 class="sec-h" style="margin-top:14px">ウルトラメガモンスター</h2><p class="dexcount">なかまにした ${uc} / ${UMO.length}　（単元のルートとでんせつを全部クリアして、ニガテの森を0問にすると手に入る）</p><div class="grid3 dexgrid">${UMO.map(id=>{ const lb=unitLabel(UNITS.find(u=>u.id===UMEGA[id].unit));
@@ -4955,7 +4967,7 @@ const weekToday = () => "week_"+new Date().getDay();
    ============================================================ */
 const TEST = {end:"2026-11-16", name:"アタックテスト（第6〜10回）", mixNos:[6,7,8,9], testNos:[6,7,8,9,10]};
 const testOn = () => today() <= TEST.end;
-const MIX_MODES = [["tile","一問一答","文字をえらんで答えを作る"],["haya","早押し","わかったらすぐボタン！早いほどボーナス"],["time","タイムアタック","時間内に答えよう"],["ox","○×クイズ","正しいか、まちがいか"]];
+const MIX_MODES = [["tile","一問一答","文字をえらんで答えを作る"],["haya","早押し","ライバルとピンポン早押し対決！"],["time","タイムアタック","時間内に答えよう"],["ox","○×クイズ","正しいか、まちがいか"]];
 const mixUnits = (subj, nos) => UNITS.filter(u=>u.subject===subj && nos.includes(u.no) && unitOpen(u));
 function mixPlain(subj, nos){ const all=[]; for(const u of mixUnits(subj,nos)) u.stages.forEach(st=>st.qs.forEach((q,i)=>{ if(!q.type && Array.isArray(q.c) && typeof q.a==="number" && !q.band && !q.graph && !q.pic && !q.shape) all.push({q,key:qKey(u.id,st.id,i)}); })); return all; }
 const TILE_OK = /^[ぁ-ゖァ-ヺー一-龯々〆0-9０-９]{2,8}$/;
@@ -4972,6 +4984,7 @@ function mixMake(subj, mode){
   return out;
 }
 function startMix(subj, mode){
+  if(mode==="haya") return startHaya(subj);
   let queue, name;
   if(mode==="review"){ const ids=new Set(mixUnits(subj,TEST.testNos).map(u=>u.id)), all=[];
     for(const u of mixUnits(subj,TEST.testNos)) u.stages.forEach(st=>st.qs.forEach((q,i)=>{ const k=qKey(u.id,st.id,i); if(save.wrong[k]) all.push({q,key:k}); }));
@@ -5036,7 +5049,7 @@ const kaiserCard = () => `<div class="card get urcard"><div class="mon">${artMin
 /* カードのステータス */
 function cardStat(id){
   const o=save.owned[id]||{lv:1}, s=SP[id], lv=o.lv||1, p=shinyPow(id), sg=sigOf(id), M=sg?MOVES[sg]:MOVES[s.type+"3"]||MOVES.tackle;
-  const rare = id===KAISER?5 : s.umega||s.ur?4 : s.mega||s.legend||s.week?3 : (o.shinyWild||s.rare||s.daily||s.qd)?2 : 1;
+  const rare = id===KAISER?5 : s.umega||s.ur||s.gacha===3?4 : s.gacha===2?3 : s.mega||s.legend||s.week?3 : (o.shinyWild||s.rare||s.daily||s.qd)?2 : 1;
   return {id, lv, hp:Math.round((30+lv*3)*p), atk:Math.round((8+lv*0.9)*p), type:s.type, type2:s.type2, mv:M.n, mvPow:M.pow, rare};
 }
 const RARE_N = ["","★","★★","★★★","★★★★","★★★★★"];
@@ -5055,6 +5068,7 @@ function cardTabHTML(){
   return `<div class="card" style="padding:12px"><b>🃏 カードバトル</b><p class="mini">なかまのカード6まいでデッキを組んで、カードトレーナーとたたかおう。自分のばんは、まず問題に答える→正解でエネルギー＋1。エネルギー2で「わざ」が使える！</p>
     <p class="mini"><b>バトルチケット ${tk} / ${CARD_MAX_TK}まい</b>（ルートかテスト対策をクリアすると1まいもらえる）・きょう ${cd.n} / ${CARD_DAY}回・つぎのあいて ${rk}人目</p>
     <button class="btn go" id="cbgo" ${deck.length===6&&tk>0&&cd.n<CARD_DAY?'':'disabled'}>${deck.length<6?`デッキを6まいにしよう（いま${deck.length}まい）`:tk<=0?'チケットがないよ（ルートをクリアしよう）':cd.n>=CARD_DAY?'きょうはもう3回あそんだよ。またあした！':'カードバトルをはじめる（チケット1まい）'}</button></div>
+    ${gachaHTML()}
     <h3 class="shopcat">デッキ（${deck.length}/6）</h3><div class="deckrow">${deck.map(id=>cardHTML(cardStat(id),{small:true,attr:`data-deckrm="${id}"`})).join("")||'<p class="mini">下のカードをタップしてデッキに入れよう</p>'}</div>
     <h3 class="shopcat">もっているカード</h3><div class="cardgrid">${ids.map(c=>cardHTML(c,{small:true,cls:deck.includes(c.id)?'indeck':'',attr:`data-deckadd="${c.id}"`})).join("")}</div>`;
 }
@@ -5062,6 +5076,7 @@ function bindCardTab(rer){
   app.querySelectorAll("[data-deckadd]").forEach(b=>b.onclick=()=>{ const id=b.dataset.deckadd, d=(save.deck||[]).filter(x=>save.owned[x]); if(d.includes(id)) save.deck=d.filter(x=>x!==id); else if(d.length<6) save.deck=[...d,id]; persist(); rer(); });
   app.querySelectorAll("[data-deckrm]").forEach(b=>b.onclick=()=>{ save.deck=(save.deck||[]).filter(x=>x!==b.dataset.deckrm); persist(); rer(); });
   const g=document.getElementById("cbgo"); if(g) g.onclick=startCard;
+  const gp=document.getElementById("gpull"); if(gp) gp.onclick=()=>{ gachaRes=gachaPull(); rer(); };
 }
 let CB=null;
 function cardQs(){ const a=[...mixPlain("理科",TEST.testNos), ...mixPlain("社会",TEST.testNos)]; return shuffle(a.length>=10?a:UNITS.flatMap(u=>u.stages.flatMap(s=>s.qs.map((q,i)=>({q,key:qKey(u.id,s.id,i)})))).filter(x=>!x.q.type&&Array.isArray(x.q.c))); }
@@ -5089,7 +5104,7 @@ function renderCard(){
    : `<button class="btn go" id="cbend">${C.phase==="win"?'しょうり！ つぎへ':'もどる'}</button>`}</div>`;
   document.getElementById("cbq").onclick=()=>{ CB=null; tab="plaza"; plazaTab="card"; home(); };
   app.querySelectorAll("[data-cq]").forEach(b=>b.onclick=()=>{ const ok=+b.dataset.cq===q.a, it=C.qs[C.qn%C.qs.length]; C.qn++;
-    if(ok){ C.en=Math.min(3,C.en+1); C.log=`<b>せいかい！</b> ⚡+1（いま${C.en}）`; } else { C.log=`ざんねん… 正解は「${esc(q.c[q.a])}」。${esc(q.e||"")}`; save.wrong[it.key]=(save.wrong[it.key]||0)+1; persist(); }
+    if(ok){ C.en=Math.min(3,C.en+1); save.cardOk=(save.cardOk||0)+1; let gl=''; if(save.cardOk%10===0){ save.gacha=(save.gacha||0)+1; gl=' <b>🎰 10問正解！ ガチャ券を1まいゲット！</b>'; } persist(); C.log=`<b>せいかい！</b> ⚡+1（いま${C.en}）`+gl; } else { C.log=`ざんねん… 正解は「${esc(q.c[q.a])}」。${esc(q.e||"")}`; save.wrong[it.key]=(save.wrong[it.key]||0)+1; persist(); }
     C.phase="act"; renderCard(); });
   app.querySelectorAll("[data-ca]").forEach(b=>b.onclick=()=>{ const sp=b.dataset.ca==="sp"; if(sp) C.en-=2; const r=cDmg(me,fo,sp); fo.cur=Math.max(0,fo.cur-r.d);
     C.log=`<b>${esc(nameOf(me.id))}</b>の ${sp?`「${esc(me.mv)}」`:'こうげき'}！ ${r.m>=2?'こうかばつぐん！ ':r.m<=.5?'いまひとつ… ':''}${r.d}ダメージ！`+(fo.cur<=0?` ${esc(nameOf(fo.id))}をたおした！`:'');
@@ -5110,6 +5125,111 @@ function cardEnd(win){
   if(win){ save.cardRank=(save.cardRank||1)+1; save.cardWins=(save.cardWins||0)+1; save.balls+=5; C.log=`<b>カードトレーナーに勝った！</b> フラスコ +5。つぎは${save.cardRank}人目（もっと強くなる）。`; }
   else C.log="まけてしまった… デッキを見なおして、またちょうせんしよう。";
   persist(); renderCard();
+}
+
+/* ============================================================
+   カードバトルのガチャ（v56）
+   ユーザーの要望「カードバトルの時10問正解したら、1回ガチャが引けるようにして、そのガチャの中にモンスターとかを入れて」
+   - カードバトルのエネルギーチャレンジで正解するたびに save.cardOk+1。10問ごとにガチャ券（save.gacha）+1
+   - 出るもの：N（フラスコ・道具）／R（まだなかまでないモンスター・ふしぎなアメ）／SR（ガチャ限定モンスター）／SSR（ガチャ限定でんせつ）
+   ============================================================ */
+const GACHA_MON = {
+  gc_kirameki:{arch:"fox", type:"hikari", type2:"hono", color:"#ffe28a", accent:"#ff8fc8", skill:"luck", gacha:2, parts:{pat:"stars", acc:"bell", accColor:"#ff8fc8"}, forms:[{n:"キラメキャット"},{n:"キラメキャッスル",lv:25}], dex:"ガチャからあらわれた、星のようにきらめくキツネ。"},
+  gc_galaxy:{arch:"fish", type:"mizu", type2:"hikari", color:"#3d3a8f", accent:"#ffd23f", skill:"hint", gacha:2, parts:{pat:"stars"}, forms:[{n:"ギャラクシーフィッシュ"},{n:"ギャラクシーシャーク",lv:25}], dex:"夜空のような体の魚。ガチャ限定。"},
+  gc_lumina:{arch:"bat", type:"denki", type2:"kaze", color:"#24324a", accent:"#3dd6c6", skill:"power", gacha:2, parts:{pat:"zigzag"}, forms:[{n:"ルミナバット"},{n:"ルミナドラキュラ",lv:25}], dex:"ネオンのように光るコウモリ。ガチャ限定。"},
+  gc_crystal:{arch:"beetle", type:"iwa", type2:"koori", color:"#bfe6ff", accent:"#ffffff", skill:"heal", gacha:2, parts:{horn:"uni"}, forms:[{n:"クリスタルビートル"},{n:"ダイヤモンドビートル",lv:25}], dex:"ダイヤのようなツノのカブトムシ。ガチャ限定。"},
+  gc_ruby:{arch:"golem", body:"crystal", type:"hono", type2:"iwa", color:"#e8475a", accent:"#ffd23f", skill:"power", gacha:2, forms:[{n:"ルビーゴーレム"},{n:"ルビーキング",lv:25}], dex:"ルビーでできたゴーレム。ガチャ限定。"},
+  gc_aurora:{arch:"jelly", type:"koori", type2:"hikari", color:"#c8f0e8", accent:"#b06ad9", skill:"heal", gacha:2, forms:[{n:"オーロラジェリー"},{n:"オーロラクイーン",lv:25}], dex:"オーロラ色にかがやくクラゲ。ガチャ限定。"},
+  gc_miracle:{arch:"dragon", type:"hikari", type2:"kaze", color:"#ffffff", accent:"#ff8fc8", skill:"power", gacha:3, legend:true, parts:{horn:"crown", wing:"feather", pat:"stars"}, forms:[{n:"ミラクルドラゴン"}], dex:"ガチャのいちばん奥にねむる、きせきのドラゴン。めったに出ない。"},
+  gc_phoenix:{arch:"bird", type:"hono", type2:"hikari", color:"#ff7a2f", accent:"#ffd23f", skill:"luck", gacha:3, legend:true, parts:{horn:"crest", wing:"feather"}, forms:[{n:"ニジイロフェニックス"}], dex:"虹色の炎をまとう不死鳥。ガチャ限定のでんせつ。"}
+};
+Object.assign(SP, GACHA_MON);
+const GACHA_ORDER = Object.keys(GACHA_MON);
+function gachaPull(){
+  if(!(save.gacha>0)) return null; save.gacha--;
+  const r=Math.random(), top=Math.max(...Object.values(save.owned).map(o=>o.lv||1)), lv=Math.max(10, Math.round(top*.6));
+  const give=(id,l,rk)=>{ const had=save.owned[id]; if(!had){ save.owned[id]={lv:l, exp:0, form:formIdx(id,l)}; } else { had.lv=Math.min(MAX_LV, Math.max(had.lv, l)+2); had.form=Math.max(had.form||0, formIdx(id,had.lv)); } save.seen[id]=1; return {rk, id, txt:had?`${nameOf(id)}がもう1ぴき！ Lvアップ（Lv.${save.owned[id].lv}）`:`${nameOf(id)}がなかまになった！`}; };
+  let res;
+  if(r<.05){ res=give(pick(GACHA_ORDER.filter(id=>GACHA_MON[id].gacha===3)), lv+10, "SSR"); }
+  else if(r<.20){ res=give(pick(GACHA_ORDER.filter(id=>GACHA_MON[id].gacha===2)), lv, "SR"); }
+  else if(r<.50){ const un=DEX_ORDER.filter(id=>monOpen(id)&&!SP[id].legend&&!save.owned[id]); if(un.length) res=give(pick(un), Math.max(5,Math.round(lv*.8)), "R"); else { bag().ame=(bag().ame||0)+3; res={rk:"R", txt:"ふしぎなアメ ×3"}; } }
+  else { const n=Math.random(); if(n<.5){ const f=5+Math.floor(Math.random()*6); save.balls+=f; res={rk:"N", txt:`フラスコ ×${f}`}; } else if(n<.8){ bag().superflask=(bag().superflask||0)+1; res={rk:"N", txt:"スーパーフラスコ ×1"}; } else { bag().ame=(bag().ame||0)+1; res={rk:"N", txt:"ふしぎなアメ ×1"}; } }
+  persist(); return res;
+}
+let gachaRes=null;
+function gachaHTML(){
+  const ok=save.cardOk||0;
+  return `<div class="card gacha"><b>🎰 ガチャ</b><span class="mini">カードバトルで問題に10問正解するごとにガチャ券が1まい。モンスター（ガチャ限定もいるよ）や道具が出る！</span>
+    <div class="gbar"><i style="width:${(ok%10)*10}%"></i><span>つぎのガチャ券まで あと${10-ok%10}問</span></div>
+    ${gachaRes?`<div class="gres g${gachaRes.rk}">${gachaRes.id?`<div class="mon">${artMine(gachaRes.id)}</div>`:''}<div><b class="grk">${gachaRes.rk}</b><b>${esc(gachaRes.txt)}</b></div></div>`:''}
+    <button class="btn go" id="gpull" ${(save.gacha||0)>0?'':'disabled'}>ガチャをひく（ガチャ券 ${save.gacha||0}まい）</button>
+    <p class="mini">出る確率：SSR 5%・SR 15%・R 30%・N 50%</p></div>`;
+}
+
+/* ============================================================
+   早押しクイズ（v56で作り直し）
+   ユーザーの要望「早押し問題は5秒以内に答えるとかではなくて、ピンポンで自分でわかったら形式にしてほしい、対戦相手がいて欲しい」
+   - 問題文が1文字ずつ出る。わかったら「ピンポン！」→ 全文と選択肢が出て、時間制限なしで答える
+   - ライバル（ハヤオシくん）も、文の途中で押してくる（45〜95％のどこか）。ライバルは70％で正解、まちがえたら自分にチャンス
+   - 自分がまちがえたら、ライバルにチャンス（80％で正解）。10問で点数が多いほうが勝ち
+   - ★3＝勝ち＋自分のまちがい0、★2＝勝ち、★1＝それ以外（さいごまでやれば）
+   ============================================================ */
+let HY=null;
+const HY_RIVAL = {n:"ハヤオシくん", mon:"gc_lumina"};
+function startHaya(subj){
+  const qs=mixMake(subj,"time").slice(0,10); if(!qs.length) return;
+  showTabs(false);
+  HY={subj, qs, i:0, me:0, riv:0, wrong:0, early:0, phase:"read", pos:0, log:`<b>${HY_RIVAL.n}</b>「早押しで勝負だ！ わかったら先にピンポンを押したほうが答えられるぞ！」`};
+  hyNext(true);
+}
+function hyStop(){ if(HY && HY.tick){ clearInterval(HY.tick); HY.tick=null; } }
+function hyNext(first){
+  hyStop(); if(!first) HY.i++;
+  if(HY.i>=HY.qs.length) return hyEnd();
+  const q=HY.qs[HY.i].q; HY.phase="read"; HY.pos=0; HY.rivAt=Math.floor(q.q.length*(.45+Math.random()*.5)); HY.picked=null; HY.ord=shuffle(q.c.map((_,j)=>j));
+  renderHaya();
+  HY.tick=setInterval(()=>{ if(!HY||HY.phase!=="read"){ hyStop(); return; } HY.pos++; const t=document.getElementById("hytext"); if(t) t.textContent=q.q.slice(0,HY.pos);
+    if(HY.pos>=HY.rivAt) hyRival(); }, 130);
+}
+function hyRival(){
+  hyStop(); const q=HY.qs[HY.i].q; HY.phase="rival"; HY.log=`<b class="hasty">ピンポーン！</b> ${HY_RIVAL.n}が先に押した！`; renderHaya();
+  setTimeout(()=>{ if(!HY||HY.phase!=="rival") return;
+    if(Math.random()<.7){ HY.riv++; HY.phase="show"; HY.log=`${HY_RIVAL.n}「答えは<b>${esc(q.c[q.a])}</b>！」 → <b>せいかい</b>。ライバルに1点…`; }
+    else { HY.phase="me"; HY.chance=true; HY.log=`${HY_RIVAL.n}「えーと…${esc(q.c[pick(q.c.map((_,j)=>j).filter(j=>j!==q.a))])}！」 → <b>ブブー！</b> まちがい。<b>チャンス！</b> きみが答えよう`; }
+    renderHaya(); }, 1100);
+}
+function hyAnswer(j){
+  const it=HY.qs[HY.i], q=it.q; if(HY.phase!=="me") return; HY.picked=j;
+  if(j===q.a){ HY.me++; let b=""; if(!HY.chance && HY.pos<q.q.length*.6){ HY.early++; save.balls++; b=" 早押しボーナス！ フラスコ+1"; } HY.phase="show"; HY.log=`<b>ピンポンピンポン！ せいかい！</b> 1点ゲット！${b}`; }
+  else { HY.wrong++; save.wrong[it.key]=(save.wrong[it.key]||0)+1; if(!HY.chance && Math.random()<.8){ HY.riv++; HY.log=`<b>ブブー！</b> 正解は「${esc(q.c[q.a])}」。${HY_RIVAL.n}がよこどりして1点…`; } else HY.log=`<b>ブブー！</b> 正解は「${esc(q.c[q.a])}」。`; HY.phase="show"; }
+  persist(); renderHaya();
+}
+function renderHaya(){
+  const q=HY.qs[HY.i].q, read=HY.phase==="read"||HY.phase==="rival", showAll=!read;
+  app.innerHTML=`<div class="btop"><button class="back" id="hyq">← やめる</button><span class="pill">${esc(HY.subj)} 早押しクイズ ${HY.i+1}/${HY.qs.length}</span></div>
+  <div class="hyboard"><div class="hyp me"><div class="mon">${artMine(save.party[0])}</div><b>きみ</b><span class="hysc">${HY.me}</span></div><div class="hyvs">VS</div><div class="hyp riv ${HY.phase==="rival"?'buzzed':''}"><div class="mon">${art(HY_RIVAL.mon,30)}</div><b>${HY_RIVAL.n}</b><span class="hysc">${HY.riv}</span></div></div>
+  <div class="log">${HY.log}</div>
+  <div class="card qpanel"><p class="qtext" id="hytext">${esc(showAll?q.q:q.q.slice(0,HY.pos))}</p>
+   ${HY.phase==="read"?`<button class="btn go buzz" id="hybz">🔔 ピンポン！（わかった）</button>`:''}
+   ${HY.phase==="me"||HY.phase==="show"?`<div class="choices">${HY.ord.map((j,k)=>`<button class="choice ${HY.phase==="show"&&j===q.a?'ok':''} ${HY.phase==="show"&&HY.picked===j&&j!==q.a?'ng':''}" data-hy="${j}" ${HY.phase==="show"?'disabled':''}><span class="k">${KANA[k]}</span><span>${esc(q.c[j])}</span></button>`).join("")}</div>`:''}
+   ${HY.phase==="show"?`${q.e?`<p class="mini" style="margin-top:8px">${esc(q.e)}</p>`:''}<button class="btn go" id="hynx" style="margin-top:10px">${HY.i+1>=HY.qs.length?'けっかを見る':'つぎの問題'}</button>`:''}</div>`;
+  document.getElementById("hyq").onclick=()=>{ hyStop(); HY=null; home(); };
+  const bz=document.getElementById("hybz"); if(bz) bz.onclick=()=>{ if(HY.phase!=="read") return; hyStop(); HY.phase="me"; HY.chance=false; HY.log="<b>ピンポン！</b> きみが先に押した！ 答えをえらぼう"; renderHaya(); };
+  app.querySelectorAll("[data-hy]").forEach(b=>b.onclick=()=>hyAnswer(+b.dataset.hy));
+  const nx=document.getElementById("hynx"); if(nx) nx.onclick=()=>{ HY.chance=false; hyNext(false); };
+}
+function hyEnd(){
+  hyStop(); const H=HY, win=H.me>H.riv, stars=win&&H.wrong===0?3:win?2:1;
+  let rw=2+stars; save.balls+=rw; addExp(save.party[0], stars*6); misAdd("test");
+  const k=H.subj+"|haya", tb=save.testBest||(save.testBest={}); if(stars===3 && (tb[k]||0)<3){ save.balls+=5; rw+=5; } tb[k]=Math.max(tb[k]||0, stars); giveTicket();
+  const gotK=grantKaiser(); persist();
+  app.innerHTML=`<div class="result"><p class="line">${esc(H.subj)} 早押しクイズ</p><h2>${win?`${HY_RIVAL.n}に勝った！`:H.me===H.riv?'引き分け！':`${HY_RIVAL.n}に負けた…`}</h2>
+    <div class="big">${starStr(stars)}</div><p class="line">きみ ${H.me}点 − ${H.riv}点 ライバル・まちがい ${H.wrong}回・早押しボーナス ${H.early}回</p><p class="line">フラスコ +${rw+H.early}</p>
+    <p class="mini">★3は「ライバルに勝って、まちがい0」</p><div class="gets">${gotK?kaiserCard():''}${rewardCards()}</div>
+    <button class="btn go" id="again">もう一度</button><button class="btn alt" id="map">ホームにもどる</button></div>`;
+  const sj=H.subj; HY=null;
+  document.getElementById("again").onclick=()=>startHaya(sj);
+  document.getElementById("map").onclick=()=>{ tab="adv"; home(); };
 }
 
 function weekNote(){
@@ -6125,7 +6245,7 @@ function finishMix(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261113010031";
+const APP_VER="20261115033733";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
