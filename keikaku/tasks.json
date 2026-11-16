@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated": "2026-11-16T05:54+09:00",
+ "updated": "2026-11-17T05:53+09:00",
  "week": {
   "0": "テニス",
   "1": "",
@@ -138,32 +138,6 @@
    "detail": "ノートワーク\n第13回トレーニング・第13回基本問題\n（リトライまで頑張ろう）\nアタックテストに向けて第6～9回のトレーニングや基本問題も少しずつ始めよう",
    "assigned": "2026-11-06",
    "due": "2026-11-13",
-   "suggest": "2026-11-09",
-   "doneInNotebook": false
-  },
-  {
-   "id": "h_hmvd9w2ye_20261109",
-   "kind": "habit",
-   "subj": "国語",
-   "src": "学校",
-   "title": "学校の漢字",
-   "lesson": "",
-   "detail": "",
-   "assigned": "2026-11-09",
-   "due": "",
-   "suggest": "2026-11-09",
-   "doneInNotebook": false
-  },
-  {
-   "id": "h_rmvd9jjaq_20261109",
-   "kind": "habit",
-   "subj": "算数",
-   "src": "塾",
-   "title": "計算",
-   "lesson": "",
-   "detail": "",
-   "assigned": "2026-11-09",
-   "due": "",
    "suggest": "2026-11-09",
    "doneInNotebook": false
   },
@@ -815,6 +789,32 @@
    "assigned": "2026-11-30",
    "due": "2026-12-07",
    "suggest": "",
+   "doneInNotebook": false
+  },
+  {
+   "id": "r_r1_20261201",
+   "kind": "hw",
+   "subj": "算数",
+   "src": "塾",
+   "title": "算数の宿題",
+   "lesson": "4下第17回 選び方を調べる【場合の数】",
+   "detail": "4下第17回",
+   "assigned": "2026-12-01",
+   "due": "2026-12-08",
+   "suggest": "2026-12-05",
+   "doneInNotebook": false
+  },
+  {
+   "id": "r_r2_20261201",
+   "kind": "hw",
+   "subj": "理科",
+   "src": "塾",
+   "title": "理科の宿題",
+   "lesson": "4下第17回 ばね",
+   "detail": "",
+   "assigned": "2026-12-01",
+   "due": "2026-12-08",
+   "suggest": "2026-12-06",
    "doneInNotebook": false
   }
  ],
