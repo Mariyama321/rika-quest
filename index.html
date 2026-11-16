@@ -201,7 +201,7 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .tc-h{font-size:16px}.tc-row{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
 .tc-s{font-weight:800;width:100%;font-size:13px}
 .tc-b{flex:1 1 calc(33% - 6px);border:2px solid var(--ink);border-radius:10px;background:#fff;font-weight:800;font-size:13px;padding:7px 2px;box-shadow:0 2px 0 var(--ink)}
-.tc-b.rv{background:#ffe28a}.tc-b small{display:block;font-size:10px;color:#e0a800;letter-spacing:-1px}.tc-b.s3{background:#fff4c2}
+.tc-b.rv{background:#ffe28a}.tc-b.inf{flex-basis:100%;background:#d8f3ff}.tc-b.inf small{color:#3d5aa8;letter-spacing:0}.tc-b small{display:block;font-size:10px;color:#e0a800;letter-spacing:-1px}.tc-b.s3{background:#fff4c2}
 .tc-goal{font-weight:800;color:#b5651d}
 .hyboard{display:grid;grid-template-columns:1fr auto 1fr;gap:6px;align-items:center;margin-top:10px}
 .hyp{border:3px solid var(--ink);border-radius:14px;background:#fff;display:flex;flex-direction:column;align-items:center;padding:6px}.hyp .mon{width:64px;height:64px}
@@ -3637,7 +3637,7 @@ function wildLv(base, boss){ return enemyLv(base, boss).lv; }
 /* 強い相手ほど EXP が多い */
 const xp = n => Math.round(n*(1+((B&&B.wild)?B.wild.lv:1)/15));
 
-const APP_NO = "v57";
+const APP_NO = "v58";
 let save = load();
 function load(){
   try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && s.v===2){ for(const [id,o] of Object.entries(s.owned)) if(o.form==null && SP[id]) o.form = formIdx(id,o.lv); if(!s.wrongEver) s.wrongEver=Object.fromEntries(Object.keys(s.wrong||{}).map(k=>[k,1])); cleanGone(s); return s; } }catch(e){}
@@ -4971,16 +4971,17 @@ const MIX_MODES = [["tile","一問一答","文字をえらんで答えを作る"
 const mixUnits = (subj, nos) => UNITS.filter(u=>u.subject===subj && nos.includes(u.no) && unitOpen(u));
 function mixPlain(subj, nos){ const all=[]; for(const u of mixUnits(subj,nos)) u.stages.forEach(st=>st.qs.forEach((q,i)=>{ if(!q.type && Array.isArray(q.c) && typeof q.a==="number" && !q.band && !q.graph && !q.pic && !q.shape) all.push({q,key:qKey(u.id,st.id,i)}); })); return all; }
 const TILE_OK = /^[ぁ-ゖァ-ヺー一-龯々〆0-9０-９]{2,8}$/;
-function mixMake(subj, mode){
-  const base=shuffle(mixPlain(subj, TEST.mixNos)), out=[];
+function mixMake(subj, mode, nos){
+  const base=shuffle(mixPlain(subj, nos||TEST.mixNos)), out=[], endless=mode==="endless";
   for(const it of base){ const q=it.q, ans=q.c[q.a];
+    if(endless){ const r=Math.random(); mode = r<.4 && TILE_OK.test(ans) ? "tile" : r<.65 ? "ox" : "plain"; }
     if(mode==="tile"){ if(!TILE_OK.test(ans) || /どれ|は？$/.test("")) continue;
       const chars=[...ans], pool=shuffle([...new Set(q.c.filter((_,j)=>j!==q.a).join("").split("").filter(ch=>TILE_OK.test(ch+ch)&&!chars.includes(ch)))]).slice(0, Math.max(3, 10-chars.length));
       out.push({q:{type:"tile", q:q.q, ans, tiles:shuffle([...chars, ...pool]), pre:0, e:q.e}, key:it.key, num:false}); }
     else if(mode==="ox"){ const right=Math.random()<.5, x=right?ans:q.c[pick(q.c.map((_,j)=>j).filter(j=>j!==q.a))];
       out.push({q:{q:`${q.q}　→ 答え「${x}」`, c:["○（正しい）","×（まちがい）"], a:right?0:1, fixed:true, e:(right?'○です。':`×です。正しくは「${ans}」。`)+(q.e||"")}, key:it.key, num:false}); }
     else out.push({q, key:it.key, num:false});
-    if(out.length>=12) break; }
+    if(out.length>=(endless?8:12)) break; }
   return out;
 }
 function startMix(subj, mode){
@@ -4989,11 +4990,12 @@ function startMix(subj, mode){
   if(mode==="review"){ const ids=new Set(mixUnits(subj,TEST.testNos).map(u=>u.id)), all=[];
     for(const u of mixUnits(subj,TEST.testNos)) u.stages.forEach(st=>st.qs.forEach((q,i)=>{ const k=qKey(u.id,st.id,i); if(save.wrong[k]) all.push({q,key:k}); }));
     queue=shuffle(all).slice(0,15); name=`${subj} 第6〜10回 ふくしゅう`; if(!ids.size||!queue.length) return; }
+  else if(mode==="endless"){ queue=mixMake(subj, "endless", TEST.testNos); name=`${subj} むげんチャレンジ（第6〜10回）`; }
   else { queue=mixMake(subj, mode); name=`${subj}ごちゃまぜ（${MIX_MODES.find(m=>m[0]===mode)[1]}）`; }
   if(!queue.length) return;
   showTabs(false);
-  const us=mixUnits(subj, mode==="review"?TEST.testNos:TEST.mixNos), pool=us.flatMap(u=>Object.keys(u.monsters).filter(k=>k!==u.legend));
-  B = {colBefore:prefLevels(), u:{id:"mix", stages:[]}, sid:"mix", mix:{subj, mode, timed:mode==="time"||mode==="haya"}, name, queue, total:queue.length, pool, lvBase:8, hearts:MAX_HP, lead:save.party[0],
+  const us=mixUnits(subj, mode==="review"||mode==="endless"?TEST.testNos:TEST.mixNos), pool=us.flatMap(u=>Object.keys(u.monsters).filter(k=>k!==u.legend));
+  B = {colBefore:prefLevels(), u:{id:"mix", stages:[]}, sid:"mix", mix:{subj, mode, timed:mode==="time"||mode==="haya"}, endOk:0, name, queue, total:queue.length, pool, lvBase:8, hearts:MAX_HP, lead:save.party[0],
        wild:null, combo:0, maxCombo:0, mistakes:0, n:0, used:{}, power:false, luck:false,
        caught:[], defeated:0, evoReady:[], lvups:{}, ballsGot:0, busy:false, swapOpen:false, hp:{}, guard:false, lure:false, newMoves:[]};
   spawn(); renderBattle(true);
@@ -5022,7 +5024,7 @@ function testCardHTML(){
   if(!subs.length) return "";
   const wrongN = sj => mixUnits(sj,TEST.testNos).reduce((n,u)=>n+Object.keys(save.wrong).filter(k=>k.startsWith(u.id+"|")).length,0);
   return `<div class="card testcard"><b class="tc-h">${on?`📝 ${TEST.name}対策　〜${+TEST.end.slice(5,7)}/${+TEST.end.slice(8)}まで`:'第6〜9回 ごちゃまぜ'}</b><span class="mini">第6〜9回の問題がまざって出るよ。答え方をえらぼう！</span><span class="mini tc-goal">${save.owned[KAISER]?'🏆 全部★3クリア！ アタックカイザーがなかまになった（ひろばでカードバトル）':`🏆 8つ全部★3（まちがい0）で、いままでで一番強いモンスターとカードバトルが手に入る！　いま ★3 ${["理科","社会"].map(sj=>MIX_MODES.filter(([m])=>((save.testBest||{})[sj+"|"+m]||0)>=3).length).reduce((a,b)=>a+b,0)} / 8`}</span>
-    ${subs.map(sj=>`<div class="tc-row"><span class="tc-s">${sj}</span>${MIX_MODES.map(([k,n,d])=>{ const st=(save.testBest||{})[sj+"|"+k]||0; return `<button class="tc-b ${st>=3?'s3':''}" data-mix="${sj}|${k}" title="${d}">${n}<small>${st?'★'.repeat(st)+'☆'.repeat(3-st):'☆☆☆'}</small></button>`; }).join("")}<button class="tc-b rv" data-mix="${sj}|review" ${wrongN(sj)?'':'disabled'}>ふくしゅう${wrongN(sj)?`（${wrongN(sj)}）`:''}</button></div>`).join("")}</div>`;
+    ${subs.map(sj=>`<div class="tc-row"><span class="tc-s">${sj}</span>${MIX_MODES.map(([k,n,d])=>{ const st=(save.testBest||{})[sj+"|"+k]||0; return `<button class="tc-b ${st>=3?'s3':''}" data-mix="${sj}|${k}" title="${d}">${n}<small>${st?'★'.repeat(st)+'☆'.repeat(3-st):'☆☆☆'}</small></button>`; }).join("")}<button class="tc-b rv" data-mix="${sj}|review" ${wrongN(sj)?'':'disabled'}>ふくしゅう${wrongN(sj)?`（${wrongN(sj)}）`:''}</button><button class="tc-b inf" data-mix="${sj}|endless">♾ むげんチャレンジ<small>第6〜10回が終わりなく出る・5問正解でチケット</small></button></div>`).join("")}</div>`;
 }
 
 /* ============================================================
@@ -5036,7 +5038,19 @@ SP[KAISER] = {arch:"dragon", type:"hikari", type2:"denki", color:"#ffd23f", acce
 const testAll3 = () => ["理科","社会"].every(sj=>MIX_MODES.every(([m])=>((save.testBest||{})[sj+"|"+m]||0)>=3));
 const CARD_MAX_TK = 5, CARD_DAY = 3;
 function cardDay(){ const t=today(); if(!save.cardDay || save.cardDay.d!==t) save.cardDay={d:t, n:0}; return save.cardDay; }
-function giveTicket(){ if(!save.cardOpen) return 0; const b=save.cardTk||0; save.cardTk=Math.min(CARD_MAX_TK, b+1); return save.cardTk-b; }
+/* v57: テスト期間中（〜11/16）は、テスト範囲（理科・社会の第6〜10回）のルートかテスト対策のコーナーをクリアするたびにチケット1まい（上限なし・1日の回数制限なし）。
+   ただし前回チケットをもらったのと同じルート／コーナーではもらえない（別のところをクリアする） */
+let tkMsg = "";
+const isTestUnit = uid => UNITS.some(u=>u.id===uid && ["理科","社会"].includes(u.subject) && TEST.testNos.includes(u.no));
+function giveTicket(src){
+  tkMsg="";
+  if(testOn()){
+    if(!src || (!src.startsWith("mix|") && !isTestUnit(src.split("|")[0]))) return 0;
+    if(save.lastTkSrc===src){ tkMsg="same"; return 0; }
+    save.lastTkSrc=src; save.cardTk=(save.cardTk||0)+1; tkMsg="ok"; return 1; }
+  if(!save.cardOpen) return 0; const b=save.cardTk||0; save.cardTk=Math.min(CARD_MAX_TK, b+1); if(save.cardTk>b) tkMsg="ok"; return save.cardTk-b; }
+const tkCard = () => !tkMsg ? "" : tkMsg==="ok" ? `<div class="card get"><div class="mon" style="font-size:40px;display:grid;place-items:center">🎫</div><div><b>バトルチケット +1まい（いま${save.cardTk}まい）</b><span>ひろばの「カード」でカードバトルができるよ${testOn()?'（きょうまで回数むせいげん）':''}</span></div></div>`
+  : `<div class="card get"><div class="mon" style="font-size:40px;display:grid;place-items:center">🎫</div><div><b>チケットはもらえなかった…</b><span>前回と同じところだよ。テスト範囲の<b>別のルート</b>か、テスト対策の<b>別のコーナー</b>をクリアしよう！</span></div></div>`;
 function grantKaiser(){
   if(save.owned[KAISER] || !testAll3()) return false;
   const top=Math.max(...Object.values(save.owned).map(o=>o.lv||1));
@@ -5061,7 +5075,8 @@ function cardHTML(c, opt={}){
 }
 /* デッキづくり＆カードバトル画面（ひろばの「カード」タブ） */
 let cardSel = null;
-/* v57: 「今日まで限定でテスト範囲のルートであれば無限にカードゲームをできるようにして」→ テスト期間中（〜11/16）はチケット・1日3回の制限なし、まだ解放していなくても遊べる。問題はテスト範囲（第6〜10回）から */
+/* v57: 「今日まで限定でテスト範囲のルートであれば無限にカードゲームをできるようにして」「もしくは、テスト対策のコーナーのクリアでもOK」「ひとつやったらまたそこではなく別のルートに」
+   → テスト期間中（〜11/16）は、まだ解放していなくても遊べる。1日3回とチケット上限5まいの制限なし。チケットはテスト範囲のルート／テスト対策のコーナーをクリアでもらえる（前回と同じ場所はだめ） */
 const cardFree = () => testOn();
 function cardTabHTML(){
   if(!save.cardOpen && !cardFree()) return `<div class="card" style="padding:14px"><b>🔒 カードバトル</b><p class="mini">ホームの「アタックテスト対策」で、理科・社会の8つのモードを全部★3（まちがい0）でクリアすると、アタックカイザーがなかまになり、カードバトルが遊べるようになるよ。</p><p class="mini">いまの★3：${["理科","社会"].map(sj=>MIX_MODES.filter(([m])=>((save.testBest||{})[sj+"|"+m]||0)>=3).length).reduce((a,b)=>a+b,0)} / 8</p></div>`;
@@ -5069,8 +5084,8 @@ function cardTabHTML(){
   const ids=Object.keys(save.owned).filter(id=>SP[id]).map(cardStat).sort((a,b)=>b.rare-a.rare||b.lv-a.lv);
   return `<div class="card" style="padding:12px"><b>🃏 カードバトル</b><p class="mini">なかまのカード6まいでデッキを組んで、カードトレーナーとたたかおう。自分のばんは、まず問題に答える→正解でエネルギー＋1。エネルギー2で「わざ」が使える！</p>
     <p class="mini"><b>バトルチケット ${tk} / ${CARD_MAX_TK}まい</b>（ルートかテスト対策をクリアすると1まいもらえる）・きょう ${cd.n} / ${CARD_DAY}回・つぎのあいて ${rk}人目</p>
-    ${cardFree()?`<p class="mini" style="color:#e8475a"><b>🎉 ${+TEST.end.slice(5,7)}/${+TEST.end.slice(8)}まで限定：チケットなし・回数むせいげんで遊べる！（問題はテスト範囲の第6〜10回）</b></p>`:''}
-    <button class="btn go" id="cbgo" ${deck.length===6&&(cardFree()||(tk>0&&cd.n<CARD_DAY))?'':'disabled'}>${deck.length<6?`デッキを6まいにしよう（いま${deck.length}まい）`:cardFree()?'カードバトルをはじめる（きょうはむせいげん！）':tk<=0?'チケットがないよ（ルートをクリアしよう）':cd.n>=CARD_DAY?'きょうはもう3回あそんだよ。またあした！':'カードバトルをはじめる（チケット1まい）'}</button></div>
+    ${cardFree()?`<p class="mini" style="color:#e8475a"><b>🎉 ${+TEST.end.slice(5,7)}/${+TEST.end.slice(8)}まで限定：回数むせいげん！ テスト範囲（第6〜10回）のルートか、テスト対策のコーナーをクリアするたびにチケット1まい。ただし前回と同じ場所ではもらえないよ（別のルートをクリアしよう）</b></p>`:''}
+    <button class="btn go" id="cbgo" ${deck.length===6&&tk>0&&(cardFree()||cd.n<CARD_DAY)?'':'disabled'}>${deck.length<6?`デッキを6まいにしよう（いま${deck.length}まい）`:tk<=0?(cardFree()?'チケットがないよ（テスト範囲のルートかテスト対策をクリアしよう）':'チケットがないよ（ルートをクリアしよう）'):(!cardFree()&&cd.n>=CARD_DAY)?'きょうはもう3回あそんだよ。またあした！':'カードバトルをはじめる（チケット1まい）'}</button></div>
     ${gachaHTML()}
     <h3 class="shopcat">デッキ（${deck.length}/6）</h3><div class="deckrow">${deck.map(id=>cardHTML(cardStat(id),{small:true,attr:`data-deckrm="${id}"`})).join("")||'<p class="mini">下のカードをタップしてデッキに入れよう</p>'}</div>
     <h3 class="shopcat">もっているカード</h3><div class="cardgrid">${ids.map(c=>cardHTML(c,{small:true,cls:deck.includes(c.id)?'indeck':'',attr:`data-deckadd="${c.id}"`})).join("")}</div>`;
@@ -5084,9 +5099,9 @@ function bindCardTab(rer){
 let CB=null;
 function cardQs(){ const a=[...mixPlain("理科",TEST.testNos), ...mixPlain("社会",TEST.testNos)]; return shuffle(a.length>=10?a:UNITS.flatMap(u=>u.stages.flatMap(s=>s.qs.map((q,i)=>({q,key:qKey(u.id,s.id,i)})))).filter(x=>!x.q.type&&Array.isArray(x.q.c))); }
 function startCard(){
-  const cd=cardDay(), free=cardFree(); if(!free && ((save.cardTk||0)<=0 || cd.n>=CARD_DAY)) return;
+  const cd=cardDay(), free=cardFree(); if((save.cardTk||0)<=0 || (!free && cd.n>=CARD_DAY)) return;
   const deck=(save.deck||[]).filter(id=>save.owned[id]); if(deck.length<6) return;
-  if(!free){ save.cardTk--; cd.n++; } persist();
+  save.cardTk--; if(!free) cd.n++; persist();
   const rk=save.cardRank||1, mine=deck.map(cardStat), avg=mine.reduce((a,c)=>a+c.lv,0)/6, lv=Math.max(5, Math.round(avg*(0.85+Math.min(rk,10)*0.04)));
   const pool=[...DEX_ORDER.filter(id=>monOpen(id)&&!SP[id].legend), ...(rk>=3?UNITS.filter(unitOpen).map(u=>u.legend).filter(Boolean):[])];
   const foe=shuffle(pool).slice(0,6).map(id=>{ const s=SP[id], p=1; return {id, lv, hp:Math.round((30+lv*3)*p), atk:Math.round((8+lv*0.9)*p), type:s.type, type2:s.type2, mv:MOVES[sigOf(id)]?.n||"たいあたり", mvPow:MOVES[sigOf(id)]?.pow||1.5, rare:s.legend?3:1}; });
@@ -5224,11 +5239,11 @@ function renderHaya(){
 function hyEnd(){
   hyStop(); const H=HY, win=H.me>H.riv, stars=win&&H.wrong===0?3:win?2:1;
   let rw=2+stars; save.balls+=rw; addExp(save.party[0], stars*6); misAdd("test");
-  const k=H.subj+"|haya", tb=save.testBest||(save.testBest={}); if(stars===3 && (tb[k]||0)<3){ save.balls+=5; rw+=5; } tb[k]=Math.max(tb[k]||0, stars); giveTicket();
+  const k=H.subj+"|haya", tb=save.testBest||(save.testBest={}); if(stars===3 && (tb[k]||0)<3){ save.balls+=5; rw+=5; } tb[k]=Math.max(tb[k]||0, stars); giveTicket("mix|"+H.subj+"|haya");
   const gotK=grantKaiser(); persist();
   app.innerHTML=`<div class="result"><p class="line">${esc(H.subj)} 早押しクイズ</p><h2>${win?`${HY_RIVAL.n}に勝った！`:H.me===H.riv?'引き分け！':`${HY_RIVAL.n}に負けた…`}</h2>
     <div class="big">${starStr(stars)}</div><p class="line">きみ ${H.me}点 − ${H.riv}点 ライバル・まちがい ${H.wrong}回・早押しボーナス ${H.early}回</p><p class="line">フラスコ +${rw+H.early}</p>
-    <p class="mini">★3は「ライバルに勝って、まちがい0」</p><div class="gets">${gotK?kaiserCard():''}${rewardCards()}</div>
+    <p class="mini">★3は「ライバルに勝って、まちがい0」</p><div class="gets">${tkCard()}${gotK?kaiserCard():''}${rewardCards()}</div>
     <button class="btn go" id="again">もう一度</button><button class="btn alt" id="map">ホームにもどる</button></div>`;
   const sj=H.subj; HY=null;
   document.getElementById("again").onclick=()=>startHaya(sj);
@@ -5851,6 +5866,7 @@ function fieldHTML(enter){
 }
 let logMsg = "";
 function renderBattle(enter){
+  if(B.mix && B.mix.mode==="endless" && B.queue.length<4) B.queue.push(...mixMake(B.mix.subj, "endless", TEST.testNos));
   const item = B.queue[0], q = item.q, isAll = q.type==="all", multi = q.type==="multi"||isAll, isOrd = q.type==="order", isMat = q.type==="match", isPref = q.type==="pref", isTile = q.type==="tile", isSort = q.type==="sort";
   if(isSort){ if(!item.ro) item.ro = shuffle(q.items.map((_,i)=>i)); item.sel = item.sel || {}; }
   else if(isMat){ if(!item.ro) item.ro = shuffle(q.pairs.map((_,i)=>i)); item.pairs = item.pairs || {}; }
@@ -6063,6 +6079,7 @@ function judge(picked){
     if(first){ B.combo++; B.maxCombo=Math.max(B.maxCombo,B.combo); misMax("combo",B.combo); stat().maxCombo=Math.max(stat().maxCombo||0,B.maxCombo); }
     let bonus = first ? "" : `<p class="mini">まちがえたあとの正解なので、ごほうびは少なめ（EXP半分・コンボはふえない）。1回で正解するとたくさんもらえるよ。</p>`;
     if(first && B.combo%3===0){ save.balls++; B.ballsGot++; bonus=`<p><b>${B.combo}コンボ！ フラスコを1つひろった！</b></p>`; }
+    if(first && B.mix && B.mix.mode==="endless"){ B.endOk++; if(B.endOk%5===0){ save.cardTk = testOn() ? (save.cardTk||0)+1 : Math.min(CARD_MAX_TK, (save.cardTk||0)+1); bonus+=`<p><b>🎫 ${B.endOk}問正解！ バトルチケット+1まい（いま${save.cardTk}まい）</b></p>`; } else bonus+=`<p class="mini">つぎのチケットまで あと${5-B.endOk%5}問（1回目で正解）</p>`; }
     if(first && B.mix && item.early){ save.balls++; B.ballsGot++; bonus+=`<p><b>早押しボーナス！ フラスコを1つひろった！</b></p>`; }
     if(B.sid==="review") delete save.wrong[item.key];
     if(!B.qd) (save.okOnce=save.okOnce||{})[item.key]=1;
@@ -6191,7 +6208,7 @@ function finish(win){
   if(B.qd) return finishQD(win);
   if(B.mix) return finishMix(win);
   if(B.trainer) return finishTrainer(win);
-  stat().maxCombo=Math.max(stat().maxCombo||0,B.maxCombo); B.extraBalls=0; misMax("combo",B.maxCombo); if(win && B.sid!=="review"){ misAdd("route"); giveTicket(); }
+  stat().maxCombo=Math.max(stat().maxCombo||0,B.maxCombo); B.extraBalls=0; misMax("combo",B.maxCombo); tkMsg=""; if(win && B.sid!=="review"){ misAdd("route"); giveTicket(B.u.id+"|"+B.sid); }
   window.scrollTo(0,0);
   let stars=0;
   if(win){
@@ -6206,6 +6223,7 @@ function finish(win){
   const lvAfter = prefLevels(), newCol = Object.keys(lvAfter).filter(p=>lvAfter[p]>(B.colBefore[p]||0));
   const gets = [
     ...umegas.map(umegaCard),
+    tkCard(),
     rewardCards(),
     ...urs.map(urCard),
     ...(B.fracUp?[`<div class="card get"><div class="mon">${art("ur_frac",1,{sil:true})}</div><div><b>分数カードに★が ${B.fracUp}こ ついた！</b><span>分数カード ${fracDone()} / ${FRAC_UNIT().cards.length} が★3</span></div></div>`]:[]),
@@ -6235,10 +6253,10 @@ function finishMix(win){
   const mx=B.mix; stat().maxCombo=Math.max(stat().maxCombo||0,B.maxCombo); misMax("combo",B.maxCombo);
   let stars=0, rw=0;
   if(win){ stars=B.mistakes===0?3:B.mistakes<=2?2:1; rw=2+stars; save.balls+=rw; addExp(B.lead, stars*6); misAdd("test");
-    const k=mx.subj+"|"+mx.mode, tb=save.testBest||(save.testBest={}); if(stars===3 && (tb[k]||0)<3 && mx.mode!=="review"){ save.balls+=5; rw+=5; } tb[k]=Math.max(tb[k]||0, stars); giveTicket(); }
+    const k=mx.subj+"|"+mx.mode, tb=save.testBest||(save.testBest={}); if(stars===3 && (tb[k]||0)<3 && mx.mode!=="review"){ save.balls+=5; rw+=5; } tb[k]=Math.max(tb[k]||0, stars); giveTicket("mix|"+mx.subj+"|"+mx.mode); }
   const gotK = win && grantKaiser();
   persist(); window.scrollTo(0,0);
-  const gets=[gotK?kaiserCard():'', rewardCards(), ...B.evoReady.map(id=>`<div class="card get evo"><div class="mon">${artMine(id)}</div><div><b>${esc(nameOf(id))} Lv.${save.owned[id].lv}</b><span>しんかできるようになった！</span></div></div>`), ...B.caught.map(c=>`<div class="card get"><div class="mon">${art(c.id,c.lv,{shiny:c.shiny})}</div><div><b>${esc(nameOf(c.id,c.lv))}</b><span>なかまになった！</span></div></div>`)].join("");
+  const gets=[tkCard(), gotK?kaiserCard():'', rewardCards(), ...B.evoReady.map(id=>`<div class="card get evo"><div class="mon">${artMine(id)}</div><div><b>${esc(nameOf(id))} Lv.${save.owned[id].lv}</b><span>しんかできるようになった！</span></div></div>`), ...B.caught.map(c=>`<div class="card get"><div class="mon">${art(c.id,c.lv,{shiny:c.shiny})}</div><div><b>${esc(nameOf(c.id,c.lv))}</b><span>なかまになった！</span></div></div>`)].join("");
   const ups=Object.entries(B.lvups).map(([id,lv])=>`${esc(nameOf(id))} Lv.${lv}`).join("・");
   app.innerHTML=`<div class="result"><p class="line">${esc(B.name)}</p><h2>${win?'テスト対策クリア！':'目の前がまっくらになった…'}</h2>
     ${win?`<div class="big">${starStr(stars)}</div><p class="line">まちがい ${B.mistakes}回・さいだい ${B.maxCombo}コンボ</p><p class="line">フラスコ +${rw+B.ballsGot}</p>`:''}${ups?`<p class="line">レベルアップ：${ups}</p>`:''}${newMovesHTML()}
@@ -6248,7 +6266,7 @@ function finishMix(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261116073640";
+const APP_VER="20261116074424";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
