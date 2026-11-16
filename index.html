@@ -3637,7 +3637,7 @@ function wildLv(base, boss){ return enemyLv(base, boss).lv; }
 /* 強い相手ほど EXP が多い */
 const xp = n => Math.round(n*(1+((B&&B.wild)?B.wild.lv:1)/15));
 
-const APP_NO = "v56";
+const APP_NO = "v57";
 let save = load();
 function load(){
   try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && s.v===2){ for(const [id,o] of Object.entries(s.owned)) if(o.form==null && SP[id]) o.form = formIdx(id,o.lv); if(!s.wrongEver) s.wrongEver=Object.fromEntries(Object.keys(s.wrong||{}).map(k=>[k,1])); cleanGone(s); return s; } }catch(e){}
@@ -5061,13 +5061,16 @@ function cardHTML(c, opt={}){
 }
 /* デッキづくり＆カードバトル画面（ひろばの「カード」タブ） */
 let cardSel = null;
+/* v57: 「今日まで限定でテスト範囲のルートであれば無限にカードゲームをできるようにして」→ テスト期間中（〜11/16）はチケット・1日3回の制限なし、まだ解放していなくても遊べる。問題はテスト範囲（第6〜10回）から */
+const cardFree = () => testOn();
 function cardTabHTML(){
-  if(!save.cardOpen) return `<div class="card" style="padding:14px"><b>🔒 カードバトル</b><p class="mini">ホームの「アタックテスト対策」で、理科・社会の8つのモードを全部★3（まちがい0）でクリアすると、アタックカイザーがなかまになり、カードバトルが遊べるようになるよ。</p><p class="mini">いまの★3：${["理科","社会"].map(sj=>MIX_MODES.filter(([m])=>((save.testBest||{})[sj+"|"+m]||0)>=3).length).reduce((a,b)=>a+b,0)} / 8</p></div>`;
+  if(!save.cardOpen && !cardFree()) return `<div class="card" style="padding:14px"><b>🔒 カードバトル</b><p class="mini">ホームの「アタックテスト対策」で、理科・社会の8つのモードを全部★3（まちがい0）でクリアすると、アタックカイザーがなかまになり、カードバトルが遊べるようになるよ。</p><p class="mini">いまの★3：${["理科","社会"].map(sj=>MIX_MODES.filter(([m])=>((save.testBest||{})[sj+"|"+m]||0)>=3).length).reduce((a,b)=>a+b,0)} / 8</p></div>`;
   const deck=(save.deck||[]).filter(id=>save.owned[id]), cd=cardDay(), tk=save.cardTk||0, rk=save.cardRank||1;
   const ids=Object.keys(save.owned).filter(id=>SP[id]).map(cardStat).sort((a,b)=>b.rare-a.rare||b.lv-a.lv);
   return `<div class="card" style="padding:12px"><b>🃏 カードバトル</b><p class="mini">なかまのカード6まいでデッキを組んで、カードトレーナーとたたかおう。自分のばんは、まず問題に答える→正解でエネルギー＋1。エネルギー2で「わざ」が使える！</p>
     <p class="mini"><b>バトルチケット ${tk} / ${CARD_MAX_TK}まい</b>（ルートかテスト対策をクリアすると1まいもらえる）・きょう ${cd.n} / ${CARD_DAY}回・つぎのあいて ${rk}人目</p>
-    <button class="btn go" id="cbgo" ${deck.length===6&&tk>0&&cd.n<CARD_DAY?'':'disabled'}>${deck.length<6?`デッキを6まいにしよう（いま${deck.length}まい）`:tk<=0?'チケットがないよ（ルートをクリアしよう）':cd.n>=CARD_DAY?'きょうはもう3回あそんだよ。またあした！':'カードバトルをはじめる（チケット1まい）'}</button></div>
+    ${cardFree()?`<p class="mini" style="color:#e8475a"><b>🎉 ${+TEST.end.slice(5,7)}/${+TEST.end.slice(8)}まで限定：チケットなし・回数むせいげんで遊べる！（問題はテスト範囲の第6〜10回）</b></p>`:''}
+    <button class="btn go" id="cbgo" ${deck.length===6&&(cardFree()||(tk>0&&cd.n<CARD_DAY))?'':'disabled'}>${deck.length<6?`デッキを6まいにしよう（いま${deck.length}まい）`:cardFree()?'カードバトルをはじめる（きょうはむせいげん！）':tk<=0?'チケットがないよ（ルートをクリアしよう）':cd.n>=CARD_DAY?'きょうはもう3回あそんだよ。またあした！':'カードバトルをはじめる（チケット1まい）'}</button></div>
     ${gachaHTML()}
     <h3 class="shopcat">デッキ（${deck.length}/6）</h3><div class="deckrow">${deck.map(id=>cardHTML(cardStat(id),{small:true,attr:`data-deckrm="${id}"`})).join("")||'<p class="mini">下のカードをタップしてデッキに入れよう</p>'}</div>
     <h3 class="shopcat">もっているカード</h3><div class="cardgrid">${ids.map(c=>cardHTML(c,{small:true,cls:deck.includes(c.id)?'indeck':'',attr:`data-deckadd="${c.id}"`})).join("")}</div>`;
@@ -5081,9 +5084,9 @@ function bindCardTab(rer){
 let CB=null;
 function cardQs(){ const a=[...mixPlain("理科",TEST.testNos), ...mixPlain("社会",TEST.testNos)]; return shuffle(a.length>=10?a:UNITS.flatMap(u=>u.stages.flatMap(s=>s.qs.map((q,i)=>({q,key:qKey(u.id,s.id,i)})))).filter(x=>!x.q.type&&Array.isArray(x.q.c))); }
 function startCard(){
-  const cd=cardDay(); if((save.cardTk||0)<=0 || cd.n>=CARD_DAY) return;
+  const cd=cardDay(), free=cardFree(); if(!free && ((save.cardTk||0)<=0 || cd.n>=CARD_DAY)) return;
   const deck=(save.deck||[]).filter(id=>save.owned[id]); if(deck.length<6) return;
-  save.cardTk--; cd.n++; persist();
+  if(!free){ save.cardTk--; cd.n++; } persist();
   const rk=save.cardRank||1, mine=deck.map(cardStat), avg=mine.reduce((a,c)=>a+c.lv,0)/6, lv=Math.max(5, Math.round(avg*(0.85+Math.min(rk,10)*0.04)));
   const pool=[...DEX_ORDER.filter(id=>monOpen(id)&&!SP[id].legend), ...(rk>=3?UNITS.filter(unitOpen).map(u=>u.legend).filter(Boolean):[])];
   const foe=shuffle(pool).slice(0,6).map(id=>{ const s=SP[id], p=1; return {id, lv, hp:Math.round((30+lv*3)*p), atk:Math.round((8+lv*0.9)*p), type:s.type, type2:s.type2, mv:MOVES[sigOf(id)]?.n||"たいあたり", mvPow:MOVES[sigOf(id)]?.pow||1.5, rare:s.legend?3:1}; });
@@ -6245,7 +6248,7 @@ function finishMix(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261115033733";
+const APP_VER="20261116073640";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
