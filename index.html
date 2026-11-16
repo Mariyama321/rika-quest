@@ -3637,7 +3637,7 @@ function wildLv(base, boss){ return enemyLv(base, boss).lv; }
 /* 強い相手ほど EXP が多い */
 const xp = n => Math.round(n*(1+((B&&B.wild)?B.wild.lv:1)/15));
 
-const APP_NO = "v58";
+const APP_NO = "v59";
 let save = load();
 function load(){
   try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && s.v===2){ for(const [id,o] of Object.entries(s.owned)) if(o.form==null && SP[id]) o.form = formIdx(id,o.lv); if(!s.wrongEver) s.wrongEver=Object.fromEntries(Object.keys(s.wrong||{}).map(k=>[k,1])); cleanGone(s); return s; } }catch(e){}
@@ -5170,18 +5170,20 @@ function gachaPull(){
   let res;
   if(r<.05){ res=give(pick(GACHA_ORDER.filter(id=>GACHA_MON[id].gacha===3)), lv+10, "SSR"); }
   else if(r<.20){ res=give(pick(GACHA_ORDER.filter(id=>GACHA_MON[id].gacha===2)), lv, "SR"); }
-  else if(r<.50){ const un=DEX_ORDER.filter(id=>monOpen(id)&&!SP[id].legend&&!save.owned[id]); if(un.length) res=give(pick(un), Math.max(5,Math.round(lv*.8)), "R"); else { bag().ame=(bag().ame||0)+3; res={rk:"R", txt:"ふしぎなアメ ×3"}; } }
-  else { const n=Math.random(); if(n<.5){ const f=5+Math.floor(Math.random()*6); save.balls+=f; res={rk:"N", txt:`フラスコ ×${f}`}; } else if(n<.8){ bag().superflask=(bag().superflask||0)+1; res={rk:"N", txt:"スーパーフラスコ ×1"}; } else { bag().ame=(bag().ame||0)+1; res={rk:"N", txt:"ふしぎなアメ ×1"}; } }
+  else { /* v59: 「ガチャで出るものをフラスコ、スーパーフラスコ以外にしてモンスターだけにして」→ 道具は出さず、R＝まだなかまでないモンスター、N＝単元のモンスター（もういればLvアップ） */
+    const all=DEX_ORDER.filter(id=>monOpen(id)&&!SP[id].legend), un=all.filter(id=>!save.owned[id]);
+    if(r<.50 && un.length) res=give(pick(un), Math.max(5,Math.round(lv*.8)), "R");
+    else res=give(pick(all), Math.max(5,Math.round(lv*.7)), r<.50?"R":"N"); }
   persist(); return res;
 }
 let gachaRes=null;
 function gachaHTML(){
   const ok=save.cardOk||0;
-  return `<div class="card gacha"><b>🎰 ガチャ</b><span class="mini">カードバトルで問題に10問正解するごとにガチャ券が1まい。モンスター（ガチャ限定もいるよ）や道具が出る！</span>
+  return `<div class="card gacha"><b>🎰 ガチャ</b><span class="mini">カードバトルで問題に10問正解するごとにガチャ券が1まい。モンスターが出る！（ガチャ限定もいるよ。もういるモンスターならLvアップ）</span>
     <div class="gbar"><i style="width:${(ok%10)*10}%"></i><span>つぎのガチャ券まで あと${10-ok%10}問</span></div>
     ${gachaRes?`<div class="gres g${gachaRes.rk}">${gachaRes.id?`<div class="mon">${artMine(gachaRes.id)}</div>`:''}<div><b class="grk">${gachaRes.rk}</b><b>${esc(gachaRes.txt)}</b></div></div>`:''}
     <button class="btn go" id="gpull" ${(save.gacha||0)>0?'':'disabled'}>ガチャをひく（ガチャ券 ${save.gacha||0}まい）</button>
-    <p class="mini">出る確率：SSR 5%・SR 15%・R 30%・N 50%</p></div>`;
+    <p class="mini">出る確率：SSR 5%（ガチャ限定でんせつ）・SR 15%（ガチャ限定）・R 30%（まだなかまでないモンスター）・N 50%（単元のモンスター）</p></div>`;
 }
 
 /* ============================================================
@@ -6266,7 +6268,7 @@ function finishMix(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261116074424";
+const APP_VER="20261116081449";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
