@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated": "2026-11-17T05:53+09:00",
+ "updated": "2026-11-18T05:53+09:00",
  "week": {
   "0": "テニス",
   "1": "",
@@ -11,32 +11,6 @@
   "6": "塾（個別 算数ワーク）"
  },
  "tasks": [
-  {
-   "id": "r_r1_20261027",
-   "kind": "hw",
-   "subj": "算数",
-   "src": "塾",
-   "title": "算数の宿題",
-   "lesson": "4下第13回 分数と分数のかけ算・わり算",
-   "detail": "ノートワーク\nトレーニング\n基本\n計日73~75\n＋αアタック対策6~9回基本",
-   "assigned": "2026-10-27",
-   "due": "2026-11-03",
-   "suggest": "2026-10-31",
-   "doneInNotebook": false
-  },
-  {
-   "id": "r_r2_20261027",
-   "kind": "hw",
-   "subj": "理科",
-   "src": "塾",
-   "title": "理科の宿題",
-   "lesson": "4下第13回 冬の植物・動物",
-   "detail": "①ノートワーク\n②第13回トレーニング・基本問題\n③ポイント発見、リトライ",
-   "assigned": "2026-10-27",
-   "due": "2026-11-03",
-   "suggest": "2026-11-01",
-   "doneInNotebook": false
-  },
   {
    "id": "r_r3_20261030",
    "kind": "hw",
@@ -815,6 +789,19 @@
    "assigned": "2026-12-01",
    "due": "2026-12-08",
    "suggest": "2026-12-06",
+   "doneInNotebook": false
+  },
+  {
+   "id": "h_rmvd9jjaq_20261202",
+   "kind": "habit",
+   "subj": "算数",
+   "src": "塾",
+   "title": "計算",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-12-02",
+   "due": "",
+   "suggest": "2026-12-02",
    "doneInNotebook": false
   }
  ],
