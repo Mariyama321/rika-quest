@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated": "2026-11-18T05:53+09:00",
+ "updated": "2026-11-19T05:53+09:00",
  "week": {
   "0": "テニス",
   "1": "",
@@ -165,19 +165,6 @@
    "assigned": "2026-11-10",
    "due": "2026-11-17",
    "suggest": "2026-11-15",
-   "doneInNotebook": false
-  },
-  {
-   "id": "h_rmvd9jjaq_20261111",
-   "kind": "habit",
-   "subj": "算数",
-   "src": "塾",
-   "title": "計算",
-   "lesson": "",
-   "detail": "",
-   "assigned": "2026-11-11",
-   "due": "",
-   "suggest": "2026-11-11",
    "doneInNotebook": false
   },
   {
@@ -803,16 +790,48 @@
    "due": "",
    "suggest": "2026-12-02",
    "doneInNotebook": false
+  },
+  {
+   "id": "h_hmvd9w2ye_20261203",
+   "kind": "habit",
+   "subj": "国語",
+   "src": "学校",
+   "title": "学校の漢字",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-12-03",
+   "due": "",
+   "suggest": "2026-12-03",
+   "doneInNotebook": false
+  },
+  {
+   "id": "h_hmvheencv_20261203",
+   "kind": "habit",
+   "subj": "理科",
+   "src": "学校",
+   "title": "理科ノート整理",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-12-03",
+   "due": "",
+   "suggest": "2026-12-03",
+   "doneInNotebook": false
+  },
+  {
+   "id": "h_rmvd9jjaq_20261203",
+   "kind": "habit",
+   "subj": "算数",
+   "src": "塾",
+   "title": "計算",
+   "lesson": "",
+   "detail": "",
+   "assigned": "2026-12-03",
+   "due": "",
+   "suggest": "2026-12-03",
+   "doneInNotebook": false
   }
  ],
  "tests": [
-  {
-   "id": "t_attack_6_10",
-   "title": "アタックテスト（第6〜10回）",
-   "subj": "4教科",
-   "due": "2026-11-17",
-   "range": "4下 第6回〜第10回（算数・国語・社会・理科）\n第10回はまとめ回（11/9の週）"
-  },
   {
    "id": "t_attack_11_15",
    "title": "アタックテスト（第11〜15回）",
