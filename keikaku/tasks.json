@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated": "2026-11-19T05:53+09:00",
+ "updated": "2026-11-20T05:54+09:00",
  "week": {
   "0": "テニス",
   "1": "",
@@ -165,45 +165,6 @@
    "assigned": "2026-11-10",
    "due": "2026-11-17",
    "suggest": "2026-11-15",
-   "doneInNotebook": false
-  },
-  {
-   "id": "h_hmvd9w2ye_20261112",
-   "kind": "habit",
-   "subj": "国語",
-   "src": "学校",
-   "title": "学校の漢字",
-   "lesson": "",
-   "detail": "",
-   "assigned": "2026-11-12",
-   "due": "",
-   "suggest": "2026-11-12",
-   "doneInNotebook": false
-  },
-  {
-   "id": "h_hmvheencv_20261112",
-   "kind": "habit",
-   "subj": "理科",
-   "src": "学校",
-   "title": "理科ノート整理",
-   "lesson": "",
-   "detail": "",
-   "assigned": "2026-11-12",
-   "due": "",
-   "suggest": "2026-11-12",
-   "doneInNotebook": false
-  },
-  {
-   "id": "h_rmvd9jjaq_20261112",
-   "kind": "habit",
-   "subj": "算数",
-   "src": "塾",
-   "title": "計算",
-   "lesson": "",
-   "detail": "",
-   "assigned": "2026-11-12",
-   "due": "",
-   "suggest": "2026-11-12",
    "doneInNotebook": false
   },
   {
@@ -828,6 +789,32 @@
    "assigned": "2026-12-03",
    "due": "",
    "suggest": "2026-12-03",
+   "doneInNotebook": false
+  },
+  {
+   "id": "r_r3_20261204",
+   "kind": "hw",
+   "subj": "国語",
+   "src": "塾",
+   "title": "国語の宿題",
+   "lesson": "4下第17回 物語文 人物像と主題／名詞・動詞・形容詞・形容動詞・副詞②",
+   "detail": "ノートワーク\n（読解のポイント発見）\n新演習・漢字日記17回語句\n漢字日記漢字18回",
+   "assigned": "2026-12-04",
+   "due": "2026-12-11",
+   "suggest": "2026-12-07",
+   "doneInNotebook": false
+  },
+  {
+   "id": "r_r4_20261204",
+   "kind": "hw",
+   "subj": "社会",
+   "src": "塾",
+   "title": "社会の宿題",
+   "lesson": "4下第17回 農業生産を高める工夫",
+   "detail": "",
+   "assigned": "2026-12-04",
+   "due": "2026-12-11",
+   "suggest": "2026-12-07",
    "doneInNotebook": false
   }
  ],
