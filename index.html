@@ -203,6 +203,7 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .tc-b{flex:1 1 calc(33% - 6px);border:2px solid var(--ink);border-radius:10px;background:#fff;font-weight:800;font-size:13px;padding:7px 2px;box-shadow:0 2px 0 var(--ink)}
 .tc-b.rv{background:#ffe28a}.tc-b.inf{flex-basis:100%;background:#d8f3ff}.tc-b.inf small{color:#3d5aa8;letter-spacing:0}.tc-b small{display:block;font-size:10px;color:#e0a800;letter-spacing:-1px}.tc-b.s3{background:#fff4c2}
 .tc-goal{font-weight:800;color:#b5651d}
+.dfest{padding:12px;display:flex;flex-direction:column;gap:4px;margin-top:12px;border-color:#e8475a;background:linear-gradient(120deg,#fff3a0,#ffd6f0,#d8f3ff)}.dfest b{font-size:16px}.dfest span{font-size:13px;line-height:1.5}
 .hyboard{display:grid;grid-template-columns:1fr auto 1fr;gap:6px;align-items:center;margin-top:10px}
 .hyp{border:3px solid var(--ink);border-radius:14px;background:#fff;display:flex;flex-direction:column;align-items:center;padding:6px}.hyp .mon{width:64px;height:64px}
 .hyp.me{background:#e4f2ff}.hyp.riv{background:#ffe9e9}.hyp.buzzed{animation:buzzp .3s 3;box-shadow:0 0 0 4px #ffd23f}
@@ -3637,7 +3638,7 @@ function wildLv(base, boss){ return enemyLv(base, boss).lv; }
 /* 強い相手ほど EXP が多い */
 const xp = n => Math.round(n*(1+((B&&B.wild)?B.wild.lv:1)/15));
 
-const APP_NO = "v59";
+const APP_NO = "v60";
 let save = load();
 function load(){
   try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && s.v===2){ for(const [id,o] of Object.entries(s.owned)) if(o.form==null && SP[id]) o.form = formIdx(id,o.lv); if(!s.wrongEver) s.wrongEver=Object.fromEntries(Object.keys(s.wrong||{}).map(k=>[k,1])); cleanGone(s); return s; } }catch(e){}
@@ -4611,6 +4612,11 @@ const dragonCard = id => { const f=QD_FLOORS.find(x=>x.dragon===id); return `<di
 
 /* ---------- ダンジョン画面 ---------- */
 function qdBar(st){ return `<div class="lvbar">${st.c.map((n,i)=>n?`<i style="flex:${n};background:${LVCOL[i]}"></i>`:'').join("")}</div>`; }
+/* v60: 「今日中はダンジョンでゲットできるモンスターをすごく豪華にして」（2026-11-19 だけ）
+   ダンジョン（ボスいがい）の野生が、でんせつ・ガチャ限定（SR/SSR）・曜日のモンスターになる。色ちがい 1/5、つかまえやすさ+25%、Lvも少し高め */
+const DFEST = "2026-11-19";
+const dfestOn = () => today()===DFEST;
+function dfestPool(){ return [...UNITS.filter(unitOpen).map(u=>u.legend).filter(Boolean), ...GACHA_ORDER, ...WEEK_ORDER].filter(id=>SP[id]); }
 function showQD(){
   const s=qdS();
   if(!s.sel || !QD_FLOORS.some(f=>f.id===s.sel)) s.sel=QD_FLOORS[0].id;
@@ -4622,6 +4628,7 @@ function showQD(){
   const dn=Math.min(s.day.n,QD_DAY_GOAL), eggReady=s.egg.w>=EGG_NEED;
   let h=`<div class="hero dun"><h1>クイズダンジョン</h1><p>全部おぼえて、伝説のドラゴンをなかまにしよう</p>
     <div class="stats"><span class="pill">${flaskSVG} フラスコ ×${save.balls}</span><span class="pill">マスター ${totM} / ${totQ}</span></div></div>`;
+  if(dfestOn()) h+=`<div class="card dfest"><b>🎉 きょうだけ！ ダンジョン大フェス 🎉</b><span>ダンジョンに出てくるモンスターが、<b>でんせつ・ガチャ限定（SR/SSR）・曜日のモンスター</b>だけになる！ 色ちがいも出やすく（5回に1回）、つかまえやすいよ。</span></div>`;
   if(dg.length||mgq.length) h+=`<div class="gets">${mgq.map(megaCard).join("")}${dg.map(dragonCard).join("")}</div>`;
   h+=`<div class="card daily"><div class="egg">${eggSVG(s.egg.w)}</div><div style="min-width:0;flex:1"><b>今日のたんけん</b>
       <div class="mini">ダンジョンで${QD_DAY_GOAL}問正解すると、たまごがあたたまる（${EGG_NEED}日分でうまれる）</div>
@@ -4695,8 +4702,10 @@ function startQD(fid, mode){
     queue=shuffle([...weak,...rest].slice(0,10)).map(mk); name="ボス・弱点問題"; lvBase=16;
   }
   if(mode==="tower"){ name="無限の塔"; lvBase=3; }
-  if(f) pool = mode==="boss" ? [f.dragon] : QD_POOL[f.subj];
-  else pool = DEX_ORDER.filter(id=>!SP[id].legend);
+  if(f) pool = mode==="boss" ? [f.dragon] : (dfestOn() ? dfestPool() : QD_POOL[f.subj]);
+  else if(dfestOn()) pool = dfestPool();
+  else if(!pool) pool = DEX_ORDER.filter(id=>!SP[id].legend);
+  if(dfestOn() && mode!=="boss") lvBase += 6;
   B = {colBefore:prefLevels(), u:{id:"qd"}, sid:mode==="boss"?"boss":"qd", qd:{fid, mode}, name, queue, total:queue.length, pool, lvBase,
        hearts:mode==="tower"?3:MAX_HP, maxHearts:mode==="tower"?3:MAX_HP, lead:save.party[0], wild:null, combo:0, maxCombo:0, mistakes:0, n:0, used:{}, power:false, luck:false,
        caught:[], defeated:0, evoReady:[], lvups:{}, ballsGot:0, busy:false, swapOpen:false, mastered:0, ups:0, recent:[], hp:{}, guard:false, lure:false, newMoves:[]};
@@ -5837,7 +5846,7 @@ function spawn(){
   const EL = enemyLv(boss ? B.lvBase : B.lvBase + Math.floor(Math.random()*2), boss), lv = EL.lv;
   const r = Math.random(), sz = boss ? 1 : r<.07 ? 1.22 : r<.14 ? .78 : Math.round((0.92+Math.random()*.16)*100)/100;
   const max = boss ? 150 + Math.max(0, lv-14)*6 : Math.round((28 + lv*3)*sz);
-  const shiny = !boss && !B.trainer && Math.random()<SHINY_RATE;
+  const shiny = !boss && !B.trainer && Math.random()<(B.qd && dfestOn() ? 1/5 : SHINY_RATE);
   if(EL.strong && !shiny){ B.wild = {id, lv, hp:Math.round(max*1.15), max:Math.round(max*1.15), sz, strong:true}; save.seen[id]=1; persist(); return; }
   B.wild = shiny ? {id, lv:Math.min(WILD_MAX, lv+5), hp:Math.round(max*1.5), max:Math.round(max*1.5), sz, shiny:true} : {id, lv, hp:max, max, sz};
   save.seen[id]=1; persist();
@@ -6166,7 +6175,7 @@ function doBall(sup){
   lockActs();
   const w=B.wild, boss=B.sid==="boss";
   if(sup===true) bag().superflask=Math.max(0,(bag().superflask||0)-1); else save.balls--; persist();
-  const p = Math.min(.97, (boss?.08:.3) + (1-w.hp/w.max)*(boss?.55:.55) + Math.min(B.combo,5)*.04 + (B.luck?.3:0) + (B.lure?.2:0) + (w.st&&w.st.slp>0?.15:w.st&&w.st.par?.1:0) + (sup===true?(boss?.3:.35):0));
+  const p = Math.min(.97, (B.qd && dfestOn() && !boss ? .25 : 0) + (boss?.08:.3) + (1-w.hp/w.max)*(boss?.55:.55) + Math.min(B.combo,5)*.04 + (B.luck?.3:0) + (B.lure?.2:0) + (w.st&&w.st.slp>0?.15:w.st&&w.st.par?.1:0) + (sup===true?(boss?.3:.35):0));
   B.luck=false; B.lure=false;
   const got = Math.random()<p, shakes = got?3:Math.floor(Math.random()*3);
   const f=document.getElementById("field"), fl=document.createElement("div");
@@ -6268,7 +6277,7 @@ function finishMix(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261116081449";
+const APP_VER="20261119070748";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
