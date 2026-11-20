@@ -3638,7 +3638,7 @@ function wildLv(base, boss){ return enemyLv(base, boss).lv; }
 /* 強い相手ほど EXP が多い */
 const xp = n => Math.round(n*(1+((B&&B.wild)?B.wild.lv:1)/15));
 
-const APP_NO = "v60";
+const APP_NO = "v61";
 let save = load();
 function load(){
   try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && s.v===2){ for(const [id,o] of Object.entries(s.owned)) if(o.form==null && SP[id]) o.form = formIdx(id,o.lv); if(!s.wrongEver) s.wrongEver=Object.fromEntries(Object.keys(s.wrong||{}).map(k=>[k,1])); cleanGone(s); return s; } }catch(e){}
@@ -4614,8 +4614,9 @@ const dragonCard = id => { const f=QD_FLOORS.find(x=>x.dragon===id); return `<di
 function qdBar(st){ return `<div class="lvbar">${st.c.map((n,i)=>n?`<i style="flex:${n};background:${LVCOL[i]}"></i>`:'').join("")}</div>`; }
 /* v60: 「今日中はダンジョンでゲットできるモンスターをすごく豪華にして」（2026-11-19 だけ）
    ダンジョン（ボスいがい）の野生が、でんせつ・ガチャ限定（SR/SSR）・曜日のモンスターになる。色ちがい 1/5、つかまえやすさ+25%、Lvも少し高め */
-const DFEST = "2026-11-19";
-const dfestOn = () => today()===DFEST;
+/* v61: 「ダンジョンの特別期間を来週の木曜まで伸ばして」→ 11/26（木）まで */
+const DFEST = "2026-11-19", DFEST_END = "2026-11-26";
+const dfestOn = () => today()>=DFEST && today()<=DFEST_END;
 function dfestPool(){ return [...UNITS.filter(unitOpen).map(u=>u.legend).filter(Boolean), ...GACHA_ORDER, ...WEEK_ORDER].filter(id=>SP[id]); }
 function showQD(){
   const s=qdS();
@@ -4628,7 +4629,7 @@ function showQD(){
   const dn=Math.min(s.day.n,QD_DAY_GOAL), eggReady=s.egg.w>=EGG_NEED;
   let h=`<div class="hero dun"><h1>クイズダンジョン</h1><p>全部おぼえて、伝説のドラゴンをなかまにしよう</p>
     <div class="stats"><span class="pill">${flaskSVG} フラスコ ×${save.balls}</span><span class="pill">マスター ${totM} / ${totQ}</span></div></div>`;
-  if(dfestOn()) h+=`<div class="card dfest"><b>🎉 きょうだけ！ ダンジョン大フェス 🎉</b><span>ダンジョンに出てくるモンスターが、<b>でんせつ・ガチャ限定（SR/SSR）・曜日のモンスター</b>だけになる！ 色ちがいも出やすく（5回に1回）、つかまえやすいよ。</span></div>`;
+  if(dfestOn()) h+=`<div class="card dfest"><b>🎉 ダンジョン大フェス（${+DFEST_END.slice(5,7)}/${+DFEST_END.slice(8)}まで）🎉</b><span>ダンジョンに出てくるモンスターが、<b>でんせつ・ガチャ限定（SR/SSR）・曜日のモンスター</b>だけになる！ 色ちがいも出やすく（5回に1回）、つかまえやすいよ。</span></div>`;
   if(dg.length||mgq.length) h+=`<div class="gets">${mgq.map(megaCard).join("")}${dg.map(dragonCard).join("")}</div>`;
   h+=`<div class="card daily"><div class="egg">${eggSVG(s.egg.w)}</div><div style="min-width:0;flex:1"><b>今日のたんけん</b>
       <div class="mini">ダンジョンで${QD_DAY_GOAL}問正解すると、たまごがあたたまる（${EGG_NEED}日分でうまれる）</div>
@@ -6277,7 +6278,7 @@ function finishMix(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261119070748";
+const APP_VER="20261120220052";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
