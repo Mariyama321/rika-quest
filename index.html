@@ -3638,7 +3638,7 @@ function wildLv(base, boss){ return enemyLv(base, boss).lv; }
 /* 強い相手ほど EXP が多い */
 const xp = n => Math.round(n*(1+((B&&B.wild)?B.wild.lv:1)/15));
 
-const APP_NO = "v61";
+const APP_NO = "v62";
 let save = load();
 function load(){
   try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && s.v===2){ for(const [id,o] of Object.entries(s.owned)) if(o.form==null && SP[id]) o.form = formIdx(id,o.lv); if(!s.wrongEver) s.wrongEver=Object.fromEntries(Object.keys(s.wrong||{}).map(k=>[k,1])); cleanGone(s); return s; } }catch(e){}
@@ -5175,15 +5175,15 @@ Object.assign(SP, GACHA_MON);
 const GACHA_ORDER = Object.keys(GACHA_MON);
 function gachaPull(){
   if(!(save.gacha>0)) return null; save.gacha--;
-  const r=Math.random(), top=Math.max(...Object.values(save.owned).map(o=>o.lv||1)), lv=Math.max(10, Math.round(top*.6));
+  const r=Math.random(), top=Math.max(...Object.values(save.owned).map(o=>o.lv||1)), lv=Math.max(10, top); /* v62: 「ガチャで出てくるモンスターのレベルを高いレベルに」→ なかまの最高Lvと同じ（SSRは+10） */
   const give=(id,l,rk)=>{ const had=save.owned[id]; if(!had){ save.owned[id]={lv:l, exp:0, form:formIdx(id,l)}; } else { had.lv=Math.min(MAX_LV, Math.max(had.lv, l)+2); had.form=Math.max(had.form||0, formIdx(id,had.lv)); } save.seen[id]=1; return {rk, id, txt:had?`${nameOf(id)}がもう1ぴき！ Lvアップ（Lv.${save.owned[id].lv}）`:`${nameOf(id)}がなかまになった！`}; };
   let res;
-  if(r<.05){ res=give(pick(GACHA_ORDER.filter(id=>GACHA_MON[id].gacha===3)), lv+10, "SSR"); }
+  if(r<.05){ res=give(pick(GACHA_ORDER.filter(id=>GACHA_MON[id].gacha===3)), Math.min(MAX_LV, lv+10), "SSR"); }
   else if(r<.20){ res=give(pick(GACHA_ORDER.filter(id=>GACHA_MON[id].gacha===2)), lv, "SR"); }
   else { /* v59: 「ガチャで出るものをフラスコ、スーパーフラスコ以外にしてモンスターだけにして」→ 道具は出さず、R＝まだなかまでないモンスター、N＝単元のモンスター（もういればLvアップ） */
     const all=DEX_ORDER.filter(id=>monOpen(id)&&!SP[id].legend), un=all.filter(id=>!save.owned[id]);
-    if(r<.50 && un.length) res=give(pick(un), Math.max(5,Math.round(lv*.8)), "R");
-    else res=give(pick(all), Math.max(5,Math.round(lv*.7)), r<.50?"R":"N"); }
+    if(r<.50 && un.length) res=give(pick(un), lv, "R");
+    else res=give(pick(all), lv, r<.50?"R":"N"); }
   persist(); return res;
 }
 let gachaRes=null;
@@ -6278,7 +6278,7 @@ function finishMix(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261120220052";
+const APP_VER="20261122020611";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
