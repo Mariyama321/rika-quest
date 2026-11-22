@@ -3638,7 +3638,7 @@ function wildLv(base, boss){ return enemyLv(base, boss).lv; }
 /* 強い相手ほど EXP が多い */
 const xp = n => Math.round(n*(1+((B&&B.wild)?B.wild.lv:1)/15));
 
-const APP_NO = "v63";
+const APP_NO = "v64";
 let save = load();
 function load(){
   try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && s.v===2){ for(const [id,o] of Object.entries(s.owned)) if(o.form==null && SP[id]) o.form = formIdx(id,o.lv); if(!s.wrongEver) s.wrongEver=Object.fromEntries(Object.keys(s.wrong||{}).map(k=>[k,1])); cleanGone(s); return s; } }catch(e){}
@@ -4615,6 +4615,9 @@ function qdBar(st){ return `<div class="lvbar">${st.c.map((n,i)=>n?`<i style="fl
 /* v60: 「今日中はダンジョンでゲットできるモンスターをすごく豪華にして」（2026-11-19 だけ）
    ダンジョン（ボスいがい）の野生が、でんせつ・ガチャ限定（SR/SSR）・曜日のモンスターになる。色ちがい 1/5、つかまえやすさ+25%、Lvも少し高め */
 /* v61: 「ダンジョンの特別期間を来週の木曜まで伸ばして」→ 11/26（木）まで */
+/* v64: 「ダンジョンの銀の森をやり込むことでフラスコがたくさんもらえるように」→ 銀の森（rika-gin）だけ：1回目で正解ごとに+1、マスター（おぼえ度5）になった問題ごとに+3（ふだんの+1にさらに）、クリアで+5（★3なら+10）、全問マスターで+50（1回だけ） */
+const GIN = "rika-gin";
+const ginOn = () => B && B.qd && B.qd.fid===GIN && B.qd.mode!=="tower";
 const DFEST = "2026-11-19", DFEST_END = "2026-11-26";
 const dfestOn = () => today()>=DFEST && today()<=DFEST_END;
 function dfestPool(){ return [...UNITS.filter(unitOpen).map(u=>u.legend).filter(Boolean), ...GACHA_ORDER, ...WEEK_ORDER].filter(id=>SP[id]); }
@@ -4640,6 +4643,7 @@ function showQD(){
   h+=`<div class="floors">${QD_FLOORS.map(x=>{ const t=qdStats(x), own=save.owned[x.dragon];
     return `<button class="card floor ${x.id===s.sel?'on':''}" data-f="${x.id}" style="--fc:${x.col}"><div class="mon">${own?artMine(x.dragon):art(x.dragon,1,{sil:true})}</div><div style="min-width:0;flex:1"><span class="rno">${x.subj}・${x.lb}</span><b>${esc(x.name)}</b>${qdBar(t)}<span class="rsub">マスター ${t.mastered}/${t.total}${t.due?`・ふくしゅう ${t.due}`:''}</span></div></button>`; }).join("")}</div>`;
   const bossOk=st.allSeen, bossCand=f.qs.filter(q=>(qdRec(q.key)||{}).ng).length;
+  if(f.id===GIN) h+=`<div class="card dfest" style="background:linear-gradient(120deg,#eef2f7,#d6dde8,#ffffff)"><b>🥈 銀の森はやりこむほどフラスコざくざく！</b><span>1回目で正解：フラスコ+1／マスターした問題：さらに+3／クリア：+5（★3なら+10）／全問マスター：+50（1回だけ）${qdS().ginAll?'　✅ 全問マスター達成ずみ':''}</span></div>`;
   h+=`<section class="unit"><div class="unit-head"><span class="unit-no">${f.subj}・${f.lb}</span><h2>${esc(f.name)}</h2><span class="sub">マスター ${st.mastered}/${st.total}</span></div>
     <div class="lvlegend">${LVNAME.map((n,i)=>`<span><i style="background:${LVCOL[i]}"></i>${i} ${n}<b>${st.c[i]}</b></span>`).join("")}</div>
     <div class="routes">
@@ -4728,10 +4732,12 @@ function finishQD(win){
     const bonus=Math.floor(fl/5); save.balls+=bonus;
     head=`<p class="line">無限の塔</p><h2>${fl}階まで のぼった！</h2><p class="line">${rec?'<b>さいこう記録こうしん！</b>':`さいこう記録 ${s.tower.best}階`}　フラスコ +${bonus}</p>`;
   }else{
-    if(win){ stars=B.mistakes===0?3:B.mistakes<=2?2:1; save.balls+=3+B.mastered; addExp(B.lead, stars*5); if(m==="boss") s.boss[f.id]=Math.max(s.boss[f.id]||0,stars); }
+    if(win){ stars=B.mistakes===0?3:B.mistakes<=2?2:1; save.balls+=3+B.mastered; addExp(B.lead, stars*5); if(m==="boss") s.boss[f.id]=Math.max(s.boss[f.id]||0,stars);
+      if(f && f.id===GIN){ const cb=stars===3?10:5; save.balls+=cb; B.ginB=(B.ginB||0)+cb; const st0=qdStats(f); if(st0.mastered===st0.total && !s.ginAll){ s.ginAll=1; save.balls+=50; B.ginB+=50; B.ginAll=1; } } }
     head = win ? `<h2>${m==="boss"?'ボスをたおした！':'クリア！'}</h2><div class="big">${starStr(stars)}</div><p class="line">まちがい ${B.mistakes}回・さいだい ${B.maxCombo}コンボ・フラスコ +${3+B.ballsGot+B.mastered}${B.mastered?`（マスター ボーナス +${B.mastered}）`:''}</p>`
                : `<h2>目の前がまっくらになった…</h2><p class="line">ここまでの「おぼえ度」は記録されているよ</p>`;
   }
+  if(B.ginB) head+=`<p class="line" style="color:#3d5aa8"><b>🥈 銀の森ボーナス：フラスコ +${B.ginB}</b>${B.ginAll?'（全問マスターのごほうび +50 ふくむ）':''}</p>`;
   persist();
   const st=f?qdStats(f):null;
   const dg=grantDragons(), rares=grantRares(), megas=grantMegas();
@@ -6079,7 +6085,8 @@ function judge(picked){
   const fast = !!item.readUntil && (Date.now()-item.readUntil) < FAST_MS;
   logAnswer(ok, fast);
   let qmsg="";
-  if(B.qd){ const lb=qdLv(item.key); qmsg=qdMark(item, ok); const la=qdLv(item.key); if(la>lb) B.ups++; if(la>=5&&lb<5) B.mastered++; }
+  if(B.qd){ const lb=qdLv(item.key); qmsg=qdMark(item, ok); const la=qdLv(item.key); if(la>lb) B.ups++; if(la>=5&&lb<5){ B.mastered++; if(ginOn()){ save.balls+=3; B.ginB=(B.ginB||0)+3; qmsg+=" 🥈マスター！ フラスコ+3"; } }
+    if(ok && ginOn() && !item.missed){ save.balls++; B.ginB=(B.ginB||0)+1; } }
   const qm = qmsg?`<p class="mini"><b>${esc(qmsg)}</b></p>`:"";
   if(ok && B.tower){
     B.combo++; B.maxCombo=Math.max(B.maxCombo,B.combo);
@@ -6287,7 +6294,7 @@ function finishMix(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261122021053";
+const APP_VER="20261122021302";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
