@@ -3638,7 +3638,7 @@ function wildLv(base, boss){ return enemyLv(base, boss).lv; }
 /* 強い相手ほど EXP が多い */
 const xp = n => Math.round(n*(1+((B&&B.wild)?B.wild.lv:1)/15));
 
-const APP_NO = "v65";
+const APP_NO = "v66";
 let save = load();
 function load(){
   try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && s.v===2){ for(const [id,o] of Object.entries(s.owned)) if(o.form==null && SP[id]) o.form = formIdx(id,o.lv); if(!s.wrongEver) s.wrongEver=Object.fromEntries(Object.keys(s.wrong||{}).map(k=>[k,1])); cleanGone(s); return s; } }catch(e){}
@@ -4238,7 +4238,7 @@ function showMap(){
   h += '<!--BKTOP-->';
   const rg = grantRares(), mg = grantMegas(), ug = grantUR(), umg = grantUMegas(); if(rg.length||mg.length||ug.length||umg.length) h += `<div class="gets">${umg.map(umegaCard).join("")}${ug.map(urCard).join("")}${mg.map(megaCard).join("")}${rg.map(rareCard).join("")}</div>`;
   { const rc=rewardCards(); if(rc) h += `<div class="gets">${rc}</div>`; }
-  h += testCardHTML() + weekNote() + dayNote();
+  h += ybCardHTML() + testCardHTML() + weekNote() + dayNote();
   const evoId = [...DEX_ORDER,...RARE_ORDER,...QD_ORDER,...MEGA_ORDER,...UR_ORDER,...dayIds()].find(id=>canEvo(id));
   if(evoId) h += `<button class="card prof gift" id="evoNote"><div class="mon" style="width:52px;height:52px;flex:none">${artMine(evoId)}</div><div style="text-align:left"><p>しんかできるなかまがいるよ！</p><p style="font-weight:500">${esc(nameOf(evoId))}をしんかさせよう。タップで「なかま」へ。</p></div></button>`;
   const giftReady = !save.owned.toratch && save.cleared["rika-11|s1"];
@@ -4369,7 +4369,7 @@ let partySel = null;
 function showParty(){
   const lead = save.party[0], o = save.owned[lead], s = SP[lead];
   const nf = s.forms[curF(lead)+1];
-  const ids = [KAISER, ...GACHA_ORDER, ...UR_ORDER, ...UMEGA_ORDER, ...DEX_ORDER, ...WEEK_ORDER, ...dayIds(), ...RARE_ORDER, ...QD_ORDER, ...MEGA_ORDER].filter(id=>save.owned[id]);
+  const ids = [KAISER, ...YB_MON, ...GACHA_ORDER, ...UR_ORDER, ...UMEGA_ORDER, ...DEX_ORDER, ...WEEK_ORDER, ...dayIds(), ...RARE_ORDER, ...QD_ORDER, ...MEGA_ORDER].filter(id=>save.owned[id]);
   if(!partySel || !save.owned[partySel]) partySel = lead;
   const d = partySel, dO = save.owned[d], inP = save.party.includes(d);
   app.innerHTML = `<h2 class="sec-h">なかま</h2>
@@ -5082,10 +5082,47 @@ function grantKaiser(){
 }
 const kaiserCard = () => `<div class="card get urcard"><div class="mon">${artMine(KAISER)}</div><div style="text-align:left"><b>アタックカイザーがなかまになった！</b><span>8つのモードを全部★3でクリア！ いままでで一番強いドラゴン（こうげき・HP 1.5倍＋本物の色ちがい）。さらに「ひろば」で<b>カードバトル</b>が遊べるようになった！（バトルチケット3まい）</span></div></div>`;
 
+/* ============================================================
+   やりこみボーナス（v66）
+   ユーザーの要望「今週習う16回と、11-15回までの範囲をやり込むと良いことがあるようにしてほしい。16回は今週の火曜日から来週の月曜日まで」
+   選択：第11〜15回はアタックテストまで（〜12/14）・第16回は 11/24〜11/30／ごほうび＝フラスコがたくさん・モンスターが豪華・バトルチケット＋ガチャ券・全部★3で特別なモンスター
+   対象：ぼうけんのルート（理科 rika-11〜16、社会 shakai-11〜14。社会15・16回は未登録）
+   - 1回で正解するたびフラスコ+1、ルートクリアで+5（★3なら+10）
+   - 野生モンスターが豪華（半分はでんせつ・ガチャ限定・曜日モンスター）、色ちがい 1/5、Lv+3、フラスコの成功率+25%
+   - ルートクリアでバトルチケット+1、はじめて★3でガチャ券+1（期間中はカードバトルのロックなし）
+   - 範囲のルート（でんせつのすみか ふくむ）を全部★3 → 期間限定の特別なモンスター
+   ============================================================ */
+const YB = [
+  {key:"y16", name:"第16回 てこ", from:"2026-11-24", to:"2026-11-30", ids:["rika-16"], mon:"yb_tenbin"},
+  {key:"y11", name:"第11〜15回", from:"2026-11-24", to:"2026-12-14", ids:["rika-11","rika-12","rika-13","rika-14","rika-15","shakai-11","shakai-12","shakai-13","shakai-14"], mon:"yb_phoenix"},
+];
+const ybActive = () => YB.filter(y=>today()>=y.from && today()<=y.to);
+const ybFor = uid => ybActive().find(y=>y.ids.includes(uid));
+const ybKeys = y => y.ids.map(id=>UNITS.find(u=>u.id===id)).filter(u=>u&&unitOpen(u)).flatMap(u=>[...u.stages.map(st=>u.id+"|"+st.id), u.id+"|boss"]);
+const ybDone = y => ybKeys(y).filter(k=>(save.cleared[k]||0)>=3).length;
+SP.yb_tenbin = {arch:"golem", type:"iwa", type2:"hikari", color:"#c9a227", accent:"#5b3fd1", skill:"power", legend:true, boost:1.35, size:1.25, parts:{horn:"crown", pat:"stars", wing:"crystal", acc:"gem", accColor:"#ffd23f"}, numMark:"⚖", forms:[{n:"テンビンキング"}], dex:"第16回「てこ」のルートを期間中（11/24〜11/30）に全部★3でクリアした人だけがなかまにできる。支点・力点・作用点を自由にあやつる。こうげきとHPが1.35倍。"};
+SP.yb_phoenix = {arch:"bird", type:"hono", type2:"hikari", color:"#ff7a1a", accent:"#ffd23f", skill:"power", legend:true, boost:1.35, size:1.25, parts:{horn:"crown", pat:"stars", wing:"crystal", acc:"gem", accColor:"#e8475a"}, numMark:"✦", forms:[{n:"ゴカイフェニックス"}], dex:"理科・社会の第11〜15回のルートを期間中（〜12/14）に全部★3でクリアした人だけがなかまにできる、5つの回の力をもつ不死鳥。こうげきとHPが1.35倍。"};
+const YB_MON = ["yb_tenbin","yb_phoenix"];
+function ybGrant(y){
+  if(save.owned[y.mon] || ybDone(y)<ybKeys(y).length) return false;
+  const top=Math.max(...Object.values(save.owned).map(o=>o.lv||1));
+  save.owned[y.mon]={lv:Math.min(MAX_LV, Math.max(40, top+5)), exp:0, form:0, shinyWild:true}; save.seen[y.mon]=1;
+  if(save.party.length<3) save.party.push(y.mon);
+  persist(); return true;
+}
+const ybMonCard = y => `<div class="card get urcard"><div class="mon">${artMine(y.mon)}</div><div style="text-align:left"><b>${esc(nameOf(y.mon))}がなかまになった！</b><span>${esc(y.name)}のルートを全部★3でクリア！ 期間限定の特別なモンスター（こうげき・HP 1.35倍）</span></div></div>`;
+function ybCardHTML(){
+  const a=ybActive(); if(!a.length) return "";
+  const md = d => `${+d.slice(5,7)}/${+d.slice(8)}`;
+  return `<div class="card testcard"><b class="tc-h">🔥 やりこみボーナス</b><span class="mini">対象のルートでは、1回で正解するたびフラスコ+1・クリアで+5（★3なら+10）・バトルチケット+1・はじめて★3でガチャ券+1。出てくるモンスターも豪華（色ちがい 1/5）！</span>
+    ${a.map(y=>{ const n=ybKeys(y).length, d=ybDone(y), own=!!save.owned[y.mon];
+      return `<div class="tc-row" style="align-items:center;gap:8px"><div class="mon" style="width:52px;height:52px;flex:none">${own?artMine(y.mon):art(y.mon,1,{sil:true})}</div><div style="text-align:left"><b>${esc(y.name)}　〜${md(y.to)}まで</b><br><span class="mini">${y.ids.map(id=>{ const u=UNITS.find(x=>x.id===id); return u&&unitOpen(u)?esc(unitLabel(u)):""; }).filter(Boolean).join("・")}</span><br><span class="mini"><b>★3 ${d} / ${n}</b>（でんせつのすみか ふくむ）${own?' → 特別なモンスターをゲット済み！':' → 全部★3で特別なモンスター！'}</span></div></div>`; }).join("")}</div>`;
+}
+
 /* カードのステータス */
 function cardStat(id){
   const o=save.owned[id]||{lv:1}, s=SP[id], lv=o.lv||1, p=shinyPow(id), sg=sigOf(id), M=sg?MOVES[sg]:MOVES[s.type+"3"]||MOVES.tackle;
-  const rare = id===KAISER?5 : s.umega||s.ur||s.gacha===3?4 : s.gacha===2?3 : s.mega||s.legend||s.week?3 : (o.shinyWild||s.rare||s.daily||s.qd)?2 : 1;
+  const rare = id===KAISER?5 : YB_MON.includes(id)?4 : s.umega||s.ur||s.gacha===3?4 : s.gacha===2?3 : s.mega||s.legend||s.week?3 : (o.shinyWild||s.rare||s.daily||s.qd)?2 : 1;
   return {id, lv, hp:Math.round((30+lv*3)*p), atk:Math.round((8+lv*0.9)*p), type:s.type, type2:s.type2, mv:M.n, mvPow:M.pow, rare};
 }
 const RARE_N = ["","★","★★","★★★","★★★★","★★★★★"];
@@ -5101,7 +5138,7 @@ let cardSel = null;
    → テスト期間中（〜11/16）は、まだ解放していなくても遊べる。1日3回とチケット上限5まいの制限なし。チケットはテスト範囲のルート／テスト対策のコーナーをクリアでもらえる（前回と同じ場所はだめ） */
 const cardFree = () => testOn();
 function cardTabHTML(){
-  if(!save.cardOpen && !cardFree()) return `<div class="card" style="padding:14px"><b>🔒 カードバトル</b><p class="mini">ホームの「アタックテスト対策」で、理科・社会の8つのモードを全部★3（まちがい0）でクリアすると、アタックカイザーがなかまになり、カードバトルが遊べるようになるよ。</p><p class="mini">いまの★3：${["理科","社会"].map(sj=>MIX_MODES.filter(([m])=>((save.testBest||{})[sj+"|"+m]||0)>=3).length).reduce((a,b)=>a+b,0)} / 8</p></div>`;
+  if(!save.cardOpen && !cardFree() && !ybActive().length) return `<div class="card" style="padding:14px"><b>🔒 カードバトル</b><p class="mini">ホームの「アタックテスト対策」で、理科・社会の8つのモードを全部★3（まちがい0）でクリアすると、アタックカイザーがなかまになり、カードバトルが遊べるようになるよ。</p><p class="mini">いまの★3：${["理科","社会"].map(sj=>MIX_MODES.filter(([m])=>((save.testBest||{})[sj+"|"+m]||0)>=3).length).reduce((a,b)=>a+b,0)} / 8</p></div>`;
   const deck=(save.deck||[]).filter(id=>save.owned[id]), cd=cardDay(), tk=save.cardTk||0, rk=save.cardRank||1;
   const ids=Object.keys(save.owned).filter(id=>SP[id]).map(cardStat).sort((a,b)=>b.rare-a.rare||b.lv-a.lv);
   return `<div class="card" style="padding:12px"><b>🃏 カードバトル</b><p class="mini">なかまのカード6まいでデッキを組んで、カードトレーナーとたたかおう。自分のばんは、まず問題に答える→正解でエネルギー＋1。エネルギー2で「わざ」が使える！</p>
@@ -5377,6 +5414,8 @@ for(const [id,[n,e,p]] of Object.entries(UNIQ)){
 function migSig(s){ for(const [id,o] of Object.entries(s.owned||{})){ const u=MOVES["u_"+id]; if(!u||!o.mvUp) continue; for(const g of ["sig_legend","sig_mega","sig_umega","sig_week","sig_ur"]) if(o.mvUp[g]&&!o.mvUp["u_"+id]){ o.mvUp["u_"+id]=o.mvUp[g]; delete o.mvUp[g]; } } }
 migSig(save);
 MOVES["u_"+KAISER] = {n:"パーフェクトアタック", sig:true, pow:3.8, combo:2, st:"ddn", stp:1};
+MOVES.u_yb_tenbin = {n:"モーメントクラッシュ", sig:true, pow:3.2, combo:2, st:"ddn", stp:1};
+MOVES.u_yb_phoenix = {n:"ゴカイフレア", sig:true, pow:3.2, combo:2, st:"ddn", stp:1};
 
 /* v48: でんせつ等いがいの全モンスターにも、そのモンスターだけのわざ（名前＝さいしょのすがたの名前＋タイプのことば。じょうたいは id から決まる） */
 const AUTO_SUF = {mizu:["スプラッシュ","アクアショット","ウォーターガン"], hono:["バーニング","フレイム","ファイアキック"], kusa:["リーフストーム","グリーンウィップ","フラワーショット"], iwa:["ロッククラッシュ","ストーンブロウ","ガンセキアタック"], denki:["スパーク","サンダーショット","ボルトアタック"], koori:["フリーズ","アイスブレス","スノーショット"], kaze:["トルネード","ウィンドカッター","ゲイルアタック"], hikari:["シャイン","ライトビーム","スターフラッシュ"]};
@@ -5854,7 +5893,7 @@ function startBattle(uid, sid){
     queue = s.qs.map((q,i)=>({q,key:qKey(u.id,s.id,i)})); pool=s.wild; name=s.name; lvBase=2+sIdx*2;
   }
   const colBefore = prefLevels();
-  B = {colBefore, u, sid, name, queue, total:queue.length, pool, lvBase, hearts:MAX_HP, lead:save.party[0],
+  B = {colBefore, u, sid, name, queue, yb:ybFor(uid)||null, total:queue.length, pool, lvBase, hearts:MAX_HP, lead:save.party[0],
        wild:null, combo:0, maxCombo:0, mistakes:0, n:0, used:{}, power:false, luck:false,
        caught:[], defeated:0, evoReady:[], lvups:{}, ballsGot:0, busy:false, swapOpen:false, hp:{}, guard:false, lure:false, newMoves:[]};
   spawn(); renderBattle(true);
@@ -5863,12 +5902,13 @@ function spawn(){
   const boss = B.sid==="boss";
   let id = pick(B.pool);
   if(!boss && !B.trainer){ const rw=Math.random(); if(rw<WEEK_RATE) id = weekToday(); else if(rw<WEEK_RATE+DAY_RATE) id = dayToday(); }
+  if(B.yb && !boss && Math.random()<.5){ const fp=dfestPool(); if(fp.length) id=pick(fp); }
   if(B.mitsu && !boss && !B.trainer){ const un=B.pool.filter(x=>!save.owned[x]); if(un.length) id=pick(un); B.mitsu=false; }
   if(B.trainer){ const t=B.trainer, st2=Math.random()<STRONG_RATE, lv2=Math.min(MAX_LV, Math.max(1, Math.round(t.lv*(st2?1.25+Math.random()*.15:.85+Math.random()*.35)))), mx=Math.round(30+lv2*4); id=t.team[t.idx]; B.wild={id, lv:lv2, hp:mx, max:mx, sz:1, strong:st2}; save.seen[id]=1; persist(); return; }
-  const EL = enemyLv(boss ? B.lvBase : B.lvBase + Math.floor(Math.random()*2), boss), lv = EL.lv;
+  const EL = enemyLv(boss ? B.lvBase : B.lvBase + Math.floor(Math.random()*2), boss), lv = (B.yb && !boss) ? Math.min(WILD_MAX, EL.lv+3) : EL.lv;
   const r = Math.random(), sz = boss ? 1 : r<.07 ? 1.22 : r<.14 ? .78 : Math.round((0.92+Math.random()*.16)*100)/100;
   const max = boss ? 150 + Math.max(0, lv-14)*6 : Math.round((28 + lv*3)*sz);
-  const shiny = !boss && !B.trainer && Math.random()<(B.qd && festFor(B.qd.fid) ? 1/5 : SHINY_RATE);
+  const shiny = !boss && !B.trainer && Math.random()<((B.qd && festFor(B.qd.fid)) || B.yb ? 1/5 : SHINY_RATE);
   if(EL.strong && !shiny){ B.wild = {id, lv, hp:Math.round(max*1.15), max:Math.round(max*1.15), sz, strong:true}; save.seen[id]=1; persist(); return; }
   B.wild = shiny ? {id, lv:Math.min(WILD_MAX, lv+5), hp:Math.round(max*1.5), max:Math.round(max*1.5), sz, shiny:true} : {id, lv, hp:max, max, sz};
   save.seen[id]=1; persist();
@@ -6112,6 +6152,7 @@ function judge(picked){
     if(first) misAdd("ok"); if(B.qd) misAdd("qd"); if(B.sid==="review") misAdd("review");
     if(first){ B.combo++; B.maxCombo=Math.max(B.maxCombo,B.combo); misMax("combo",B.combo); stat().maxCombo=Math.max(stat().maxCombo||0,B.maxCombo); }
     let bonus = first ? "" : `<p class="mini">まちがえたあとの正解なので、ごほうびは少なめ（EXP半分・コンボはふえない）。1回で正解するとたくさんもらえるよ。</p>`;
+    if(first && B.yb){ save.balls++; B.ybB=(B.ybB||0)+1; bonus+=`<p class="mini">🔥 やりこみボーナス：フラスコ+1</p>`; }
     if(first && B.combo%3===0){ save.balls++; B.ballsGot++; bonus=`<p><b>${B.combo}コンボ！ フラスコを1つひろった！</b></p>`; }
     if(first && B.mix && B.mix.mode==="endless"){ B.endOk++; if(B.endOk%5===0){ save.cardTk = testOn() ? (save.cardTk||0)+1 : Math.min(CARD_MAX_TK, (save.cardTk||0)+1); bonus+=`<p><b>🎫 ${B.endOk}問正解！ バトルチケット+1まい（いま${save.cardTk}まい）</b></p>`; } else bonus+=`<p class="mini">つぎのチケットまで あと${5-B.endOk%5}問（1回目で正解）</p>`; }
     if(first && B.mix && item.early){ save.balls++; B.ballsGot++; bonus+=`<p><b>早押しボーナス！ フラスコを1つひろった！</b></p>`; }
@@ -6198,7 +6239,7 @@ function doBall(sup){
   lockActs();
   const w=B.wild, boss=B.sid==="boss";
   if(sup===true) bag().superflask=Math.max(0,(bag().superflask||0)-1); else save.balls--; persist();
-  const p = Math.min(.97, (B.qd && festFor(B.qd.fid) && !boss ? .25 : 0) + (boss?.08:.3) + (1-w.hp/w.max)*(boss?.55:.55) + Math.min(B.combo,5)*.04 + (B.luck?.3:0) + (B.lure?.2:0) + (w.st&&w.st.slp>0?.15:w.st&&w.st.par?.1:0) + (sup===true?(boss?.3:.35):0));
+  const p = Math.min(.97, (((B.qd && festFor(B.qd.fid)) || B.yb) && !boss ? .25 : 0) + (boss?.08:.3) + (1-w.hp/w.max)*(boss?.55:.55) + Math.min(B.combo,5)*.04 + (B.luck?.3:0) + (B.lure?.2:0) + (w.st&&w.st.slp>0?.15:w.st&&w.st.par?.1:0) + (sup===true?(boss?.3:.35):0));
   B.luck=false; B.lure=false;
   const got = Math.random()<p, shakes = got?3:Math.floor(Math.random()*3);
   const f=document.getElementById("field"), fl=document.createElement("div");
@@ -6244,18 +6285,24 @@ function finish(win){
   if(B.trainer) return finishTrainer(win);
   stat().maxCombo=Math.max(stat().maxCombo||0,B.maxCombo); B.extraBalls=0; misMax("combo",B.maxCombo); tkMsg=""; if(win && B.sid!=="review"){ misAdd("route"); giveTicket(B.u.id+"|"+B.sid); }
   window.scrollTo(0,0);
-  let stars=0;
+  let stars=0; const ybPrev = save.cleared[B.u.id+"|"+B.sid]||0, ybGets=[];
   if(win){
     stars = B.mistakes===0?3:B.mistakes<=2?2:1;
     save.balls += 3;
     if(B.sid!=="review"){ const k=B.u.id+"|"+B.sid, prev=save.cleared[k]||0; if(!prev) B.extraBalls+=2; if(stars===3 && prev<3) B.extraBalls+=3; save.cleared[k]=Math.max(prev,stars); }
     save.balls += B.extraBalls;
     addExp(B.lead, stars*5);
+    if(B.yb && B.sid!=="review"){ const fb=stars===3?10:5; save.balls+=fb; B.ybB=(B.ybB||0)+fb; save.cardTk=(save.cardTk||0)+1;
+      let g=0; if(stars===3 && ybPrev<3){ save.gacha=(save.gacha||0)+1; g=1; }
+      ybGets.push(`<div class="card get"><div class="mon" style="font-size:40px;display:grid;place-items:center">🔥</div><div><b>やりこみボーナス（${esc(B.yb.name)}）</b><span>フラスコ +${B.ybB}（正解＋クリア${stars===3?'★3':''}）・バトルチケット +1まい（いま${save.cardTk}まい）${g?'・ガチャ券 +1まい（はじめての★3）':''}<br>★3 ${ybDone(B.yb)} / ${ybKeys(B.yb).length}</span></div></div>`);
+      if(ybGrant(B.yb)) ybGets.unshift(ybMonCard(B.yb)); }
+    else if(B.yb && B.ybB) ybGets.push(`<div class="card get"><div class="mon" style="font-size:40px;display:grid;place-items:center">🔥</div><div><b>やりこみボーナス</b><span>フラスコ +${B.ybB}</span></div></div>`);
   }
   persist();
   const rares = grantRares(), megas = grantMegas(), urs = grantUR(), umegas = grantUMegas();
   const lvAfter = prefLevels(), newCol = Object.keys(lvAfter).filter(p=>lvAfter[p]>(B.colBefore[p]||0));
   const gets = [
+    ...ybGets,
     ...umegas.map(umegaCard),
     tkCard(),
     rewardCards(),
@@ -6300,7 +6347,7 @@ function finishMix(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261124095339";
+const APP_VER="20261125041509";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
