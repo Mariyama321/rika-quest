@@ -2247,7 +2247,7 @@ const UNITS = [
   ]
 },
 {
-  id:"rika-17", no:17, title:"ばね", subject:"理科", added:"2026-11-05", release:"2026-11-24",
+  id:"rika-17", no:17, title:"ばね", subject:"理科", added:"2026-11-05", release:"2026-12-01",
   region:"びよよんの谷",
   legend:"springer",
   monsters:{
@@ -2313,7 +2313,7 @@ const UNITS = [
   ]
 },
 {
-  id:"rika-18", no:18, title:"第16回〜第17回のまとめ", subject:"理科", added:"2026-11-05", release:"2026-12-01",
+  id:"rika-18", no:18, title:"第16回〜第17回のまとめ", subject:"理科", added:"2026-11-05", release:"2027-01-12",
   region:"ちからの神殿",
   legend:"forcedrago",
   monsters:{
@@ -4007,7 +4007,7 @@ function wildLv(base, boss){ return enemyLv(base, boss).lv; }
 /* 強い相手ほど EXP が多い */
 const xp = n => Math.round(n*(1+((B&&B.wild)?B.wild.lv:1)/15));
 
-const APP_NO = "v68";
+const APP_NO = "v69";
 let save = load();
 function load(){
   try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && s.v===2){ for(const [id,o] of Object.entries(s.owned)) if(o.form==null && SP[id]) o.form = formIdx(id,o.lv); if(!s.wrongEver) s.wrongEver=Object.fromEntries(Object.keys(s.wrong||{}).map(k=>[k,1])); cleanGone(s); return s; } }catch(e){}
@@ -6716,7 +6716,7 @@ function finishMix(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261125230731";
+const APP_VER="20261125231857";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
