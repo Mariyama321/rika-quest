@@ -567,6 +567,13 @@ body.dexonly .dexgrid .mcard.unseen, body.dexonly .dexgrid .mcard.seenonly{displ
 .fpc.part{border-style:solid;border-color:var(--ink)}
 .fpc.full{border:2px solid #8f6bff;background:#f3e8ff}
 .fpc i{font-style:normal;color:var(--sun);-webkit-text-stroke:.6px var(--ink);white-space:nowrap}.fpc i .off{color:#dfe6ee}
+.qsubtabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 6px}
+.qsubtab{display:flex;align-items:center;gap:8px;padding:10px;border-radius:16px;border:3px solid var(--qc);background:#fff;color:var(--ink,#24324a);text-align:left;font:inherit;cursor:pointer;box-shadow:0 4px 0 rgba(36,50,74,.18)}
+.qsubtab .qs-ic{font-size:28px;line-height:1}
+.qsubtab .qs-t{display:flex;flex-direction:column;min-width:0}
+.qsubtab b{font-size:20px}.qsubtab small{font-size:11px;opacity:.8;line-height:1.3}
+.qsubtab.on{background:var(--qc);color:#fff;transform:translateY(2px);box-shadow:0 2px 0 rgba(36,50,74,.25)}
+.qsubhead{margin:10px 2px 4px;font-weight:800;color:var(--qc);font-size:14px}
 </style>
 
 <div class="wrap" id="app"></div>
@@ -4007,7 +4014,7 @@ function wildLv(base, boss){ return enemyLv(base, boss).lv; }
 /* 強い相手ほど EXP が多い */
 const xp = n => Math.round(n*(1+((B&&B.wild)?B.wild.lv:1)/15));
 
-const APP_NO = "v69";
+const APP_NO = "v70";
 let save = load();
 function load(){
   try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && s.v===2){ for(const [id,o] of Object.entries(s.owned)) if(o.form==null && SP[id]) o.form = formIdx(id,o.lv); if(!s.wrongEver) s.wrongEver=Object.fromEntries(Object.keys(s.wrong||{}).map(k=>[k,1])); cleanGone(s); return s; } }catch(e){}
@@ -5015,7 +5022,12 @@ function showQD(){
       <div class="mini" style="margin-top:4px">今日 ${dn}/${QD_DAY_GOAL}問${s.egg.last===today()?'・<b>今日はクリア！</b>':''}　たまご ${s.egg.w}/${EGG_NEED}${s.egg.streak>1&&s.egg.last>=dayAdd(today(),-1)?`　${s.egg.streak}日れんぞく`:''}</div>
       ${allDue?`<div class="mini">ふくしゅうの日になった問題：全部で <b>${allDue}問</b></div>`:''}</div></div>`;
   if(eggReady) h+=`<button class="btn go" id="hatch" style="margin-top:10px">たまごがうまれる！ タップ</button>`;
-  h+=`<div class="floors">${QD_FLOORS.map(x=>{ const t=qdStats(x), own=save.owned[x.dragon];
+  /* v70: 「ダンジョンを理科と社会でわかりやすくわけて」→ 教科のタブで切りかえ、えらんだ教科の階だけ出す */
+  const qsubj=f.subj, QSUBS=[["理科","🔬","#3d8bff"],["社会","🗾","#4fa636"]];
+  h+=`<div class="qsubtabs">${QSUBS.map(([sj,ic,cl])=>{ const fl=QD_FLOORS.filter(x=>x.subj===sj), m=fl.reduce((n,x)=>n+qdStats(x).mastered,0), q=fl.reduce((n,x)=>n+x.qs.length,0), du=fl.reduce((n,x)=>n+qdStats(x).due,0);
+    return `<button class="qsubtab ${sj===qsubj?'on':''}" data-qsub="${sj}" style="--qc:${cl}"><span class="qs-ic">${ic}</span><span class="qs-t"><b>${sj}</b><small>ダンジョン ${fl.length}つの階<br>マスター ${m}/${q}${du?`<br>ふくしゅう ${du}問`:''}</small></span></button>`; }).join("")}</div>`;
+  h+=`<div class="qsubhead" style="--qc:${qsubj==="理科"?"#3d8bff":"#4fa636"}">${qsubj==="理科"?"🔬 理科":"🗾 社会"}の階をえらぼう</div>`;
+  h+=`<div class="floors">${QD_FLOORS.filter(x=>x.subj===qsubj).map(x=>{ const t=qdStats(x), own=save.owned[x.dragon];
     return `<button class="card floor ${x.id===s.sel?'on':''}" data-f="${x.id}" style="--fc:${x.col}"><div class="mon">${own?artMine(x.dragon):art(x.dragon,1,{sil:true})}</div><div style="min-width:0;flex:1"><span class="rno">${x.subj}・${x.lb}</span><b>${esc(x.name)}</b>${qdBar(t)}<span class="rsub">マスター ${t.mastered}/${t.total}${t.due?`・ふくしゅう ${t.due}`:''}</span></div></button>`; }).join("")}</div>`;
   const bossOk=st.allSeen, bossCand=f.qs.filter(q=>(qdRec(q.key)||{}).ng).length;
   if(f.id===GIN) h+=`<div class="card dfest" style="background:linear-gradient(120deg,#eef2f7,#d6dde8,#ffffff)"><b>🥈 銀の森はやりこむほどフラスコざくざく！</b><span>1回目で正解：フラスコ+1／マスターした問題：さらに+3／クリア：+5（★3なら+10）／全問マスター：+50（1回だけ）${qdS().ginAll?'　✅ 全問マスター達成ずみ':''}</span></div>`;
@@ -5032,7 +5044,8 @@ function showQD(){
   h+=`<button class="card tower" id="tower" ${towerPool>=TOWER_MIN?'':'disabled'}><div class="tw">${towerSVG}</div><div style="text-align:left"><b>無限の塔</b><span class="mini">${towerPool>=TOWER_MIN?`おぼえ度3以上の問題がランダムに出る。ハート3つで何階まで行ける？　さいこう記録 <b>${s.tower.best}階</b>`:`おぼえ度3以上の問題が${TOWER_MIN}問になるとひらく（いま ${towerPool}問）`}</span></div></button>`;
   h+=`<details class="card howto"><summary>おぼえ度のしくみ</summary><p class="mini">1回目で正解すると、おぼえ度が1上がって、次に出る日がのびるよ（1日後→2日後→4日後→7日後）。5になったら「マスター」。まちがえると、おぼえ度が1にもどって、また出てくる。<br>おぼえ度が上がると答え方がかわるよ。理科の「何といいますか」の問題は、文字タイルをならべて答える（だんだんヒントがへる）。社会は日本地図をタップして答える。<br>社会の問題をマスターすると、「ちず」のその都道府県の色もこくなるよ。</p></details>`;
   app.innerHTML=h;
-  app.querySelectorAll(".floor").forEach(b=>b.onclick=()=>{ s.sel=b.dataset.f; persist(); showQD(); });
+  app.querySelectorAll(".floor").forEach(b=>b.onclick=()=>{ s.sel=b.dataset.f; (s.selBy=s.selBy||{})[QD_FLOORS.find(x=>x.id===s.sel).subj]=s.sel; persist(); showQD(); });
+  app.querySelectorAll(".qsubtab").forEach(b=>b.onclick=()=>{ const sj=b.dataset.qsub; if(sj===qsubj) return; const last=(s.selBy||{})[sj]; s.sel=QD_FLOORS.some(x=>x.id===last&&x.subj===sj)?last:QD_FLOORS.find(x=>x.subj===sj).id; persist(); showQD(); });
   app.querySelectorAll(".route:not([disabled])").forEach(b=>b.onclick=()=>startQD(f.id, b.dataset.m));
   const tw=document.getElementById("tower"); if(towerPool>=TOWER_MIN) tw.onclick=()=>startQD(null,"tower");
   if(eggReady) document.getElementById("hatch").onclick=showHatch;
@@ -6716,7 +6729,7 @@ function finishMix(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261125231857";
+const APP_VER="20261126115405";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
