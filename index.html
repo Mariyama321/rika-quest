@@ -2232,7 +2232,7 @@ const UNITS = [
       {lever:{unit: "", bar: {min: -11, max: 11, piv: 0, k: "bane", hangs: [{x: -10, t: "30g"}, {x: 6, t: "X", q: true}]}}, q:"ばねばかりで中心をつるしたぼうに、左10の位置に30g、右6の位置にXをつるすとつり合った。Xは何g？", c:["50g","30g","18g","60g"], a:0, n:"50", e:"30×10＝300。X×6＝300なのでX＝50g。"},
       {lever:{unit: "", bar: {min: -11, max: 11, piv: 0, k: "bane", hangs: [{x: -10, t: "30g"}, {x: 6, t: "50g"}]}}, q:"ばねばかりで中心をつるしたぼうに、左10の位置に30g、右6の位置に50gをつるしてつり合った。ばねばかりのしめす値は？", c:["80g","50g","30g","20g"], a:0, n:"80", e:"30＋50＝80g。"},
       {lever:{unit: "cm", bar: {min: -11, max: 11, piv: 0, k: "bane", pl: "P", hangs: [{x: 10, t: "10g"}]}}, q:"重さを無視できるぼうの真ん中（点P）をばねばかりでつるし、点Pから右に10cmの位置に10gのおもりをつるした。ぼうはどうなる？", c:["右側が下がる","左側が下がる","つり合う"], a:0, fixed:true, e:"左には何もないので、右側が下がります。"},
-      {lever:{unit: "cm", bar: {min: -11, max: 11, piv: 0, k: "bane", pl: "P", hangs: [{x: 10, t: "10g"}, {x: -5, t: "20g", dt: "□cm", q: true}]}}, q:"点Pから右に10cmの位置に10gをつるしたぼうを水平にするには、20gのおもりを点Pから左に何cmの位置につるせばよい？", c:["5cm","10cm","20cm","2cm"], a:0, n:"5", e:"10×10＝100。20×□＝100なので5cm。"},
+      {lever:{unit: "cm", bar: {min: -11, max: 11, piv: 0, k: "bane", pl: "P", hangs: [{x: 10, t: "10g"}, {x: -5, t: "20g", dt: "□cm"}]}}, q:"点Pから右に10cmの位置に10gをつるしたぼうを水平にするには、20gのおもりを点Pから左に何cmの位置につるせばよい？", c:["5cm","10cm","20cm","2cm"], a:0, n:"5", e:"10×10＝100。20×□＝100なので5cm。"},
       {lever:{unit: "cm", bar: {min: -11, max: 11, piv: 0, k: "bane", pl: "P", hangs: [{x: 10, t: "10g"}, {x: -5, t: "20g"}]}}, q:"点Pから右10cmに10g、左5cmに20gをつるしてつり合った。ばねばかりのしめす値は？", c:["30g","20g","10g","100g"], a:0, n:"30", e:"10＋20＝30g。"},
       {lever:{unit: "cm", bar: {min: -11, max: 11, piv: 0, k: "bane", pl: "P", hangs: [{x: 10, t: "10g"}, {x: -4, t: "□g", q: true}]}}, q:"点Pから右10cmに10gをつるしたぼうを水平にするには、点Pから左に4cmの位置に何gのおもりをつるせばよい？", c:["25g","40g","10g","20g"], a:0, n:"25", e:"10×10＝100。□×4＝100なので25g。"},
       {lever:{unit: "cm", bar: {min: -16, max: 16, piv: 0, k: "ito", hangs: [{x: -10, t: "30g"}, {x: 15, t: "10g", t2: "ねん土？", q2: true}]}}, q:"支点から左10cmに30gのおもり、右15cmに10gのおもりと、その下にねん土をつるすとつり合った。ねん土は何g？", c:["10g","20g","30g","5g"], a:0, n:"10", e:"左30×10＝300。右は15cmの位置に（10＋ねん土）gで、300÷15＝20g。ねん土は20−10＝10g。"},
@@ -4019,7 +4019,7 @@ function wildLv(base, boss){ return enemyLv(base, boss).lv; }
 /* 強い相手ほど EXP が多い */
 const xp = n => Math.round(n*(1+((B&&B.wild)?B.wild.lv:1)/15));
 
-const APP_NO = "v75";
+const APP_NO = "v76";
 let save = load();
 function load(){
   try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && s.v===2){ for(const [id,o] of Object.entries(s.owned)) if(o.form==null && SP[id]) o.form = formIdx(id,o.lv); if(!s.wrongEver) s.wrongEver=Object.fromEntries(Object.keys(s.wrong||{}).map(k=>[k,1])); cleanGone(s); return s; } }catch(e){}
@@ -4501,6 +4501,7 @@ function leverSVG(L){
     /* ぼう */
     s+=`<rect x="${X(ox+b.min)}" y="${y-4}" width="${(b.max-b.min)*sc}" height="8" rx="4" fill="#f6e2b8" stroke="#24324a" stroke-width="2"/>`;
     if(b.pl) s+=txt(px-12, y-9, b.pl, {fs:12, c:'#e8475a'});
+    if(!U && b.max-b.min<=24) for(let u=Math.ceil(b.min); u<=b.max; u++){ const tx=X(ox+u); s+=`<line x1="${tx}" y1="${y-4}" x2="${tx}" y2="${y+4}" stroke="#a0784b" stroke-width="1"/>`; }
     s+=`<circle cx="${px}" cy="${y}" r="3.5" fill="#e8475a" stroke="#24324a" stroke-width="1.5"/>`;
     if(b.lab) s+=txt(X(ox+b.min)+2, y-10, b.lab, {fs:10, c:'#5a6b85'}).replace('text-anchor="middle"','text-anchor="start"');
     /* おもり */
@@ -6888,7 +6889,7 @@ function finishMix(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261128013852";
+const APP_VER="20261128014118";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
