@@ -1656,7 +1656,7 @@ const UNITS = [
   id:"shakai-mark",
   no:90,
   label:"県章",
-  title:"都道府県のマーク",
+  title:"都道府県のマーク", prefByStage:true,
   subject:"社会",
   added:"2026-11-01",
   region:"マークの国",
@@ -4015,7 +4015,7 @@ function wildLv(base, boss){ return enemyLv(base, boss).lv; }
 /* 強い相手ほど EXP が多い */
 const xp = n => Math.round(n*(1+((B&&B.wild)?B.wild.lv:1)/15));
 
-const APP_NO = "v72";
+const APP_NO = "v73";
 let save = load();
 function load(){
   try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && s.v===2){ for(const [id,o] of Object.entries(s.owned)) if(o.form==null && SP[id]) o.form = formIdx(id,o.lv); if(!s.wrongEver) s.wrongEver=Object.fromEntries(Object.keys(s.wrong||{}).map(k=>[k,1])); cleanGone(s); return s; } }catch(e){}
@@ -4558,9 +4558,13 @@ const MAPCREDIT=`<div class="mapcredit">地図：svg-maps/japan（Victor Cazanav
 /* 地図の色の段階: 単元ごとに「重み×クリア率」を都道府県に足していく。
    テーマ単元（米づくり等）は重み1 → 1単元だけでは段階2まで。地方の単元は重み2（prefW:2）。合計で段階4（最高）になる */
 const MAPLV=["#f6f2e3","#fde9a6","#f7cf5c","#f0a83a","#d9772a"], MAPLVN=["まだ","うっすら","すこし","かなり","かんぜん"];
+const prefStages=(u,p)=>u.stages.filter(st=>st.qs.some(q=>q.img===p||q.a===p));
 function prefScores(){
   const sc={};
   for(const u of UNITS){ if(!u.prefs) continue;
+    /* v73: 「都道府県のマーク」は地方ごとのルート。そのルートをクリアすると、その地方の都道府県に1ポイント（でんせつのすみかは関係なし） */
+    if(u.prefByStage){ for(const p of u.prefs){ const sts=prefStages(u,p); if(!sts.length) continue; const d=sts.filter(st=>save.cleared[u.id+"|"+st.id]).length; if(!d) continue;
+      const r=sc[p]||(sc[p]={s:0,us:[]}); r.s+=(u.prefW||1)*d/sts.length; r.us.push([u,d,sts.length]); } continue; }
     const total=u.stages.length+1, done=u.stages.filter(s=>save.cleared[u.id+"|"+s.id]).length+(save.cleared[u.id+"|boss"]?1:0);
     if(!done) continue;
     for(const p of u.prefs){ const r=sc[p]||(sc[p]={s:0,us:[]}); r.s+=(u.prefW||1)*done/total; r.us.push([u,done,total]); }
@@ -4572,6 +4576,17 @@ function prefScores(){
   return sc;
 }
 const prefLv = s => s<=0?0 : s<1?1 : s<2?2 : s<3?3 : 4;
+/* v73: 「星3ついているのに、あと何をすればいいかわからない」→ その都道府県で、あと何をすればポイントがたまるかのリスト */
+function prefTodo(p){
+  const out=[];
+  for(const u of UNITS){ if(!u.prefs||!u.prefs.includes(p)||!unitOpen(u)) continue;
+    const ks=u.prefByStage?prefStages(u,p).map(st=>[st.id,st.name]):[...u.stages.map(st=>[st.id,st.name]),["boss","でんせつのすみか"]], left=ks.filter(([id])=>!save.cleared[u.id+"|"+id]), w=u.prefW||1;
+    out.push({done:!left.length, txt:`${u.subject}「${u.title}」（全部で${w}ポイント）`+(left.length?`：あと ${left.map(x=>x[1]).join("・")}`:'：全部クリア！')}); }
+  for(const f of QD_FLOORS){ if(f.subj!=="社会") continue; const qs=f.qs.filter(q=>q.p===p); if(!qs.length) continue;
+    const m=qs.filter(q=>qdLv(q.key)>=5).length;
+    out.push({done:m===qs.length, txt:`ダンジョン「${f.name}」でこの都道府県の問題を「マスター」（1ポイント）：${m}/${qs.length}問`}); }
+  return out;
+}
 function grantRares(){
   const lv=prefLevels(), got=[];
   for(const [p,l] of Object.entries(lv)){ const id="rare_"+p;
@@ -4590,7 +4605,7 @@ function showJMap(){
   let info="地図の都道府県をタップすると、名前と色の段階がわかるよ。";
   if(mapSel){ const r=sc[mapSel], l=lv[mapSel]||0;
     const rid="rare_"+mapSel, rown=save.owned[rid];
-    info=`<div class="row" style="display:flex;gap:10px;align-items:center"><div class="mon" style="width:64px;height:64px;flex:none">${rown?artMine(rid):art(rid,1,{sil:true})}</div><div><b>${MAPD[mapSel][0]}</b>　色の段階：${l}／4（${MAPLVN[l]}）<br><span class="mini">レアモンスター：${rown?esc(nameOf(rid))+"（なかま）":"？？？（かんぜんにすると手に入る）"}</span>${rown?'':`<div class="bar" style="margin-top:4px"><i style="width:${Math.min(100,((r?r.s:0)/4)*100)}%;background:#d9772a"></i></div><span class="mini">かんぜんまで <b>${(r?r.s:0).toFixed(1)} / 4</b> ポイント（あと ${Math.max(0,4-(r?r.s:0)).toFixed(1)}）</span>`}</div></div>`+(r?`<br><span class="mini">${[...r.us.map(([u,d,t])=>`${esc(u.subject)}「${esc(u.title)}」${d}/${t}クリア`), ...(r.qd||[]).map(([lb,m,t])=>`クイズダンジョン${lb} ${m}/${t}問マスター`)].join("、")}</span>`:`<br><span class="mini">この都道府県が出てくる単元をクリアすると色がつくよ。</span>`)+`<br><span class="mini">ポイントのため方：地方の単元はルートとでんせつを全部クリアで2、テーマの単元（米づくりなど）は全部で1、クイズダンジョン社会の各階でその都道府県の問題を全部マスターで1。とちゅうまでなら、その分だけ（例：5つのうち3つで0.6）。4ポイントで「かんぜん」→レアモンスター！</span>`; }
+    info=`<div class="row" style="display:flex;gap:10px;align-items:center"><div class="mon" style="width:64px;height:64px;flex:none">${rown?artMine(rid):art(rid,1,{sil:true})}</div><div><b>${MAPD[mapSel][0]}</b>　色の段階：${l}／4（${MAPLVN[l]}）<br><span class="mini">レアモンスター：${rown?esc(nameOf(rid))+"（なかま）":"？？？（かんぜんにすると手に入る）"}</span>${rown?'':`<div class="bar" style="margin-top:4px"><i style="width:${Math.min(100,((r?r.s:0)/4)*100)}%;background:#d9772a"></i></div><span class="mini">かんぜんまで <b>${(r?r.s:0).toFixed(1)} / 4</b> ポイント（あと ${Math.max(0,4-(r?r.s:0)).toFixed(1)}）</span>`}</div></div>`+(r?`<br><span class="mini">${[...r.us.map(([u,d,t])=>`${esc(u.subject)}「${esc(u.title)}」${d}/${t}クリア`), ...(r.qd||[]).map(([lb,m,t])=>`クイズダンジョン${lb} ${m}/${t}問マスター`)].join("、")}</span>`:`<br><span class="mini">この都道府県が出てくる単元をクリアすると色がつくよ。</span>`)+(()=>{ const td=prefTodo(mapSel); return td.length?`<div class="mini" style="margin-top:8px"><b>あと何をすればいい？</b><ul style="margin:4px 0 0 1.1em;padding:0">${td.map(t=>`<li style="${t.done?'opacity:.55':''}">${t.done?'✅':'⬜'} ${esc(t.txt)}</li>`).join("")}</ul><span>ルートの★3だけでなく「でんせつのすみか」もクリアすると、ポイントがたまるよ。ダンジョンの「マスター」は、何日かに分けてふくしゅうすると上がるよ。</span></div>`:''; })()+`<br><span class="mini">ポイントのため方：地方の単元はルートとでんせつを全部クリアで2、テーマの単元（米づくりなど）は全部で1、クイズダンジョン社会の各階でその都道府県の問題を全部マスターで1。とちゅうまでなら、その分だけ（例：5つのうち3つで0.6）。4ポイントで「かんぜん」→レアモンスター！</span>`; }
   app.innerHTML=`<h2 class="sec-h">日本地図</h2>${pgEntryHTML()}<p class="dexcount" style="margin-top:14px">色がついた都道府県 ${n} / 47・かんぜん ${full}${(()=>{ const near=Object.entries(sc).filter(([p,r])=>!save.owned["rare_"+p]&&r.s<4).sort((a,b)=>b[1].s-a[1].s).slice(0,3); return near.length?`<br><span class="mini">かんぜんに近い：${near.map(([p,r])=>`${MAPD[p][0]} ${r.s.toFixed(1)}/4`).join("・")}</span>`:''; })()}</p>
     <div class="card mapcard">${mapSVG({fill, tap:true})}${MAPCREDIT}</div>
     <div class="maplegend">${MAPLV.map((c,i)=>`<span><i style="background:${c}"></i>${i}</span>`).join("")}<span class="mini">← 色の段階</span></div>
@@ -4878,7 +4893,7 @@ function showDex(){
     return `<div class="card mcard unseen"><span class="no">${lb}</span><div class="mon">？</div><b>？？？</b></div>`; }).join("")}</div>`;
   const rc = RARE_ORDER.filter(id=>save.owned[id]).length;
   if(dexCat==="rare") h += `<h2 class="sec-h" style="margin-top:14px">都道府県のレアモンスター</h2><p class="dexcount">なかまにした ${rc} / 47　（「ちず」でその都道府県を「かんぜん」にすると手に入る）</p><div class="dexgrps">${RARE_AREAS.map(([n,a0,a1],i)=>`<button class="${dexArea===i?'on':''}" data-area="${i}">${n}<small>${RARE_ORDER.slice(a0,a1).filter(id=>save.owned[id]).length}/${a1-a0}</small></button>`).join("")}</div><div class="grid3 dexgrid">${RARE_ORDER.slice(RARE_AREAS[dexArea][1],RARE_AREAS[dexArea][2]).map(id=>{ const pn=MAPD[RARE[id].pref][0];
-    if(!save.owned[id]) return `<div class="card mcard unseen"><span class="no">${pn}</span><div class="mon">${art(id,1,{sil:true})}</div><b>？？？</b></div>`;
+    if(!save.owned[id]){ const sc0=(prefScores()[RARE[id].pref]||{s:0}).s; return `<button class="card mcard unseen" data-mapgo="${RARE[id].pref}"><span class="no">${pn}</span><div class="mon">${art(id,1,{sil:true})}</div><b>？？？</b><small class="mini">${sc0.toFixed(1)} / 4<br>タップで地図へ</small></button>`; }
     return `<button class="card mcard rarecell" data-id="${id}"><span class="no">${pn}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typesChip(id)}</button>`; }).join("")}</div>`;
   const qc = QD_ORDER.filter(id=>save.owned[id]).length;
   if(dexCat==="qd") h += `<h2 class="sec-h" style="margin-top:14px">クイズダンジョンのモンスター</h2><p class="dexcount">なかまにした ${qc} / ${QD_ORDER.length}　（ドラゴン：フロアを全部マスター／たまご：毎日のたんけん）</p><div class="grid3 dexgrid">${QD_ORDER.map(id=>{ const lb=SP[id].qd?QD_FLOORS.find(f=>f.dragon===id).lb:'たまご';
@@ -4891,6 +4906,7 @@ function showDex(){
   const y = window.scrollY;
   app.innerHTML = h; window.scrollTo(0, y);
   app.querySelectorAll(".mcard[data-id]").forEach(b=>b.onclick=()=>{ dexSel=b.dataset.id; showDex(); });
+  app.querySelectorAll("[data-mapgo]").forEach(b=>b.onclick=()=>{ mapSel=b.dataset.mapgo; tab="map"; home(); setTimeout(()=>{ const d=document.querySelector(".detail"); if(d) d.scrollIntoView({block:"center"}); },50); });
   app.querySelectorAll("[data-cat]").forEach(b=>b.onclick=()=>{ dexCat=b.dataset.cat; dexSel=null; showDex(); window.scrollTo(0,0); });
   app.querySelectorAll("[data-area]").forEach(b=>b.onclick=()=>{ dexArea=+b.dataset.area; dexSel=null; showDex(); });
   app.querySelectorAll("[data-grp]").forEach(b=>b.onclick=()=>{ dexGrp=b.dataset.grp; dexSel=null; showDex(); });
@@ -6781,7 +6797,7 @@ function finishMix(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261128012908";
+const APP_VER="20261128013210";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
