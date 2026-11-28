@@ -4015,7 +4015,7 @@ function wildLv(base, boss){ return enemyLv(base, boss).lv; }
 /* 強い相手ほど EXP が多い */
 const xp = n => Math.round(n*(1+((B&&B.wild)?B.wild.lv:1)/15));
 
-const APP_NO = "v73";
+const APP_NO = "v74";
 let save = load();
 function load(){
   try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && s.v===2){ for(const [id,o] of Object.entries(s.owned)) if(o.form==null && SP[id]) o.form = formIdx(id,o.lv); if(!s.wrongEver) s.wrongEver=Object.fromEntries(Object.keys(s.wrong||{}).map(k=>[k,1])); cleanGone(s); return s; } }catch(e){}
@@ -4851,7 +4851,7 @@ function showDex(){
   const DEXO = DEX_ORDER.filter(monOpen), caught = DEXO.filter(id=>save.owned[id]).length, seen = DEXO.filter(id=>save.seen[id]).length;
   const UMO = UMEGA_ORDER.filter(id=>unitOpen(UNITS.find(u=>u.id===UMEGA[id].unit))), MGO = MEGA_ORDER.filter(id=>!MEGA[id].where.unit || unitOpen(UNITS.find(u=>u.id===MEGA[id].where.unit)));
   const cnt = ids => `${ids.filter(id=>save.owned[id]).length}/${ids.length}`;
-  const CATS = [["main","ずかん",cnt(DEXO)],["rare","都道府県",cnt(RARE_ORDER)],["mega","メガ",cnt(MGO)],["umega","ウルトラメガ",cnt(UMO)],["week","曜日",cnt(WEEK_ORDER)],["day","日替わり",String(dayIds().length)],["qd","ダンジョン",cnt(QD_ORDER)],["ur","ウルトラレア",cnt([...UR_ORDER,KAISER])],["gacha","ガチャ",cnt(GACHA_ORDER)]];
+  const CATS = [["main","ずかん",cnt(DEXO)],["rare","都道府県",cnt(RARE_ORDER)],["mega","メガ",cnt(MGO)],["umega","ウルトラメガ",cnt(UMO)],["week","曜日",cnt(WEEK_ORDER)],["day","日替わり",String(dayIds().length)],["qd","ダンジョン",cnt(QD_ORDER)],["ur","ウルトラレア",cnt([...UR_ORDER,KAISER])],["gacha","ガチャ",cnt(GACHA_ORDER)],["sp","とくべつ",cnt([KAISER,...YB_MON])]];
   if(!CATS.some(c=>c[0]===dexCat)) dexCat="main";
   let h = `<h2 class="sec-h">モンスターずかん</h2><p class="dexcount">つかまえた ${caught}・見つけた ${seen}・ぜんぶで ${DEXO.length}</p>`;
   h += `<label class="dexown"><input type="checkbox" id="dexown" ${dexOwn?"checked":""}> なかまにしたモンスターだけ見る</label>`;
@@ -4879,6 +4879,8 @@ function showDex(){
     return `<button class="card mcard ${own?'':'seenonly'}" data-id="${id}"><span class="no">${no}</span><div class="mon">${(own?artMine(id):art(id,1,{sil:true}))}</div><b>${esc(own?nameOf(id):SP[id].forms[0].n)}</b>${own?typesChip(id):'<span class="mini">見つけた</span>'}</button>`;
   }).join("")}</div>`;
   }
+  if(dexCat==="sp"){ const HOW={[KAISER]:"アタックテスト対策の8モードを全部★3", yb_tenbin:"理科 第16回「てこ」のおわびのプレゼント（アプリを開くと自動でなかまに）", yb_shitenou:"理科 第16回「てこ」を11/30までに全部★3（でんせつのすみかもふくむ）", yb_phoenix:"理科・社会の第11〜15回を12/14までに全部★3"};
+    h += `<h2 class="sec-h" style="margin-top:14px">とくべつなモンスター</h2><p class="dexcount">テスト対策ややりこみボーナスでもらえるモンスター。「なかま」の一覧ではいちばん上のほうにいるよ。</p><div class="grid3 dexgrid">${[KAISER,...YB_MON].map(id=>save.owned[id]?`<button class="card mcard urcell" data-id="${id}"><span class="no">とくべつ</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typesChip(id)}<small class="mini">${esc(HOW[id]||"")}</small></button>`:`<div class="card mcard unseen"><span class="no">とくべつ</span><div class="mon">${art(id,1,{sil:true})}</div><b>？？？</b><small class="mini">${esc(HOW[id]||"")}</small></div>`).join("")}</div>`; }
   if(dexCat==="gacha") h += `<h2 class="sec-h" style="margin-top:14px">ガチャのモンスター</h2><p class="dexcount">カードバトルのガチャで出る、ガチャ限定のモンスター</p><div class="grid3 dexgrid">${GACHA_ORDER.map(id=>save.owned[id]?`<button class="card mcard rarecell" data-id="${id}"><span class="no">${GACHA_MON[id].gacha===3?'SSR':'SR'}</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typesChip(id)}</button>`:`<div class="card mcard unseen"><span class="no">${GACHA_MON[id].gacha===3?'SSR':'SR'}</span><div class="mon">${art(id,1,{sil:true})}</div><b>？？？</b></div>`).join("")}</div>`;
   if(dexCat==="ur") h += `<h2 class="sec-h" style="margin-top:14px">ウルトラレア</h2><p class="dexcount">算数4「ぶんすうの城」の分数カードを全部★3にすると…</p><div class="grid3 dexgrid">${UR_ORDER.map(id=>save.owned[id]?`<button class="card mcard urcell" data-id="${id}"><span class="no">ウルトラレア</span><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b>${typesChip(id)}</button>`:`<div class="card mcard unseen"><span class="no">ウルトラレア</span><div class="mon">${art(id,1,{sil:true})}</div><b>？？？</b></div>`).join("")}</div>`;
   const uc = UMO.filter(id=>save.owned[id]).length, wc = WEEK_ORDER.filter(id=>save.owned[id]).length;
@@ -6797,7 +6799,7 @@ function finishMix(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261128013210";
+const APP_VER="20261128013358";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
