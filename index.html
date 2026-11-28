@@ -568,6 +568,10 @@ body.dexonly .dexgrid .mcard.unseen, body.dexonly .dexgrid .mcard.seenonly{displ
 .fpc.full{border:2px solid #8f6bff;background:#f3e8ff}
 .fpc i{font-style:normal;color:var(--sun);-webkit-text-stroke:.6px var(--ink);white-space:nowrap}.fpc i .off{color:#dfe6ee}
 .qlever{background:#fff;border:2px solid #dfe6ee;border-radius:14px;padding:6px;margin:8px 0}.qlever svg{width:100%;height:auto;display:block}
+.vrow{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}.vrow .mic{flex:none;width:auto;padding:8px 14px}.vrow .mic.on{background:#e8475a;color:#fff;animation:micp 1s infinite}@keyframes micp{50%{transform:scale(1.05)}}
+.lfbar{display:flex;gap:6px;align-items:center;margin:10px 0 8px;position:sticky;top:0;z-index:5;background:var(--bg,#eef7e9);padding:6px 0}.lfbar select{font:inherit;font-size:14px;padding:6px 8px;border-radius:10px;border:2px solid #24324a;background:#fff;max-width:42%}
+.grid4{grid-template-columns:repeat(4,1fr)!important;gap:6px!important}.grid4 .mcard{padding:6px 4px!important}.grid4 .mcard .mon{width:52px!important;height:52px!important;margin:0 auto}.grid4 .mcard b{font-size:11px;line-height:1.2;word-break:break-all}.grid4 .mcard.sel{outline:3px solid #e8475a}
+.detail-h{display:block;margin-bottom:4px;color:#5a6b85}
 .qsubtabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 6px}
 .qsubtab{display:flex;align-items:center;gap:8px;padding:10px;border-radius:16px;border:3px solid var(--qc);background:#fff;color:var(--ink,#24324a);text-align:left;font:inherit;cursor:pointer;box-shadow:0 4px 0 rgba(36,50,74,.18)}
 .qsubtab .qs-ic{font-size:28px;line-height:1}
@@ -4015,7 +4019,7 @@ function wildLv(base, boss){ return enemyLv(base, boss).lv; }
 /* 強い相手ほど EXP が多い */
 const xp = n => Math.round(n*(1+((B&&B.wild)?B.wild.lv:1)/15));
 
-const APP_NO = "v74";
+const APP_NO = "v75";
 let save = load();
 function load(){
   try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && s.v===2){ for(const [id,o] of Object.entries(s.owned)) if(o.form==null && SP[id]) o.form = formIdx(id,o.lv); if(!s.wrongEver) s.wrongEver=Object.fromEntries(Object.keys(s.wrong||{}).map(k=>[k,1])); cleanGone(s); return s; } }catch(e){}
@@ -4587,10 +4591,14 @@ function prefTodo(p){
     out.push({done:m===qs.length, txt:`ダンジョン「${f.name}」でこの都道府県の問題を「マスター」（1ポイント）：${m}/${qs.length}問`}); }
   return out;
 }
+/* v75: 「都道府県モンスターのレベルが低すぎるので、高いのと低いのをまぜこぜに」→ 都道府県ごとに、高い（なかまの最高Lvの前後）か低い（Lv15〜25）かが決まる */
+function rareLv(id){ let h=0; for(const ch of id) h=(h*31+ch.charCodeAt(0))>>>0; const top=Math.max(15,...Object.values(save.owned).filter((o,i)=>o).map(o=>o.lv||1));
+  return h%2 ? Math.min(MAX_LV, Math.max(20, top-5+h%11)) : 15+h%11; }
+function rareLvFix(){ if(save.rareLvFix) return; save.rareLvFix=1; for(const id of RARE_ORDER){ const o=save.owned[id]; if(!o) continue; const t=rareLv(id); if(t>(o.lv||1)){ o.lv=t; o.exp=0; } } persist(); }
 function grantRares(){
   const lv=prefLevels(), got=[];
   for(const [p,l] of Object.entries(lv)){ const id="rare_"+p;
-    if(l>=4 && RARE[id] && !save.owned[id]){ save.owned[id]={lv:15,exp:0,form:0}; save.seen[id]=1; if(save.party.length<3) save.party.push(id); got.push(id); } }
+    if(l>=4 && RARE[id] && !save.owned[id]){ save.owned[id]={lv:rareLv(id),exp:0,form:0}; save.seen[id]=1; if(save.party.length<3) save.party.push(id); got.push(id); } }
   if(got.length) persist();
   return got;
 }
@@ -4803,17 +4811,28 @@ function showBackup(){
 
 /* ---------- party ---------- */
 let partySel = null;
+/* v75: 「モンスターやカードを見るときにスクロールが大変」→ タイプ・ならべかえのしぼりこみ、小さめの4列、えらんだらくわしい画面へ自動で移動 */
+const LF = {party:{t:"",s:"def"}, card:{t:"",s:"rare"}};
+function lfBar(k, n){ const f=LF[k];
+  return `<div class="lfbar"><select data-lf="${k}|t"><option value="">すべてのタイプ</option>${Object.entries(TYPES).map(([t,nm])=>`<option value="${t}" ${f.t===t?'selected':''}>${nm}</option>`).join("")}</select>
+    <select data-lf="${k}|s">${(k==="card"?[["rare","レア度順"],["lv","Lvが高い順"],["hp","HPが高い順"],["atk","こうげき順"]]:[["def","いつもの順"],["lv","Lvが高い順"],["new","とくべつ・でんせつ"],["name","なまえ順"]]).map(([v,nm])=>`<option value="${v}" ${f.s===v?'selected':''}>${nm}</option>`).join("")}</select><span class="mini">${n}</span></div>`; }
+function lfApply(k, ids){ const f=LF[k]; let a=ids.filter(id=>!f.t || SP[id].type===f.t || SP[id].type2===f.t);
+  if(k==="party"){ if(f.s==="lv") a=[...a].sort((x,y)=>(save.owned[y].lv||1)-(save.owned[x].lv||1)); else if(f.s==="name") a=[...a].sort((x,y)=>nameOf(x).localeCompare(nameOf(y),"ja")); else if(f.s==="new") a=a.filter(id=>SP[id].legend||SP[id].ur||SP[id].umega||SP[id].mega||SP[id].gacha||SP[id].rare||SP[id].week); }
+  return a; }
+function lfBind(k, rer){ app.querySelectorAll(`[data-lf^="${k}|"]`).forEach(el=>el.onchange=()=>{ const [,w]=el.dataset.lf.split("|"); LF[k][w]=el.value; rer(); }); }
+let partyJump=false;
 function showParty(){
   const lead = save.party[0], o = save.owned[lead], s = SP[lead];
   const nf = s.forms[curF(lead)+1];
-  const ids = [KAISER, ...YB_MON, ...GACHA_ORDER, ...UR_ORDER, ...UMEGA_ORDER, ...DEX_ORDER, ...WEEK_ORDER, ...dayIds(), ...RARE_ORDER, ...QD_ORDER, ...MEGA_ORDER].filter(id=>save.owned[id]);
+  const idsAll = [...new Set([KAISER, ...YB_MON, ...GACHA_ORDER, ...UR_ORDER, ...UMEGA_ORDER, ...DEX_ORDER, ...WEEK_ORDER, ...dayIds(), ...RARE_ORDER, ...QD_ORDER, ...MEGA_ORDER])].filter(id=>save.owned[id]&&SP[id]), ids=lfApply("party", idsAll);
   if(!partySel || !save.owned[partySel]) partySel = lead;
   const d = partySel, dO = save.owned[d], inP = save.party.includes(d);
   app.innerHTML = `<h2 class="sec-h">なかま</h2>
   <div class="card leadcard"><div class="mon">${artMine(lead)}</div><div style="min-width:0"><span class="mini">せんとう</span><h3>${esc(nameOf(lead))}</h3><div>${typesChip(lead)} <span class="mini">Lv.${o.lv}</span></div>
     <div class="bar expbar" style="margin-top:6px"><i style="width:${o.exp/need(o.lv)*100}%"></i></div><div class="mini" style="margin-top:4px">${SKILLS[s.skill].n}：${SKILLS[s.skill].d}</div>${canEvo(lead)?`<div class="mini" style="color:var(--accent)">しんかできる！</div>`:nf?`<div class="mini">${evoNeedText(nf)}でしんかできる</div>`:''}</div></div>
   <p class="mini" style="margin:16px 0 8px">パーティ（3ひきまで）は黄色。タップしてえらぼう。</p>
-  <div class="grid3">${ids.map(id=>`<button class="card mcard ${save.party.includes(id)?'inparty':''}" data-id="${id}"><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b><span class="mini">Lv.${save.owned[id].lv}</span>${canEvo(id)?'<span class="evotag">しんかOK</span>':''}</button>`).join("")}</div>
+  ${lfBar("party", `${ids.length} / ${idsAll.length}ひき`)}
+  <div class="grid3 grid4">${ids.map(id=>`<button class="card mcard ${save.party.includes(id)?'inparty':''} ${id===partySel?'sel':''}" data-id="${id}"><div class="mon">${artMine(id)}</div><b>${esc(nameOf(id))}</b><span class="mini">Lv.${save.owned[id].lv}</span>${canEvo(id)?'<span class="evotag">しんかOK</span>':''}</button>`).join("")}</div>
   <div class="card detail"><div class="row"><div class="mon">${artMine(d)}</div><div style="min-width:0"><h3>${esc(nameOf(d))}</h3><div>${typesChip(d)} <span class="mini">Lv.${dO.lv}</span></div><p class="mini">${SKILLS[SP[d].skill].n}：${SKILLS[SP[d].skill].d}</p><p class="mini">${dO.shinyWild?'<b>本物の色ちがい</b>（こうげき・HP 1.2倍）・':dO.shiny?'色ちがい（インク）・':''}さいだいHP ${maxHPOf(d)}・${sizeText(d)}</p></div></div>
     <div class="mvlist">${movesOf(d).map(k=>{ const up=((dO.mvUp||{})[k]||0); return `<span class="mvchip mt-${moveType(d,k)||'none'}"><b>${esc(MOVES[k].n)}</b><small>${moveInfo(d,k)}</small>${(bag().mvpow||0)>0&&up<5?`<button class="mvup" data-mvup="${k}">＋いりょく（${bag().mvpow}）</button>`:''}${(dO.ext||[]).includes(k)?`<button class="mvup" data-forget="${k}">わすれる</button>`:''}</span>`; }).join("")}</div>
     ${Object.keys(smS()).some(k=>SMV[k])?`<div class="smpick"><span class="mini">とくべつわざ：</span>${Object.keys(smS()).filter(k=>SMV[k]).map(k=>`<button class="${dO.sm==="sm_"+k?'on':''}" data-sm="${k}">${esc(SMV[k].n)}</button>`).join("")}${dO.sm?'<button data-sm="">はずす</button>':''}</div>`:''}${nextMoveText(d)}
@@ -4826,7 +4845,10 @@ function showParty(){
       return x?`<div class="itembtns">${x}</div>`:''; })()}
     <div class="btns">${save.party[0]!==d?`<button class="btn go" id="mklead">せんとうにする</button>`:''}${inP?(save.party.length>1?`<button class="btn alt" id="rm">パーティからはずす</button>`:''):`<button class="btn alt" id="add" ${save.party.length>=3?'disabled':''}>${save.party.length>=3?'パーティがいっぱい':'パーティに入れる'}</button>`}</div></div>
   <div class="card" style="padding:12px 14px;margin-top:14px"><b>タイプのあいしょう</b><p class="mini" style="margin:2px 0 8px">左のタイプのわざは、右のタイプに「こうかばつぐん」（2倍）。ぎゃくむきだと半分になるよ。わざのタイプで決まるので、あいてに合わせてわざをえらぼう。タイプを2つもつモンスターは、2つのあいしょうをかけ合わせる（いちばん大きくて2倍、小さくて半分）。</p>${typeChartHTML()}</div>`;
-  app.querySelectorAll(".mcard").forEach(b=>b.onclick=()=>{ partySel=b.dataset.id; showParty(); });
+  { const det=app.querySelector(".card.detail"), grid=app.querySelector(".grid4"), lb=app.querySelector(".lfbar"); if(det&&lb){ lb.parentNode.insertBefore(det, lb); det.insertAdjacentHTML("afterbegin",'<span class="mini detail-h">えらんだモンスター（下の一覧からえらんでね）</span>'); } }
+  lfBind("party", ()=>{ const y=window.scrollY; showParty(); window.scrollTo(0,y); });
+  if(partyJump){ partyJump=false; const det=app.querySelector(".card.detail"); if(det) det.scrollIntoView({behavior:"smooth", block:"start"}); }
+  app.querySelectorAll(".mcard").forEach(b=>b.onclick=()=>{ partySel=b.dataset.id; partyJump=true; showParty(); });
   const g=id=>document.getElementById(id);
   if(g("evo")) g("evo").onclick=()=>showEvolve(d);
   app.querySelectorAll("[data-mvup]").forEach(b=>b.onclick=()=>{ const k=b.dataset.mvup, o=save.owned[d], bb=bag(); if(!(bb.mvpow>0)) return; o.mvUp=o.mvUp||{}; if((o.mvUp[k]||0)>=5) return; o.mvUp[k]=(o.mvUp[k]||0)+1; bb.mvpow--; persist(); const y=window.scrollY; showParty(); window.scrollTo(0,y); });
@@ -5552,6 +5574,7 @@ SP.yb_shitenou = {arch:"dragon", type:"hikari", type2:"iwa", color:"#fff3c4", ac
 /* v71: 「てこの問題が図がないとわかりにくかった」おわびとして、テンビンキングをいったんプレゼント。全部★3の本当のごほうびはシテンオウに変更 */
 function ybGift16(){ if(save.ybGift16) return; save.ybGift16=1; if(!save.owned.yb_tenbin){ const top=Math.max(...Object.values(save.owned).map(o=>o.lv||1)); save.owned.yb_tenbin={lv:Math.min(MAX_LV, Math.max(40, top+5)), exp:0, form:0, shinyWild:true}; save.seen.yb_tenbin=1; if(save.party.length<3) save.party.push("yb_tenbin"); save.ybGiftNew=1; } persist(); }
 ybGift16();
+setTimeout(()=>{ try{ rareLvFix(); }catch(e){} },0);
 const YB_MON = ["yb_shitenou","yb_tenbin","yb_phoenix"];
 function ybGrant(y){
   if(save.owned[y.mon] || ybDone(y)<ybKeys(y).length) return false;
@@ -5592,15 +5615,17 @@ function cardTabHTML(){
   if(!save.cardOpen && !cardFree() && !ybActive().length) return `<div class="card" style="padding:14px"><b>🔒 カードバトル</b><p class="mini">ホームの「アタックテスト対策」で、理科・社会の8つのモードを全部★3（まちがい0）でクリアすると、アタックカイザーがなかまになり、カードバトルが遊べるようになるよ。</p><p class="mini">いまの★3：${["理科","社会"].map(sj=>MIX_MODES.filter(([m])=>((save.testBest||{})[sj+"|"+m]||0)>=3).length).reduce((a,b)=>a+b,0)} / 8</p></div>`;
   const deck=(save.deck||[]).filter(id=>save.owned[id]), cd=cardDay(), tk=save.cardTk||0, rk=save.cardRank||1;
   const ids=Object.keys(save.owned).filter(id=>SP[id]).map(cardStat).sort((a,b)=>b.rare-a.rare||b.lv-a.lv);
+  const fc=LF.card, idsF=ids.filter(c=>!fc.t||c.type===fc.t||c.type2===fc.t).sort((a,b)=>fc.s==="lv"?b.lv-a.lv:fc.s==="hp"?b.hp-a.hp:fc.s==="atk"?b.atk-a.atk:b.rare-a.rare||b.lv-a.lv);
   return `<div class="card" style="padding:12px"><b>🃏 カードバトル</b><p class="mini">なかまのカード6まいでデッキを組んで、カードトレーナーとたたかおう。自分のばんは、まず問題に答える→正解でエネルギー＋1。エネルギー2で「わざ」が使える！</p>
     <p class="mini"><b>バトルチケット ${tk} / ${CARD_MAX_TK}まい</b>（ルートかテスト対策をクリアすると1まいもらえる）・きょう ${cd.n} / ${CARD_DAY}回・つぎのあいて ${rk}人目</p>
     ${cardFree()?`<p class="mini" style="color:#e8475a"><b>🎉 ${+TEST.end.slice(5,7)}/${+TEST.end.slice(8)}まで限定：回数むせいげん！ テスト範囲（第6〜10回）のルートか、テスト対策のコーナーをクリアするたびにチケット1まい。ただし前回と同じ場所ではもらえないよ（別のルートをクリアしよう）</b></p>`:''}
     <button class="btn go" id="cbgo" ${deck.length===6&&tk>0&&(cardFree()||cd.n<CARD_DAY)?'':'disabled'}>${deck.length<6?`デッキを6まいにしよう（いま${deck.length}まい）`:tk<=0?(cardFree()?'チケットがないよ（テスト範囲のルートかテスト対策をクリアしよう）':'チケットがないよ（ルートをクリアしよう）'):(!cardFree()&&cd.n>=CARD_DAY)?'きょうはもう3回あそんだよ。またあした！':'カードバトルをはじめる（チケット1まい）'}</button></div>
     ${gachaHTML()}
     <h3 class="shopcat">デッキ（${deck.length}/6）</h3><div class="deckrow">${deck.map(id=>cardHTML(cardStat(id),{small:true,attr:`data-deckrm="${id}"`})).join("")||'<p class="mini">下のカードをタップしてデッキに入れよう</p>'}</div>
-    <h3 class="shopcat">もっているカード</h3><div class="cardgrid">${ids.map(c=>cardHTML(c,{small:true,cls:deck.includes(c.id)?'indeck':'',attr:`data-deckadd="${c.id}"`})).join("")}</div>`;
+    <h3 class="shopcat">もっているカード</h3>${lfBar("card", `${idsF.length}まい`)}<div class="cardgrid">${idsF.map(c=>cardHTML(c,{small:true,cls:deck.includes(c.id)?'indeck':'',attr:`data-deckadd="${c.id}"`})).join("")}</div>`;
 }
 function bindCardTab(rer){
+  lfBind("card", rer);
   app.querySelectorAll("[data-deckadd]").forEach(b=>b.onclick=()=>{ const id=b.dataset.deckadd, d=(save.deck||[]).filter(x=>save.owned[x]); if(d.includes(id)) save.deck=d.filter(x=>x!==id); else if(d.length<6) save.deck=[...d,id]; persist(); rer(); });
   app.querySelectorAll("[data-deckrm]").forEach(b=>b.onclick=()=>{ save.deck=(save.deck||[]).filter(x=>x!==b.dataset.deckrm); persist(); rer(); });
   const g=document.getElementById("cbgo"); if(g) g.onclick=startCard;
@@ -5966,6 +5991,68 @@ const FAST_MS = 1200;
 function readSecs(q){
   const c=(q.q||"").length + (q.note?q.note.length*.4:0) + (Array.isArray(q.c)?q.c.join("").length*.3:0) + (q.pairs?q.pairs.flat().join("").length*.3:0) + (q.table||q.graph||q.bars||q.map||q.img||q.band||q.lever?8:0)+(q.items?q.items.length*1.5:0);
   return Math.min(6, Math.max(1.5, 1+c*.05));
+}
+/* ============================================================
+   声でこたえる（v75）
+   ユーザーの要望「回答を選択ではなくて音声で喋るモードも作れる？」
+   選択：iPhone/iPad／全部の問題でボタン切りかえ／ごほうびはふつうと同じ
+   - 問題画面の「🎤 声でこたえる」→ ブラウザの音声認識（ja-JP）で聞き取り、言った言葉にいちばん近い答えをえらぶ
+   - 4択（選択肢の文・「ア」〜「エ」）／数字の入力／都道府県を地図でタップする問題／文字タイルに対応
+   - 聞き取れない・どれか決められないときは、聞こえた言葉を出して、もう一度（まちがいにはしない）
+   ============================================================ */
+const VSR = window.SpeechRecognition || window.webkitSpeechRecognition;
+const vNorm = t => String(t||"").normalize("NFKC").replace(/[ァ-ヶ]/g, c=>String.fromCharCode(c.charCodeAt(0)-0x60)).toLowerCase()
+  .replace(/ぐらむ/g,"g").replace(/せんちめーとる|せんち/g,"cm").replace(/ぱーせんと/g,"%").replace(/[\s、。・，．,.!?！？「」『』（）()〜~ー－\-]/g,"");
+function vLcs(a,b){ const A=[...a], Bb=[...b]; if(!A.length||!Bb.length) return 0; let prev=new Array(Bb.length+1).fill(0);
+  for(let i=1;i<=A.length;i++){ const cur=[0]; for(let j=1;j<=Bb.length;j++) cur[j]= A[i-1]===Bb[j-1]? prev[j-1]+1 : Math.max(prev[j],cur[j-1]); prev=cur; } return prev[Bb.length]; }
+const vSim = (a,b) => { if(!a||!b) return 0; if(a===b) return 1; return 2*vLcs(a,b)/([...a].length+[...b].length); };
+function vVariants(t){ const s=String(t); const v=[s, s.replace(/（[^）]*）|\([^)]*\)/g,"")]; (s.match(/（([^）]*)）/g)||[]).forEach(m=>v.push(m.slice(1,-1))); return [...new Set(v.map(vNorm).filter(Boolean))]; }
+/* opts: [{key, texts:[...]}] → {key, score} か null */
+function vPick(alts, opts){
+  const A=alts.map(vNorm).filter(Boolean); if(!A.length) return null;
+  const sc=opts.map(o=>{ const vs=o.texts.flatMap(vVariants); let best=0;
+    for(const a of A) for(const v of vs){ let x=vSim(a,v);
+      if(v.includes(a) && [...a].length>=1 && !opts.some(p=>p!==o && p.texts.flatMap(vVariants).some(w=>w.includes(a)))) x=Math.max(x,.86);
+      if(a.includes(v) && [...v].length>=2) x=Math.max(x,.8);
+      best=Math.max(best,x); } return {key:o.key, score:best}; }).sort((x,y)=>y.score-x.score);
+  if(!sc.length || sc[0].score<.5 || (sc[1] && sc[0].score-sc[1].score<.08)) return null;
+  return sc[0];
+}
+let vRec=null;
+function vListen(onText, onMsg){
+  if(!VSR){ onMsg("この画面では声の入力が使えないよ（iPhone・iPadはSafariで開いてね）"); return; }
+  try{ if(vRec) vRec.abort(); }catch(e){}
+  const r=new VSR(); vRec=r; r.lang="ja-JP"; r.interimResults=false; r.maxAlternatives=5; r.continuous=false;
+  let got=false;
+  r.onresult=e=>{ got=true; const alts=[...e.results[0]].map(a=>a.transcript); onText(alts); };
+  r.onerror=e=>{ got=true; onMsg(e.error==="not-allowed"||e.error==="service-not-allowed"?"マイクが使えないよ。設定でマイクをゆるしてね":e.error==="no-speech"?"聞こえなかったよ。もう一度ボタンをおして話してね":"うまく聞き取れなかったよ。もう一度ためしてね"); };
+  r.onend=()=>{ vRec=null; const b=document.getElementById("mic"); if(b) b.classList.remove("on"); if(!got) onMsg("聞こえなかったよ。もう一度ボタンをおして話してね"); };
+  try{ r.start(); const b=document.getElementById("mic"); if(b) b.classList.add("on"); onMsg("🎤 きいているよ…答えを言ってね"); }catch(e){ onMsg("マイクをはじめられなかったよ。もう一度おしてね"); }
+}
+const KANA_LB=["ア","イ","ウ","エ","オ","カ"];
+function bindVoice(item, q, kind){
+  const mb=document.getElementById("mic"), msg=t=>{ const m=document.getElementById("vmsg"); if(m) m.textContent=t; };
+  if(!mb) return;
+  mb.onclick=()=>{ if(B.busy) return;
+    if(item.readUntil && Date.now()<item.readUntil){ msg("よく読んでから答えよう（バーがおわったら話してね）"); return; }
+    vListen(alts=>{
+      if(!B || B.queue[0]!==item || B.busy) return;
+      const heard=alts[0]||"";
+      if(kind==="num"){ const d=alts.map(a=>String(a).normalize("NFKC").replace(/[^0-9.]/g,"")).find(x=>x); if(!d){ msg(`「${heard}」と聞こえたよ。数字で言ってね`); return; } item.input=d.slice(0,8); return judge([item.input]); }
+      if(kind==="pref"){ const opts=PREF_ORDER.map(p=>({key:p, texts:[MAPD[p][0], MAPD[p][0].replace(/[都府県]$/,"")]})); const r=vPick(alts, opts); if(!r){ msg(`「${heard}」と聞こえたよ。都道府県の名前をもう一度言ってね`); return; } msg(`「${MAPD[r.key][0]}」`); return judge([r.key]); }
+      if(kind==="tile"){ const n=vNorm(heard), used=new Set(), idx=[];
+        const tiles=item.q.tiles||q.tiles; const want=[...(alts.map(a=>String(a).normalize("NFKC").replace(/\s/g,"")).find(a=>[...a].every(ch=>tiles.includes(ch)))||"")];
+        for(const ch of want){ const j=tiles.findIndex((c,k)=>c===ch&&!used.has(k)); if(j<0){ idx.length=0; break; } used.add(j); idx.push(j); }
+        if(!idx.length){ msg(`「${heard}」と聞こえたよ。タイルの文字で言ってね（タイルをおしてもOK）`); return; } return judge(idx.slice(0,[...q.ans].length-(q.pre||0))); }
+      const btns=[...app.querySelectorAll(".choices .choice")].filter(b=>!b.disabled && b.offsetParent!==null);
+      const opts=btns.map((b,k)=>({key:+b.dataset.i, texts:[q.c[+b.dataset.i]]}));
+      const lb=alts.map(vNorm).map(a=>KANA_LB.findIndex(L=>vNorm(L)===a || vNorm(L+"ばん")===a)).find(x=>x>=0&&x<btns.length);
+      if(lb!=null){ msg(`「${KANA_LB[lb]}」`); return judge([+btns[lb].dataset.i]); }
+      const r=vPick(alts, opts);
+      if(!r){ msg(`「${heard}」と聞こえたよ。どれか決められなかった…もう一度言うか、ボタンをおしてね`); return; }
+      msg(`「${q.c[r.key]}」`); judge([r.key]);
+    }, msg);
+  };
 }
 function applyReadLock(item, q){
   if(!item.readUntil) item.readUntil = Date.now() + readSecs(q)*1000;
@@ -6416,6 +6503,7 @@ function renderBattle(enter){
     ${q.img&&MARKS[q.img]?`<div class="qimg"><img src="${MARKS[q.img]}" alt="都道府県のマーク" width="180" height="180"></div>`:''}${q.shape&&MAPD[q.shape]?`<div class="pgbox">${prefShapeSVG(q.shape)}</div>`:''}${q.pic&&PICS[q.pic]?`<div class="qpic">${PICS[q.pic]}</div>`:''}<p class="qtext">${esc(q.q)}</p>${B.mix&&B.mix.timed&&(B.mix.mode!=="haya"||item.buzz)?'<div class="mixbar" id="mixbar"><i></i><span></span></div>':''}${B.mix&&B.mix.mode==="haya"&&!item.buzz?'<button class="btn go buzz" id="buzz">わかった！（早押し）</button>':''}${isAll?'<div class="hint">あてはまるものを全部えらんで「けってい」</div>':multi?'<div class="hint">2つえらんで「けってい」</div>':''}${isNum?'<div class="hint">なれてきた問題！ 数字キーで答えよう</div>':''}${isOrd?'<div class="hint">はじめのものから順にタップしよう</div>':''}${isMat?'<div class="hint">左をタップしてから、右をタップしてつなごう</div>':''}${isPref?'<div class="hint">地図をタップしてえらび、「けってい」</div>':''}${isTile?`<div class="hint">文字をタップして答えをつくろう（${[...q.ans].length}文字）</div>`:''}
     ${isNum?`<div class="cans" id="nans">${item.input?esc(item.input):'&nbsp;'}</div><div class="keypad">${["7","8","9","4","5","6","1","2","3",".","0","⌫"].map(k=>`<button class="key" data-k="${k}">${k}</button>`).join("")}</div><button class="btn" id="dec" style="margin-top:10px" ${item.input?'':'disabled'}>けってい</button>`:isTile?tileHTML(item,q)+`<div class="ordrow"><button class="btn alt" id="redo">1文字もどす</button><button class="btn" id="dec" ${item.seq.length===[...q.ans].length-q.pre?'':'disabled'}>けってい</button></div>`:isPref?`<div class="qmap big">${mapSVG({view:q.view, sel:item.selP, tap:true})}${MAPCREDIT}</div><button class="btn" id="dec" style="margin-top:10px" ${item.selP?'':'disabled'}>けってい</button>`:isOrd?orderHTML(item,q):isMat?matchHTML(item,q):isSort?sortHTML(item,q):`<div class="choices${isAll?' allgrid':''}">${item.order.filter(ci=>!item.hidden.includes(ci)).map((ci,k)=>`<button class="choice" data-i="${ci}">${isAll||q.c[ci]===KANA[k]?'':`<span class="k">${KANA[k]}</span>`}<span>${esc(q.c[ci])}</span></button>`).join("")}</div>`}
     ${multi?'<button class="btn" id="dec" style="margin-top:12px" disabled>けってい</button>':''}
+    ${(()=>{ const vk = isNum?"num": isPref?"pref": isTile?"tile": (!multi&&!isOrd&&!isMat&&!isSort&&Array.isArray(q.c))?"c":""; item.vk=vk; return vk&&!(B.mix&&B.mix.mode==="haya"&&!item.buzz)?`<div class="vrow"><button class="btn alt mic" id="mic">🎤 声でこたえる</button><span class="mini" id="vmsg">${vk==="num"?"数字を言ってね":vk==="pref"?"都道府県の名前を言ってね":vk==="tile"?"答えを言ってね":"答えか「ア」「イ」…を言ってね"}</span></div>`:''; })()}
     ${isOrd||isMat||isSort?`<div class="ordrow"><button class="btn alt" id="redo">やりなおし</button><button class="btn" id="dec" ${(isOrd?item.seq.length===q.c.length:isSort?Object.keys(item.sel).length===q.items.length:Object.keys(item.pairs).length===q.pairs.length)?'':'disabled'}>けってい</button></div>`:''}
     <div id="sub"><div class="subrow"><button id="skill" ${B.used[me]?'disabled':''}>${sk.n}${B.used[me]?'（使った）':''}<small>${sk.d}</small></button><button id="swapBtn" ${save.party.length<2?'disabled':''}>こうたい<small>${save.party.length<2?'なかまをふやそう':'なかまを入れかえる'}</small></button>${bagCount()?`<button id="bagBtn">どうぐ<small>${bagCount()}こ</small></button>`:''}</div>
     ${B.bagOpen?bagHTML():''}
@@ -6432,6 +6520,7 @@ function renderBattle(enter){
     document.getElementById("dec").disabled = isAll ? !sel.length : sel.length!==2;
   });
   if(multi) document.getElementById("dec").onclick=()=>judge(sel);
+  if(item.vk) bindVoice(item, q, item.vk);
   if(isNum){
     app.querySelectorAll(".key").forEach(b=>b.onclick=()=>{ if(B.busy) return; const k=b.dataset.k;
       if(k==="⌫") item.input=item.input.slice(0,-1); else if(item.input.length<8 && !(k==="." && item.input.includes("."))) item.input+=k;
@@ -6799,7 +6888,7 @@ function finishMix(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261128013358";
+const APP_VER="20261128013852";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
