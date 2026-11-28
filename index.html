@@ -4015,7 +4015,7 @@ function wildLv(base, boss){ return enemyLv(base, boss).lv; }
 /* 強い相手ほど EXP が多い */
 const xp = n => Math.round(n*(1+((B&&B.wild)?B.wild.lv:1)/15));
 
-const APP_NO = "v71";
+const APP_NO = "v72";
 let save = load();
 function load(){
   try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && s.v===2){ for(const [id,o] of Object.entries(s.owned)) if(o.form==null && SP[id]) o.form = formIdx(id,o.lv); if(!s.wrongEver) s.wrongEver=Object.fromEntries(Object.keys(s.wrong||{}).map(k=>[k,1])); cleanGone(s); return s; } }catch(e){}
@@ -4590,8 +4590,8 @@ function showJMap(){
   let info="地図の都道府県をタップすると、名前と色の段階がわかるよ。";
   if(mapSel){ const r=sc[mapSel], l=lv[mapSel]||0;
     const rid="rare_"+mapSel, rown=save.owned[rid];
-    info=`<div class="row" style="display:flex;gap:10px;align-items:center"><div class="mon" style="width:64px;height:64px;flex:none">${rown?artMine(rid):art(rid,1,{sil:true})}</div><div><b>${MAPD[mapSel][0]}</b>　色の段階：${l}／4（${MAPLVN[l]}）<br><span class="mini">レアモンスター：${rown?esc(nameOf(rid))+"（なかま）":"？？？（かんぜんにすると手に入る）"}</span></div></div>`+(r?`<br><span class="mini">${[...r.us.map(([u,d,t])=>`${esc(u.subject)}「${esc(u.title)}」${d}/${t}クリア`), ...(r.qd||[]).map(([lb,m,t])=>`クイズダンジョン${lb} ${m}/${t}問マスター`)].join("、")}</span>`:`<br><span class="mini">この都道府県が出てくる単元をクリアすると色がつくよ。</span>`); }
-  app.innerHTML=`<h2 class="sec-h">日本地図</h2>${pgEntryHTML()}<p class="dexcount" style="margin-top:14px">色がついた都道府県 ${n} / 47・かんぜん ${full}</p>
+    info=`<div class="row" style="display:flex;gap:10px;align-items:center"><div class="mon" style="width:64px;height:64px;flex:none">${rown?artMine(rid):art(rid,1,{sil:true})}</div><div><b>${MAPD[mapSel][0]}</b>　色の段階：${l}／4（${MAPLVN[l]}）<br><span class="mini">レアモンスター：${rown?esc(nameOf(rid))+"（なかま）":"？？？（かんぜんにすると手に入る）"}</span>${rown?'':`<div class="bar" style="margin-top:4px"><i style="width:${Math.min(100,((r?r.s:0)/4)*100)}%;background:#d9772a"></i></div><span class="mini">かんぜんまで <b>${(r?r.s:0).toFixed(1)} / 4</b> ポイント（あと ${Math.max(0,4-(r?r.s:0)).toFixed(1)}）</span>`}</div></div>`+(r?`<br><span class="mini">${[...r.us.map(([u,d,t])=>`${esc(u.subject)}「${esc(u.title)}」${d}/${t}クリア`), ...(r.qd||[]).map(([lb,m,t])=>`クイズダンジョン${lb} ${m}/${t}問マスター`)].join("、")}</span>`:`<br><span class="mini">この都道府県が出てくる単元をクリアすると色がつくよ。</span>`)+`<br><span class="mini">ポイントのため方：地方の単元はルートとでんせつを全部クリアで2、テーマの単元（米づくりなど）は全部で1、クイズダンジョン社会の各階でその都道府県の問題を全部マスターで1。とちゅうまでなら、その分だけ（例：5つのうち3つで0.6）。4ポイントで「かんぜん」→レアモンスター！</span>`; }
+  app.innerHTML=`<h2 class="sec-h">日本地図</h2>${pgEntryHTML()}<p class="dexcount" style="margin-top:14px">色がついた都道府県 ${n} / 47・かんぜん ${full}${(()=>{ const near=Object.entries(sc).filter(([p,r])=>!save.owned["rare_"+p]&&r.s<4).sort((a,b)=>b[1].s-a[1].s).slice(0,3); return near.length?`<br><span class="mini">かんぜんに近い：${near.map(([p,r])=>`${MAPD[p][0]} ${r.s.toFixed(1)}/4`).join("・")}</span>`:''; })()}</p>
     <div class="card mapcard">${mapSVG({fill, tap:true})}${MAPCREDIT}</div>
     <div class="maplegend">${MAPLV.map((c,i)=>`<span><i style="background:${c}"></i>${i}</span>`).join("")}<span class="mini">← 色の段階</span></div>
     <div class="card detail" style="margin-top:10px"><p style="margin:0">${info}</p></div>
@@ -6781,7 +6781,7 @@ function finishMix(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261128012725";
+const APP_VER="20261128012908";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
