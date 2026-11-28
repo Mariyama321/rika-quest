@@ -567,6 +567,7 @@ body.dexonly .dexgrid .mcard.unseen, body.dexonly .dexgrid .mcard.seenonly{displ
 .fpc.part{border-style:solid;border-color:var(--ink)}
 .fpc.full{border:2px solid #8f6bff;background:#f3e8ff}
 .fpc i{font-style:normal;color:var(--sun);-webkit-text-stroke:.6px var(--ink);white-space:nowrap}.fpc i .off{color:#dfe6ee}
+.qlever{background:#fff;border:2px solid #dfe6ee;border-radius:14px;padding:6px;margin:8px 0}.qlever svg{width:100%;height:auto;display:block}
 .qsubtabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 6px}
 .qsubtab{display:flex;align-items:center;gap:8px;padding:10px;border-radius:16px;border:3px solid var(--qc);background:#fff;color:var(--ink,#24324a);text-align:left;font:inherit;cursor:pointer;box-shadow:0 4px 0 rgba(36,50,74,.18)}
 .qsubtab .qs-ic{font-size:28px;line-height:1}
@@ -2206,47 +2207,47 @@ const UNITS = [
       {q:"糸でぼうを支えている点を何という？", c:["支点","重心","力点","作用点"], a:0, e:"ぼうを支えている点を支点といいます。"},
       {q:"支点の左右にものをつり下げて、つり合いをとるようにしたしくみを何という？", c:["てんびん","ばねばかり","メスシリンダー","かっ車"], a:0, e:"支点に糸をつるしてぼうをつり合わせ、左右にものをつり下げるしくみをてんびんといいます。"},
       {q:"重さを無視できるぼうがつり合うときのきまりは？", c:["左右で「おもりの重さ×支点からのきょり」が等しい","左右でおもりの重さが等しい","左右で支点からのきょりが等しい","おもりの数が等しい"], a:0, e:"「つるしたおもりの重さ×支点からおもりをつるした点までのきょり」が左右で等しくなるとつり合います。"},
-      {q:"支点から左に5の位置に40g、右に4の位置に50gをつるした。ぼうはどうなる？", c:["つり合う","左が下がる","右が下がる"], a:0, fixed:true, e:"左40×5＝200、右50×4＝200。等しいのでつり合います。"},
-      {q:"支点から左に4の位置に40g、右に3の位置に50gをつるした。ぼうはどうなる？", c:["左が下がる","右が下がる","つり合う"], a:0, fixed:true, e:"左40×4＝160、右50×3＝150。値が大きい左側が下がります。"},
-      {q:"支点から左に6cmの位置と右に8cmの位置に、10gのおもりを1つずつつるした。ぼうはどうなる？", c:["右が下がる","左が下がる","つり合う"], a:0, fixed:true, e:"左10×6＝60、右10×8＝80。右が下がります。"},
-      {q:"支点から左に5の位置に15g、右に3の位置にXをつるすとつり合った。Xは何g？", c:["25g","15g","9g","45g"], a:0, n:"25", e:"15×5＝75。X×3＝75なので X＝25g。"},
-      {q:"支点から右に4の位置に60g、左に□の位置に48gをつるすとつり合った。□はいくつ？", c:["5","4","6","3"], a:0, n:"5", e:"60×4＝240。48×□＝240なので □＝5。"},
-      {q:"支点から左に15cmの位置に20gのおもり、右に15cmの位置にねん土をつるすとつり合った。ねん土は何g？", c:["20g","15g","30g","10g"], a:0, n:"20", e:"きょりが同じなので、重さも同じ20gです。"},
-      {q:"支点から左に15cmの位置に30gのおもり、右に10cmの位置にねん土をつるすとつり合った。ねん土は何g？", c:["45g","20g","30g","40g"], a:0, n:"45", e:"30×15＝450。ねん土×10＝450なので45g。"},
-      {q:"支点から左に5cmの位置に10gのおもりを2つ、右に10cmの位置にねん土をつるすとつり合った。ねん土は何g？", c:["10g","20g","5g","40g"], a:0, n:"10", e:"左は20×5＝100。ねん土×10＝100なので10g。"},
-      {q:"支点から左に12cmの位置に20gのおもり、右に10cmの位置にねん土をつるすとつり合った。ねん土は何g？", c:["24g","20g","12g","22g"], a:0, n:"24", e:"20×12＝240。ねん土×10＝240なので24g。"}
+      {lever:{unit: "", bar: {min: -6, max: 6, piv: 0, k: "ito", hangs: [{x: -5, t: "40g"}, {x: 4, t: "50g"}]}}, q:"支点から左に5の位置に40g、右に4の位置に50gをつるした。ぼうはどうなる？", c:["つり合う","左が下がる","右が下がる"], a:0, fixed:true, e:"左40×5＝200、右50×4＝200。等しいのでつり合います。"},
+      {lever:{unit: "", bar: {min: -6, max: 6, piv: 0, k: "ito", hangs: [{x: -4, t: "40g"}, {x: 3, t: "50g"}]}}, q:"支点から左に4の位置に40g、右に3の位置に50gをつるした。ぼうはどうなる？", c:["左が下がる","右が下がる","つり合う"], a:0, fixed:true, e:"左40×4＝160、右50×3＝150。値が大きい左側が下がります。"},
+      {lever:{unit: "cm", bar: {min: -9, max: 9, piv: 0, k: "ito", hangs: [{x: -6, t: "10g"}, {x: 8, t: "10g"}]}}, q:"支点から左に6cmの位置と右に8cmの位置に、10gのおもりを1つずつつるした。ぼうはどうなる？", c:["右が下がる","左が下がる","つり合う"], a:0, fixed:true, e:"左10×6＝60、右10×8＝80。右が下がります。"},
+      {lever:{unit: "", bar: {min: -6, max: 6, piv: 0, k: "ito", hangs: [{x: -5, t: "15g"}, {x: 3, t: "X", q: true}]}}, q:"支点から左に5の位置に15g、右に3の位置にXをつるすとつり合った。Xは何g？", c:["25g","15g","9g","45g"], a:0, n:"25", e:"15×5＝75。X×3＝75なので X＝25g。"},
+      {lever:{unit: "", bar: {min: -6, max: 6, piv: 0, k: "ito", hangs: [{x: 4, t: "60g"}, {x: -5, t: "48g", dt: "□"}]}}, q:"支点から右に4の位置に60g、左に□の位置に48gをつるすとつり合った。□はいくつ？", c:["5","4","6","3"], a:0, n:"5", e:"60×4＝240。48×□＝240なので □＝5。"},
+      {lever:{unit: "cm", bar: {min: -16, max: 16, piv: 0, k: "ito", hangs: [{x: -15, t: "20g"}, {x: 15, t: "ねん土？", q: true}]}}, q:"支点から左に15cmの位置に20gのおもり、右に15cmの位置にねん土をつるすとつり合った。ねん土は何g？", c:["20g","15g","30g","10g"], a:0, n:"20", e:"きょりが同じなので、重さも同じ20gです。"},
+      {lever:{unit: "cm", bar: {min: -16, max: 16, piv: 0, k: "ito", hangs: [{x: -15, t: "30g"}, {x: 10, t: "ねん土？", q: true}]}}, q:"支点から左に15cmの位置に30gのおもり、右に10cmの位置にねん土をつるすとつり合った。ねん土は何g？", c:["45g","20g","30g","40g"], a:0, n:"45", e:"30×15＝450。ねん土×10＝450なので45g。"},
+      {lever:{unit: "cm", bar: {min: -12, max: 12, piv: 0, k: "ito", hangs: [{x: -5, t: "10g", t2: "10g"}, {x: 10, t: "ねん土？", q: true}]}}, q:"支点から左に5cmの位置に10gのおもりを2つ、右に10cmの位置にねん土をつるすとつり合った。ねん土は何g？", c:["10g","20g","5g","40g"], a:0, n:"10", e:"左は20×5＝100。ねん土×10＝100なので10g。"},
+      {lever:{unit: "cm", bar: {min: -14, max: 14, piv: 0, k: "ito", hangs: [{x: -12, t: "20g"}, {x: 10, t: "ねん土？", q: true}]}}, q:"支点から左に12cmの位置に20gのおもり、右に10cmの位置にねん土をつるすとつり合った。ねん土は何g？", c:["24g","20g","12g","22g"], a:0, n:"24", e:"20×12＝240。ねん土×10＝240なので24g。"}
     ]},
   { id:"s2", name:"ばねばかりの間", note:"3つ以上のおもり・力のつり合い",
     wild:["hakarin","nendon","kyorin"],
     qs:[
       {q:"おもりが3つ以上のときのつり合いのきまりは？", c:["左右それぞれの「重さ×きょり」の合計が等しい","いちばん重いおもりの重さが等しい","おもりの数が左右で等しい","きょりの合計が等しい"], a:0, e:"「重さ×きょり」の左右それぞれの合計が等しくなればつり合います。"},
-      {q:"支点から左に5の位置に60g、左に2の位置に30g、右に3の位置にXをつるすとつり合った。Xは何g？", c:["120g","90g","60g","180g"], a:0, n:"120", e:"左60×5＋30×2＝360。X×3＝360なのでX＝120g。"},
-      {q:"支点から左に8の位置に60g、右に4の位置に30g、右に□の位置に40gをつるすとつり合った。□はいくつ？", c:["9","8","12","6"], a:0, n:"9", e:"左60×8＝480。右30×4＝120なので、40×□＝480−120＝360。□＝9。"},
-      {q:"ばねばかりでぼうの中心をつるし、20gと60gのおもりをつるすとつり合った。ばねばかりのしめす値は？", c:["80g","60g","40g","20g"], a:0, n:"80", e:"上向きの力の合計＝下向きの力の合計。20＋60＝80g。"},
+      {lever:{unit: "", bar: {min: -6, max: 6, piv: 0, k: "ito", hangs: [{x: -5, t: "60g"}, {x: -2, t: "30g", dl: 1}, {x: 3, t: "X", q: true}]}}, q:"支点から左に5の位置に60g、左に2の位置に30g、右に3の位置にXをつるすとつり合った。Xは何g？", c:["120g","90g","60g","180g"], a:0, n:"120", e:"左60×5＋30×2＝360。X×3＝360なのでX＝120g。"},
+      {lever:{unit: "", bar: {min: -9, max: 10, piv: 0, k: "ito", hangs: [{x: -8, t: "60g"}, {x: 4, t: "30g"}, {x: 9, t: "40g", dt: "□", dl: 1}]}}, q:"支点から左に8の位置に60g、右に4の位置に30g、右に□の位置に40gをつるすとつり合った。□はいくつ？", c:["9","8","12","6"], a:0, n:"9", e:"左60×8＝480。右30×4＝120なので、40×□＝480−120＝360。□＝9。"},
+      {lever:{unit: "", bar: {min: -10, max: 10, piv: 0, k: "bane", hangs: [{x: -3, t: "60g"}, {x: 9, t: "20g"}]}}, q:"ばねばかりでぼうの中心をつるし、左3の位置に60g、右9の位置に20gのおもりをつるすとつり合った。ばねばかりのしめす値は？", c:["80g","60g","40g","20g"], a:0, n:"80", e:"上向きの力の合計＝下向きの力の合計。20＋60＝80g。"},
       {q:"力のつり合いの関係として正しいものは？", c:["上向きの力の合計＝下向きの力の合計","上向きの力＝0","下向きの力の合計は2倍になる","上向きの力のほうが大きい"], a:0, e:"ぼうがつり合っているとき、上向きの力の合計と下向きの力の合計は等しくなります。"},
-      {q:"ばねばかりで中心をつるしたぼうに、左10の位置に30g、右6の位置にXをつるすとつり合った。Xは何g？", c:["50g","30g","18g","60g"], a:0, n:"50", e:"30×10＝300。X×6＝300なのでX＝50g。"},
-      {q:"ばねばかりで中心をつるしたぼうに、左10の位置に30g、右6の位置に50gをつるしてつり合った。ばねばかりのしめす値は？", c:["80g","50g","30g","20g"], a:0, n:"80", e:"30＋50＝80g。"},
-      {q:"重さを無視できるぼうの真ん中（点P）をばねばかりでつるし、点Pから右に10cmの位置に10gのおもりをつるした。ぼうはどうなる？", c:["右側が下がる","左側が下がる","つり合う"], a:0, fixed:true, e:"左には何もないので、右側が下がります。"},
-      {q:"点Pから右に10cmの位置に10gをつるしたぼうを水平にするには、20gのおもりを点Pから左に何cmの位置につるせばよい？", c:["5cm","10cm","20cm","2cm"], a:0, n:"5", e:"10×10＝100。20×□＝100なので5cm。"},
-      {q:"点Pから右10cmに10g、左5cmに20gをつるしてつり合った。ばねばかりのしめす値は？", c:["30g","20g","10g","100g"], a:0, n:"30", e:"10＋20＝30g。"},
-      {q:"点Pから右10cmに10gをつるしたぼうを水平にするには、点Pから左に4cmの位置に何gのおもりをつるせばよい？", c:["25g","40g","10g","20g"], a:0, n:"25", e:"10×10＝100。□×4＝100なので25g。"},
-      {q:"支点から左10cmに30gのおもり、右15cmに10gのおもりと、その下にねん土をつるすとつり合った。ねん土は何g？", c:["10g","20g","30g","5g"], a:0, n:"10", e:"左30×10＝300。右は15cmの位置に（10＋ねん土）gで、300÷15＝20g。ねん土は20−10＝10g。"},
-      {q:"左に5cmの位置に60g、右に12cmの位置に24gのねん土をつるした。ぼうはどうなる？", c:["左が下がる","右が下がる","つり合う"], a:0, fixed:true, e:"左60×5＝300、右24×12＝288。左が下がります。"},
-      {q:"左5cmに60g、右12cmに24gのねん土をつるして左が下がった。ねん土の下に何gのおもりをつるせばつり合う？", c:["1g","12g","5g","2g"], a:0, n:"1", e:"右を300にするには、300÷12＝25g。ねん土24gにあと1gです。"}
+      {lever:{unit: "", bar: {min: -11, max: 11, piv: 0, k: "bane", hangs: [{x: -10, t: "30g"}, {x: 6, t: "X", q: true}]}}, q:"ばねばかりで中心をつるしたぼうに、左10の位置に30g、右6の位置にXをつるすとつり合った。Xは何g？", c:["50g","30g","18g","60g"], a:0, n:"50", e:"30×10＝300。X×6＝300なのでX＝50g。"},
+      {lever:{unit: "", bar: {min: -11, max: 11, piv: 0, k: "bane", hangs: [{x: -10, t: "30g"}, {x: 6, t: "50g"}]}}, q:"ばねばかりで中心をつるしたぼうに、左10の位置に30g、右6の位置に50gをつるしてつり合った。ばねばかりのしめす値は？", c:["80g","50g","30g","20g"], a:0, n:"80", e:"30＋50＝80g。"},
+      {lever:{unit: "cm", bar: {min: -11, max: 11, piv: 0, k: "bane", pl: "P", hangs: [{x: 10, t: "10g"}]}}, q:"重さを無視できるぼうの真ん中（点P）をばねばかりでつるし、点Pから右に10cmの位置に10gのおもりをつるした。ぼうはどうなる？", c:["右側が下がる","左側が下がる","つり合う"], a:0, fixed:true, e:"左には何もないので、右側が下がります。"},
+      {lever:{unit: "cm", bar: {min: -11, max: 11, piv: 0, k: "bane", pl: "P", hangs: [{x: 10, t: "10g"}, {x: -5, t: "20g", dt: "□cm", q: true}]}}, q:"点Pから右に10cmの位置に10gをつるしたぼうを水平にするには、20gのおもりを点Pから左に何cmの位置につるせばよい？", c:["5cm","10cm","20cm","2cm"], a:0, n:"5", e:"10×10＝100。20×□＝100なので5cm。"},
+      {lever:{unit: "cm", bar: {min: -11, max: 11, piv: 0, k: "bane", pl: "P", hangs: [{x: 10, t: "10g"}, {x: -5, t: "20g"}]}}, q:"点Pから右10cmに10g、左5cmに20gをつるしてつり合った。ばねばかりのしめす値は？", c:["30g","20g","10g","100g"], a:0, n:"30", e:"10＋20＝30g。"},
+      {lever:{unit: "cm", bar: {min: -11, max: 11, piv: 0, k: "bane", pl: "P", hangs: [{x: 10, t: "10g"}, {x: -4, t: "□g", q: true}]}}, q:"点Pから右10cmに10gをつるしたぼうを水平にするには、点Pから左に4cmの位置に何gのおもりをつるせばよい？", c:["25g","40g","10g","20g"], a:0, n:"25", e:"10×10＝100。□×4＝100なので25g。"},
+      {lever:{unit: "cm", bar: {min: -16, max: 16, piv: 0, k: "ito", hangs: [{x: -10, t: "30g"}, {x: 15, t: "10g", t2: "ねん土？", q2: true}]}}, q:"支点から左10cmに30gのおもり、右15cmに10gのおもりと、その下にねん土をつるすとつり合った。ねん土は何g？", c:["10g","20g","30g","5g"], a:0, n:"10", e:"左30×10＝300。右は15cmの位置に（10＋ねん土）gで、300÷15＝20g。ねん土は20−10＝10g。"},
+      {lever:{unit: "cm", bar: {min: -13, max: 13, piv: 0, k: "ito", hangs: [{x: -5, t: "60g"}, {x: 12, t: "ねん土24g"}]}}, q:"左に5cmの位置に60g、右に12cmの位置に24gのねん土をつるした。ぼうはどうなる？", c:["左が下がる","右が下がる","つり合う"], a:0, fixed:true, e:"左60×5＝300、右24×12＝288。左が下がります。"},
+      {lever:{unit: "cm", bar: {min: -13, max: 13, piv: 0, k: "ito", hangs: [{x: -5, t: "60g"}, {x: 12, t: "ねん土24g", t2: "□g", q2: true}]}}, q:"左5cmに60g、右12cmに24gのねん土をつるして左が下がった。ねん土の下に何gのおもりをつるせばつり合う？", c:["1g","12g","5g","2g"], a:0, n:"1", e:"右を300にするには、300÷12＝25g。ねん土24gにあと1gです。"}
     ]},
   { id:"s3", name:"組み合わせの塔", note:"てんびんの組み合わせ・支点がはしにあるてんびん・重心（発展）",
     wild:["tsuriain","jushin","kyorin","omorin"],
     qs:[
-      {q:"てんびん1：左60cmにおもりA、右30cmに200gをつるすとつり合った。Aは何g？", c:["100g","200g","400g","60g"], a:0, n:"100", e:"200×30＝6000。A×60＝6000なのでA＝100g。"},
-      {q:"100gと200gのおもりでつり合っているてんびん1を、上のてんびんの点Bにつるした。点Bにかかる下向きの力は？", c:["300g","200g","100g","600g"], a:0, n:"300", e:"力のつり合いから、100＋200＝300g。"},
-      {q:"てんびん2：左20cmに300gのてんびん、右60cmにおもりCをつるすとつり合った。Cは何g？", c:["100g","300g","900g","60g"], a:0, n:"100", e:"300×20＝6000。C×60＝6000なのでC＝100g。"},
-      {q:"300gのてんびんと100gのおもりCがつるされた上のてんびんを、ばねばかりでつるした。ばねばかりの値は？", c:["400g","300g","200g","100g"], a:0, n:"400", e:"300＋100＝400g。"},
-      {q:"3本のぼうでつり合っている。左下のぼうは、左16cmに24g、右4cmに①gをつるしてつり合った。①は何g？", c:["96g","24g","64g","6g"], a:0, n:"96", e:"24×16＝384。①×4＝384なので96g。"},
-      {q:"右下のぼうは、左②cmに36g、右12cmに24gをつるしてつり合った。②はいくつ？", c:["8","12","6","16"], a:0, n:"8", e:"24×12＝288。36×②＝288なので②＝8cm。"},
-      {q:"上のぼうに、左10cmに120g（左下のぼう全体）、右③cmに60g（右下のぼう全体）がかかってつり合った。③はいくつ？", c:["20","10","5","30"], a:0, n:"20", e:"120×10＝1200。60×③＝1200なので③＝20cm。"},
-      {q:"左はしに支点があるぼうで、支点から3の位置に40g、6の位置（右はし）をばねばかりでつるすとつり合った。ばねばかりの値は？", c:["20g","40g","80g","120g"], a:0, n:"20", e:"40×3＝120。ばねばかりの力×6＝120なので20g。"},
-      {q:"左はしの支点、3の位置に40g、右はしのばねばかりが20gでつり合っている。支点がぼうを上向きに支える力は？", c:["20g","40g","60g","0g"], a:0, n:"20", e:"力のつり合いから、下向き40gのうち、ばねばかりが20g、支点が40−20＝20gを支えています。"},
-      {q:"左はしを支点にし、右はし（支点から20cm）をばねばかりでつるし、支点から6cmにXをつるした。ばねばかりは150g。Xは何g？", c:["500g","150g","300g","450g"], a:0, n:"500", e:"150×20＝3000。X×6＝3000なのでX＝500g。"},
+      {lever:{unit: "cm", bar: {min: -60, max: 30, piv: 0, k: "ito", hangs: [{x: -60, t: "A", q: true}, {x: 30, t: "200g"}], lab: "てんびん1"}}, q:"てんびん1：左60cmにおもりA、右30cmに200gをつるすとつり合った。Aは何g？", c:["100g","200g","400g","60g"], a:0, n:"100", e:"200×30＝6000。A×60＝6000なのでA＝100g。"},
+      {lever:{unit: "cm", bar: {min: -20, max: 60, piv: 0, k: "ito", hangs: [{x: -20, t: "", p: "B", sub: {min: -60, max: 30, piv: 0, k: "ito", hangs: [{x: -60, t: "100g", q: false}, {x: 30, t: "200g"}], lab: "てんびん1"}}, {x: 60, t: "C", q: true}]}}, q:"100gと200gのおもりでつり合っているてんびん1を、上のてんびんの点Bにつるした。点Bにかかる下向きの力は？", c:["300g","200g","100g","600g"], a:0, n:"300", e:"力のつり合いから、100＋200＝300g。"},
+      {lever:{unit: "cm", bar: {min: -20, max: 60, piv: 0, k: "ito", hangs: [{x: -20, t: "", p: "B", sub: {min: -60, max: 30, piv: 0, k: "ito", hangs: [{x: -60, t: "100g", q: false}, {x: 30, t: "200g"}], lab: "てんびん1"}}, {x: 60, t: "C", q: true}]}}, q:"てんびん2：左20cmに300gのてんびん、右60cmにおもりCをつるすとつり合った。Cは何g？", c:["100g","300g","900g","60g"], a:0, n:"100", e:"300×20＝6000。C×60＝6000なのでC＝100g。"},
+      {lever:{unit: "cm", bar: {min: -20, max: 60, piv: 0, k: "bane", hangs: [{x: -20, t: "", p: "B", sub: {min: -60, max: 30, piv: 0, k: "ito", hangs: [{x: -60, t: "100g", q: false}, {x: 30, t: "200g"}], lab: "てんびん1"}}, {x: 60, t: "100g", q: false}]}}, q:"300gのてんびんと100gのおもりCがつるされた上のてんびんを、ばねばかりでつるした。ばねばかりの値は？", c:["400g","300g","200g","100g"], a:0, n:"400", e:"300＋100＝400g。"},
+      {lever:{unit: "cm", bar: {min: -10, max: 20, piv: 0, k: "ito", hangs: [{x: -10, t: "", sub: {min: -16, max: 4, piv: 0, k: "ito", hangs: [{x: -16, t: "24g"}, {x: 4, t: "①", q: true}], lab: "左下"}}, {x: 20, t: "", sub: {min: -8, max: 12, piv: 0, k: "ito", hangs: [{x: -8, t: "36g", dt: null}, {x: 12, t: "24g"}], lab: "右下"}, dt: "③"}]}}, q:"3本のぼうでつり合っている。左下のぼうは、左16cmに24g、右4cmに①gをつるしてつり合った。①は何g？", c:["96g","24g","64g","6g"], a:0, n:"96", e:"24×16＝384。①×4＝384なので96g。"},
+      {lever:{unit: "cm", bar: {min: -10, max: 20, piv: 0, k: "ito", hangs: [{x: -10, t: "", sub: {min: -16, max: 4, piv: 0, k: "ito", hangs: [{x: -16, t: "24g"}, {x: 4, t: "96g", q: false}], lab: "左下"}}, {x: 20, t: "", sub: {min: -8, max: 12, piv: 0, k: "ito", hangs: [{x: -8, t: "36g", dt: "②"}, {x: 12, t: "24g"}], lab: "右下"}, dt: "③"}]}}, q:"右下のぼうは、左②cmに36g、右12cmに24gをつるしてつり合った。②はいくつ？", c:["8","12","6","16"], a:0, n:"8", e:"24×12＝288。36×②＝288なので②＝8cm。"},
+      {lever:{unit: "cm", bar: {min: -10, max: 20, piv: 0, k: "ito", hangs: [{x: -10, t: "", sub: {min: -16, max: 4, piv: 0, k: "ito", hangs: [{x: -16, t: "24g"}, {x: 4, t: "96g", q: false}], lab: "左下"}}, {x: 20, t: "", sub: {min: -8, max: 12, piv: 0, k: "ito", hangs: [{x: -8, t: "36g", dt: "8cm"}, {x: 12, t: "24g"}], lab: "右下"}, dt: "③"}]}}, q:"上のぼうに、左10cmに120g（左下のぼう全体）、右③cmに60g（右下のぼう全体）がかかってつり合った。③はいくつ？", c:["20","10","5","30"], a:0, n:"20", e:"120×10＝1200。60×③＝1200なので③＝20cm。"},
+      {lever:{unit: "", bar: {min: 0, max: 6, piv: 0, k: "dai", hangs: [{x: 3, t: "40g"}], ups: [{x: 6, t: "ばねばかり？"}]}}, q:"左はしに支点があるぼうで、支点から3の位置に40g、6の位置（右はし）をばねばかりでつるすとつり合った。ばねばかりの値は？", c:["20g","40g","80g","120g"], a:0, n:"20", e:"40×3＝120。ばねばかりの力×6＝120なので20g。"},
+      {lever:{unit: "", bar: {min: 0, max: 6, piv: 0, k: "dai", hangs: [{x: 3, t: "40g"}], ups: [{x: 6, t: "20g"}]}}, q:"左はしの支点、3の位置に40g、右はしのばねばかりが20gでつり合っている。支点がぼうを上向きに支える力は？", c:["20g","40g","60g","0g"], a:0, n:"20", e:"力のつり合いから、下向き40gのうち、ばねばかりが20g、支点が40−20＝20gを支えています。"},
+      {lever:{unit: "cm", bar: {min: 0, max: 20, piv: 0, k: "dai", hangs: [{x: 6, t: "X", q: true}], ups: [{x: 20, t: "150g"}]}}, q:"左はしを支点にし、右はし（支点から20cm）をばねばかりでつるし、支点から6cmにXをつるした。ばねばかりは150g。Xは何g？", c:["500g","150g","300g","450g"], a:0, n:"500", e:"150×20＝3000。X×6＝3000なのでX＝500g。"},
       {q:"ぼうの重さを無視しないとき、ぼうの重さが集まっていると考えられる点を何という？", c:["重心","支点","震源","中心点"], a:0, e:"この点を重心といいます。重心を支えるとぼうはつり合います。"},
       {q:"太さが一様なぼうの重心はどこにある？", c:["ぼうの真ん中","太いほうのはし","細いほうのはし","ぼうの外"], a:0, e:"太さが一様なぼうの重心は真ん中にあります。太さが一様でないぼうは太いほうに重心があります。"},
       {q:"支点を重心からずらしてぼうを支えると、どうなる？", c:["重心があるほうが下がる","重心がないほうが下がる","つり合ったまま","ぼうが上がる"], a:0, e:"ぼうはつり合わなくなり、重心があるほうが下がります。"}
@@ -4014,7 +4015,7 @@ function wildLv(base, boss){ return enemyLv(base, boss).lv; }
 /* 強い相手ほど EXP が多い */
 const xp = n => Math.round(n*(1+((B&&B.wild)?B.wild.lv:1)/15));
 
-const APP_NO = "v70";
+const APP_NO = "v71";
 let save = load();
 function load(){
   try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && s.v===2){ for(const [id,o] of Object.entries(s.owned)) if(o.form==null && SP[id]) o.form = formIdx(id,o.lv); if(!s.wrongEver) s.wrongEver=Object.fromEntries(Object.keys(s.wrong||{}).map(k=>[k,1])); cleanGone(s); return s; } }catch(e){}
@@ -4472,6 +4473,51 @@ function graphSVG(g){
 }
 /* v53: 帯グラフ（生産地の割合など）。q.band=[{t:"A", total:"生産量68万トン", parts:[["和歌山",21],...]}] */
 const BCOL=["#9fd0ff","#ffcf8a","#b8e6a0","#ffb3c0","#d6c8ff","#ffe28a","#c9d3e0"];
+/* v71: てこの図（「図がないとわかりにくい」→ 問題に q.lever をつけると、ぼう・支点・おもり・きょりの図を表示）
+   lever = {unit:"cm", bar:{min,max, piv:x, k:"ito"|"bane"|"dai", hangs:[{x, t, sub:bar}], ups:[{x,t}], lab:"ぼうの名前"}, nodist:true(きょりを書かない)}
+   x は支点（piv）からではなく、ぼうの上の位置（目もり）。支点の左はマイナス */
+let LVID=0;
+function leverSVG(L){
+  const U=L.unit||"", rows=[], id="lv"+(++LVID);
+  (function walk(b,ox,d){ rows.push({b,ox,d}); (b.hangs||[]).forEach(h=>{ if(h.sub) walk(h.sub, ox+h.x-h.sub.piv, d+1); }); })(L.bar,0,0);
+  let mn=Infinity, mx=-Infinity; rows.forEach(r=>{ mn=Math.min(mn,r.ox+r.b.min); mx=Math.max(mx,r.ox+r.b.max); });
+  const W=320, pad=42, sc=(W-pad*2)/((mx-mn)||1), X=u=>pad+(u-mn)*sc, depth=Math.max(...rows.map(r=>r.d));
+  const RH=112, top=44, H=top+RH*depth+100;
+  let s=`<svg class="lever" viewBox="0 0 ${W} ${H}" role="img" aria-label="てこの図">`;
+  const txt=(x,y,t,o={})=>`<text x="${x}" y="${y}" font-size="${o.fs||12}" font-weight="${o.fw||800}" text-anchor="middle" fill="${o.c||'#24324a'}" stroke="#fff" stroke-width="3" paint-order="stroke">${esc(String(t))}</text>`;
+  rows.forEach(({b,ox,d})=>{
+    const y=top+d*RH, px=X(ox+b.piv);
+    /* 支え */
+    if(d===0){
+      if(b.k==="dai") s+=`<path d="M${px} ${y+5} l-11 18 h22z" fill="#c9a27a" stroke="#24324a" stroke-width="2" stroke-linejoin="round"/>`+txt(px,y+36,"支点",{fs:11});
+      else if(b.k==="bane") s+=`<line x1="${px}" y1="4" x2="${px}" y2="${y-4}" stroke="#24324a" stroke-width="2"/><rect x="${px-24}" y="6" width="48" height="16" rx="5" fill="#ffe08a" stroke="#24324a" stroke-width="2"/>`+txt(px,18,"ばねばかり",{fs:9});
+      else s+=`<line x1="${px}" y1="2" x2="${px}" y2="${y-4}" stroke="#24324a" stroke-width="2"/>`+txt(px+16,14,"支点",{fs:11});
+    }
+    (b.ups||[]).forEach(u=>{ const ux=X(ox+u.x); s+=`<line x1="${ux}" y1="${y-26}" x2="${ux}" y2="${y-4}" stroke="#24324a" stroke-width="2"/><rect x="${ux-26}" y="${y-42}" width="52" height="16" rx="5" fill="#ffe08a" stroke="#24324a" stroke-width="2"/>`+txt(ux,y-30,u.t||"ばねばかり",{fs:9}); });
+    /* ぼう */
+    s+=`<rect x="${X(ox+b.min)}" y="${y-4}" width="${(b.max-b.min)*sc}" height="8" rx="4" fill="#f6e2b8" stroke="#24324a" stroke-width="2"/>`;
+    if(b.pl) s+=txt(px-12, y-9, b.pl, {fs:12, c:'#e8475a'});
+    s+=`<circle cx="${px}" cy="${y}" r="3.5" fill="#e8475a" stroke="#24324a" stroke-width="1.5"/>`;
+    if(b.lab) s+=txt(X(ox+b.min)+2, y-10, b.lab, {fs:10, c:'#5a6b85'}).replace('text-anchor="middle"','text-anchor="start"');
+    /* おもり */
+    (b.hangs||[]).forEach((h,i)=>{
+      const hx=X(ox+h.x);
+      if(h.p) s+=txt(hx, y-9, h.p, {fs:12, c:'#e8475a'});
+      if(h.sub){ s+=`<line x1="${hx}" y1="${y+4}" x2="${hx}" y2="${y+RH-4}" stroke="#24324a" stroke-width="2"/>`; }
+      else { const ly=y+22+(h.lo||0); s+=`<line x1="${hx}" y1="${y+4}" x2="${hx}" y2="${ly}" stroke="#24324a" stroke-width="2"/>`;
+        const lab=String(h.t), w=Math.max(28, [...lab].length*11+8);
+        s+=`<rect x="${hx-w/2}" y="${ly}" width="${w}" height="22" rx="5" fill="${h.q?'#ffd0d6':'#c9d3e0'}" stroke="#24324a" stroke-width="2"/>`+txt(hx,ly+15,lab,{fs:12});
+        if(h.t2){ s+=`<line x1="${hx}" y1="${ly+22}" x2="${hx}" y2="${ly+30}" stroke="#24324a" stroke-width="2"/>`; const w2=Math.max(28,[...String(h.t2)].length*11+8); s+=`<rect x="${hx-w2/2}" y="${ly+30}" width="${w2}" height="22" rx="5" fill="${h.q2?'#ffd0d6':'#c9d3e0'}" stroke="#24324a" stroke-width="2"/>`+txt(hx,ly+45,h.t2,{fs:12}); } }
+      /* きょり */
+      if(!L.nodist && h.x!==b.piv){ const dy=y+(h.sub?RH*0.42:((b.hangs||[]).some(g=>g.t2)?90:62))+(h.dl||0)*14, a=Math.min(px,hx), z=Math.max(px,hx), dist=h.dt!=null?h.dt:Math.abs(h.x-b.piv)+U;
+        s+=`<line x1="${a}" y1="${dy}" x2="${z}" y2="${dy}" stroke="#3d8bff" stroke-width="1.5" marker-start="url(#${id}a)" marker-end="url(#${id}a)"/>`+txt((a+z)/2, dy-3, dist, {fs:11, c:'#1f5fbf'}); }
+    });
+    (b.ups||[]).forEach(u=>{ if(L.nodist||u.x===b.piv) return; const ux=X(ox+u.x), a=Math.min(px,ux), z=Math.max(px,ux), dy=y+84, dist=u.dt!=null?u.dt:Math.abs(u.x-b.piv)+U;
+        s+=`<line x1="${a}" y1="${dy}" x2="${z}" y2="${dy}" stroke="#e0a000" stroke-width="1.5" marker-start="url(#${id}b)" marker-end="url(#${id}b)"/>`+txt((a+z)/2, dy-3, dist, {fs:11, c:'#9a6a00'}); });
+  });
+  s+=`<defs><marker id="${id}a" viewBox="0 0 6 6" refX="3" refY="3" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L6 3L0 6z" fill="#3d8bff"/></marker><marker id="${id}b" viewBox="0 0 6 6" refX="3" refY="3" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L6 3L0 6z" fill="#e0a000"/></marker></defs>`;
+  return s+`</svg>`;
+}
 function bandHTML(bs){ return `<div class="qband">${bs.map(b=>`<div class="qbd-h"><b>${esc(b.t||'')}</b><span>${esc(b.total||'')}</span></div><div class="qbd">${b.parts.map(([n,v],i)=>`<div style="flex:${v};background:${n.startsWith('その他')?'#fff6b8':BCOL[i%BCOL.length]}"><span>${esc(n)}</span><small>${v}${i===0?'%':''}</small></div>`).join("")}</div>`).join("")}</div>`; }
 function barsHTML(b){
   const mx=Math.max(...b.items.map(x=>x[1]));
@@ -5475,16 +5521,20 @@ const kaiserCard = () => `<div class="card get urcard"><div class="mon">${artMin
    - 範囲のルート（でんせつのすみか ふくむ）を全部★3 → 期間限定の特別なモンスター
    ============================================================ */
 const YB = [
-  {key:"y16", name:"第16回 てこ", from:"2026-11-24", to:"2026-11-30", ids:["rika-16"], mon:"yb_tenbin"},
+  {key:"y16", name:"第16回 てこ", from:"2026-11-24", to:"2026-11-30", ids:["rika-16"], mon:"yb_shitenou"},
   {key:"y11", name:"第11〜15回", from:"2026-11-24", to:"2026-12-14", ids:["rika-11","rika-12","rika-13","rika-14","rika-15","shakai-11","shakai-12","shakai-13","shakai-14","shakai-15"], mon:"yb_phoenix"},
 ];
 const ybActive = () => YB.filter(y=>today()>=y.from && today()<=y.to);
 const ybFor = uid => ybActive().find(y=>y.ids.includes(uid));
 const ybKeys = y => y.ids.map(id=>UNITS.find(u=>u.id===id)).filter(u=>u&&unitOpen(u)).flatMap(u=>[...u.stages.map(st=>u.id+"|"+st.id), u.id+"|boss"]);
 const ybDone = y => ybKeys(y).filter(k=>(save.cleared[k]||0)>=3).length;
-SP.yb_tenbin = {arch:"golem", type:"iwa", type2:"hikari", color:"#c9a227", accent:"#5b3fd1", skill:"power", legend:true, boost:1.35, size:1.25, parts:{horn:"crown", pat:"stars", wing:"crystal", acc:"gem", accColor:"#ffd23f"}, numMark:"⚖", forms:[{n:"テンビンキング"}], dex:"第16回「てこ」のルートを期間中（11/24〜11/30）に全部★3でクリアした人だけがなかまにできる。支点・力点・作用点を自由にあやつる。こうげきとHPが1.35倍。"};
+SP.yb_tenbin = {arch:"golem", type:"iwa", type2:"hikari", color:"#c9a227", accent:"#5b3fd1", skill:"power", legend:true, boost:1.35, size:1.25, parts:{horn:"crown", pat:"stars", wing:"crystal", acc:"gem", accColor:"#ffd23f"}, numMark:"⚖", forms:[{n:"テンビンキング"}], dex:"第16回「てこ」をがんばった人へのプレゼント（11/28）。支点・力点・作用点を自由にあやつる。こうげきとHPが1.35倍。"};
 SP.yb_phoenix = {arch:"bird", type:"hono", type2:"hikari", color:"#ff7a1a", accent:"#ffd23f", skill:"power", legend:true, boost:1.35, size:1.25, parts:{horn:"crown", pat:"stars", wing:"crystal", acc:"gem", accColor:"#e8475a"}, numMark:"✦", forms:[{n:"ゴカイフェニックス"}], dex:"理科・社会の第11〜15回のルートを期間中（〜12/14）に全部★3でクリアした人だけがなかまにできる、5つの回の力をもつ不死鳥。こうげきとHPが1.35倍。"};
-const YB_MON = ["yb_tenbin","yb_phoenix"];
+SP.yb_shitenou = {arch:"dragon", type:"hikari", type2:"iwa", color:"#fff3c4", accent:"#5b3fd1", skill:"power", legend:true, boost:1.4, size:1.3, parts:{horn:"crown", pat:"stars", wing:"crystal", acc:"gem", accColor:"#e8475a"}, numMark:"⚖", forms:[{n:"シテンオウ"}], dex:"第16回「てこ」のルートを期間中に全部★3でクリアした人だけがなかまにできる、てこの王さま。つばさの「重さ×きょり」をいつも左右ぴったりにそろえる。こうげきとHPが1.4倍。"};
+/* v71: 「てこの問題が図がないとわかりにくかった」おわびとして、テンビンキングをいったんプレゼント。全部★3の本当のごほうびはシテンオウに変更 */
+function ybGift16(){ if(save.ybGift16) return; save.ybGift16=1; if(!save.owned.yb_tenbin){ const top=Math.max(...Object.values(save.owned).map(o=>o.lv||1)); save.owned.yb_tenbin={lv:Math.min(MAX_LV, Math.max(40, top+5)), exp:0, form:0, shinyWild:true}; save.seen.yb_tenbin=1; if(save.party.length<3) save.party.push("yb_tenbin"); save.ybGiftNew=1; } persist(); }
+ybGift16();
+const YB_MON = ["yb_shitenou","yb_tenbin","yb_phoenix"];
 function ybGrant(y){
   if(save.owned[y.mon] || ybDone(y)<ybKeys(y).length) return false;
   const top=Math.max(...Object.values(save.owned).map(o=>o.lv||1));
@@ -5496,7 +5546,8 @@ const ybMonCard = y => `<div class="card get urcard"><div class="mon">${artMine(
 function ybCardHTML(){
   const a=ybActive(); if(!a.length) return "";
   const md = d => `${+d.slice(5,7)}/${+d.slice(8)}`;
-  return `<div class="card testcard"><b class="tc-h">🔥 やりこみボーナス</b><span class="mini">対象のルートでは、1回で正解するたびフラスコ+1・クリアで+5（★3なら+10）・バトルチケット+1・はじめて★3でガチャ券+1。出てくるモンスターも豪華（色ちがい 1/5）！</span>
+  const gift = save.ybGiftNew ? `<div class="tc-row" style="align-items:center;gap:8px;background:#fff6d8;border-radius:12px;padding:6px"><div class="mon" style="width:52px;height:52px;flex:none">${artMine("yb_tenbin")}</div><div style="text-align:left"><b>🎁 おわびのプレゼント</b><br><span class="mini">てこの問題が図がなくてわかりにくかったので、<b>テンビンキング</b>をプレゼント！ 問題に図をつけたよ。第16回を全部★3にすると、さらに<b>シテンオウ</b>がなかまになる！</span></div></div>` : "";
+  return `<div class="card testcard"><b class="tc-h">🔥 やりこみボーナス</b>${gift}<span class="mini">対象のルートでは、1回で正解するたびフラスコ+1・クリアで+5（★3なら+10）・バトルチケット+1・はじめて★3でガチャ券+1。出てくるモンスターも豪華（色ちがい 1/5）！</span>
     ${a.map(y=>{ const n=ybKeys(y).length, d=ybDone(y), own=!!save.owned[y.mon];
       return `<div class="tc-row" style="align-items:center;gap:8px"><div class="mon" style="width:52px;height:52px;flex:none">${own?artMine(y.mon):art(y.mon,1,{sil:true})}</div><div style="text-align:left"><b>${esc(y.name)}　〜${md(y.to)}まで</b><br><span class="mini">${y.ids.map(id=>{ const u=UNITS.find(x=>x.id===id); return u&&unitOpen(u)?esc(unitLabel(u)):""; }).filter(Boolean).join("・")}</span><br><span class="mini"><b>★3 ${d} / ${n}</b>（でんせつのすみか ふくむ）${own?' → 特別なモンスターをゲット済み！':' → 全部★3で特別なモンスター！'}</span></div></div>`; }).join("")}</div>`;
 }
@@ -5504,7 +5555,7 @@ function ybCardHTML(){
 /* カードのステータス */
 function cardStat(id){
   const o=save.owned[id]||{lv:1}, s=SP[id], lv=o.lv||1, p=shinyPow(id), sg=sigOf(id), M=sg?MOVES[sg]:MOVES[s.type+"3"]||MOVES.tackle;
-  const rare = id===KAISER?5 : YB_MON.includes(id)?4 : s.umega||s.ur||s.gacha===3?4 : s.gacha===2?3 : s.mega||s.legend||s.week?3 : (o.shinyWild||s.rare||s.daily||s.qd)?2 : 1;
+  const rare = id===KAISER||id==="yb_shitenou"?5 : YB_MON.includes(id)?4 : s.umega||s.ur||s.gacha===3?4 : s.gacha===2?3 : s.mega||s.legend||s.week?3 : (o.shinyWild||s.rare||s.daily||s.qd)?2 : 1;
   return {id, lv, hp:Math.round((30+lv*3)*p), atk:Math.round((8+lv*0.9)*p), type:s.type, type2:s.type2, mv:M.n, mvPow:M.pow, rare};
 }
 const RARE_N = ["","★","★★","★★★","★★★★","★★★★★"];
@@ -5797,6 +5848,7 @@ function migSig(s){ for(const [id,o] of Object.entries(s.owned||{})){ const u=MO
 migSig(save);
 MOVES["u_"+KAISER] = {n:"パーフェクトアタック", sig:true, pow:3.8, combo:2, st:"ddn", stp:1};
 MOVES.u_yb_tenbin = {n:"モーメントクラッシュ", sig:true, pow:3.2, combo:2, st:"ddn", stp:1};
+MOVES.u_yb_shitenou = {n:"パーフェクトモーメント", sig:true, pow:3.5, combo:2, st:"ddn", stp:1};
 MOVES.u_yb_phoenix = {n:"ゴカイフレア", sig:true, pow:3.2, combo:2, st:"ddn", stp:1};
 
 /* v48: でんせつ等いがいの全モンスターにも、そのモンスターだけのわざ（名前＝さいしょのすがたの名前＋タイプのことば。じょうたいは id から決まる） */
@@ -5894,7 +5946,7 @@ function sizeText(id){ const o=save.owned[id]||{}, f=SP[id].legend?2:curF(id), l
    ============================================================ */
 const FAST_MS = 1200;
 function readSecs(q){
-  const c=(q.q||"").length + (q.note?q.note.length*.4:0) + (Array.isArray(q.c)?q.c.join("").length*.3:0) + (q.pairs?q.pairs.flat().join("").length*.3:0) + (q.table||q.graph||q.bars||q.map||q.img||q.band?8:0)+(q.items?q.items.length*1.5:0);
+  const c=(q.q||"").length + (q.note?q.note.length*.4:0) + (Array.isArray(q.c)?q.c.join("").length*.3:0) + (q.pairs?q.pairs.flat().join("").length*.3:0) + (q.table||q.graph||q.bars||q.map||q.img||q.band||q.lever?8:0)+(q.items?q.items.length*1.5:0);
   return Math.min(6, Math.max(1.5, 1+c*.05));
 }
 function applyReadLock(item, q){
@@ -6342,7 +6394,7 @@ function renderBattle(enter){
   <div class="log" id="log">${logMsg}</div>
   <div class="card qpanel ${B.mix&&B.mix.mode==="haya"&&!item.buzz?"hayawait":""}">
     <div class="qmeta"><span>${esc(B.name)}</span><span>${B.tower?`${B.tower.floor}階・さいこう ${qdS().tower.best}階`:B.trainer?`あいて ${B.trainer.idx+1} / ${B.trainer.team.length}ひき目`:`のこり ${B.queue.length}問`}</span></div>
-    ${q.note||q.table||q.graph||q.bars||q.map||q.band?`<div class="qnote"><span class="qnote-h">ほそく</span>${q.note?`<p>${esc(q.note)}</p>`:''}${q.table?`<div class="qtbl"><table>${q.table.map((r,ri)=>`<tr>${r.map((c,ci)=>ri===0||ci===0?`<th>${esc(c)}</th>`:`<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</table></div>`:''}${q.graph?`<div class="qgraph">${graphSVG(q.graph)}</div>`:''}${q.bars?barsHTML(q.bars):''}${q.band?bandHTML(q.band):''}${q.map?`<div class="qmap">${mapSVG({view:q.map.view, pts:q.map.pts, fill:q.map.fill&&Object.fromEntries(q.map.fill.map(x=>[x,"#5a6b85"]))})}${MAPCREDIT}</div>`:''}</div>`:''}
+    ${q.lever?`<div class="qlever">${leverSVG(q.lever)}</div>`:''}${q.note||q.table||q.graph||q.bars||q.map||q.band?`<div class="qnote"><span class="qnote-h">ほそく</span>${q.note?`<p>${esc(q.note)}</p>`:''}${q.table?`<div class="qtbl"><table>${q.table.map((r,ri)=>`<tr>${r.map((c,ci)=>ri===0||ci===0?`<th>${esc(c)}</th>`:`<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</table></div>`:''}${q.graph?`<div class="qgraph">${graphSVG(q.graph)}</div>`:''}${q.bars?barsHTML(q.bars):''}${q.band?bandHTML(q.band):''}${q.map?`<div class="qmap">${mapSVG({view:q.map.view, pts:q.map.pts, fill:q.map.fill&&Object.fromEntries(q.map.fill.map(x=>[x,"#5a6b85"]))})}${MAPCREDIT}</div>`:''}</div>`:''}
     ${q.img&&MARKS[q.img]?`<div class="qimg"><img src="${MARKS[q.img]}" alt="都道府県のマーク" width="180" height="180"></div>`:''}${q.shape&&MAPD[q.shape]?`<div class="pgbox">${prefShapeSVG(q.shape)}</div>`:''}${q.pic&&PICS[q.pic]?`<div class="qpic">${PICS[q.pic]}</div>`:''}<p class="qtext">${esc(q.q)}</p>${B.mix&&B.mix.timed&&(B.mix.mode!=="haya"||item.buzz)?'<div class="mixbar" id="mixbar"><i></i><span></span></div>':''}${B.mix&&B.mix.mode==="haya"&&!item.buzz?'<button class="btn go buzz" id="buzz">わかった！（早押し）</button>':''}${isAll?'<div class="hint">あてはまるものを全部えらんで「けってい」</div>':multi?'<div class="hint">2つえらんで「けってい」</div>':''}${isNum?'<div class="hint">なれてきた問題！ 数字キーで答えよう</div>':''}${isOrd?'<div class="hint">はじめのものから順にタップしよう</div>':''}${isMat?'<div class="hint">左をタップしてから、右をタップしてつなごう</div>':''}${isPref?'<div class="hint">地図をタップしてえらび、「けってい」</div>':''}${isTile?`<div class="hint">文字をタップして答えをつくろう（${[...q.ans].length}文字）</div>`:''}
     ${isNum?`<div class="cans" id="nans">${item.input?esc(item.input):'&nbsp;'}</div><div class="keypad">${["7","8","9","4","5","6","1","2","3",".","0","⌫"].map(k=>`<button class="key" data-k="${k}">${k}</button>`).join("")}</div><button class="btn" id="dec" style="margin-top:10px" ${item.input?'':'disabled'}>けってい</button>`:isTile?tileHTML(item,q)+`<div class="ordrow"><button class="btn alt" id="redo">1文字もどす</button><button class="btn" id="dec" ${item.seq.length===[...q.ans].length-q.pre?'':'disabled'}>けってい</button></div>`:isPref?`<div class="qmap big">${mapSVG({view:q.view, sel:item.selP, tap:true})}${MAPCREDIT}</div><button class="btn" id="dec" style="margin-top:10px" ${item.selP?'':'disabled'}>けってい</button>`:isOrd?orderHTML(item,q):isMat?matchHTML(item,q):isSort?sortHTML(item,q):`<div class="choices${isAll?' allgrid':''}">${item.order.filter(ci=>!item.hidden.includes(ci)).map((ci,k)=>`<button class="choice" data-i="${ci}">${isAll||q.c[ci]===KANA[k]?'':`<span class="k">${KANA[k]}</span>`}<span>${esc(q.c[ci])}</span></button>`).join("")}</div>`}
     ${multi?'<button class="btn" id="dec" style="margin-top:12px" disabled>けってい</button>':''}
@@ -6729,7 +6781,7 @@ function finishMix(win){
 }
 
 /* ---------- 新しい版のおしらせ（GitHub Pages 版のみ。version.json と比べる） ---------- */
-const APP_VER="20261126115405";
+const APP_VER="20261128012725";
 function checkUpdate(){
   if(APP_VER.startsWith("__") || !/^https?:/.test(location.protocol)) return;
   fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
